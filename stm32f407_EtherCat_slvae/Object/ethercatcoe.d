@@ -1,0 +1,13 @@
+..\object\ethercatcoe.o: ..\User\soem\ethercatcoe.c
+..\object\ethercatcoe.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\object\ethercatcoe.o: E:\Keil5\ARM\ARMCC\Bin\..\include\string.h
+..\object\ethercatcoe.o: ..\User\osal\osal.h
+..\object\ethercatcoe.o: ..\User\osal\osal_defs.h
+..\object\ethercatcoe.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+..\object\ethercatcoe.o: ..\User\oshw\oshw.h
+..\object\ethercatcoe.o: ..\User\soem\ethercattype.h
+..\object\ethercatcoe.o: ..\User\oshw\nicdrv.h
+..\object\ethercatcoe.o: ..\User\soem\ethercatmain.h
+..\object\ethercatcoe.o: ..\User\oshw\types.h
+..\object\ethercatcoe.o: ..\User\soem\ethercatbase.h
+..\object\ethercatcoe.o: ..\User\soem\ethercatcoe.h

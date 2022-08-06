@@ -1,0 +1,16 @@
+..\object\ethercatconfig.o: ..\User\soem\ethercatconfig.c
+..\object\ethercatconfig.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\object\ethercatconfig.o: E:\Keil5\ARM\ARMCC\Bin\..\include\string.h
+..\object\ethercatconfig.o: ..\User\osal\osal.h
+..\object\ethercatconfig.o: ..\User\osal\osal_defs.h
+..\object\ethercatconfig.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+..\object\ethercatconfig.o: ..\User\oshw\oshw.h
+..\object\ethercatconfig.o: ..\User\soem\ethercattype.h
+..\object\ethercatconfig.o: ..\User\oshw\nicdrv.h
+..\object\ethercatconfig.o: ..\User\soem\ethercatmain.h
+..\object\ethercatconfig.o: ..\User\oshw\types.h
+..\object\ethercatconfig.o: ..\User\soem\ethercatbase.h
+..\object\ethercatconfig.o: ..\User\soem\ethercatcoe.h
+..\object\ethercatconfig.o: ..\User\soem\ethercatsoe.h
+..\object\ethercatconfig.o: ..\User\soem\ethercatconfig.h
+..\object\ethercatconfig.o: ..\User\soem\ethercatconfiglist.h
