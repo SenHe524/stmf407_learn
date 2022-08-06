@@ -1,5 +1,8 @@
 
-# ESP-IDF default build directory name
 /build
 /.vscode
 /object
+
+build
+.vscode
+object
