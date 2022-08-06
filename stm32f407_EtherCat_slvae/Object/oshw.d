@@ -1,0 +1,10 @@
+..\object\oshw.o: ..\User\oshw\oshw.c
+..\object\oshw.o: ..\User\oshw\oshw.h
+..\object\oshw.o: ..\User\soem\ethercattype.h
+..\object\oshw.o: ..\User\osal\osal.h
+..\object\oshw.o: ..\User\osal\osal_defs.h
+..\object\oshw.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+..\object\oshw.o: ..\User\oshw\nicdrv.h
+..\object\oshw.o: ..\User\soem\ethercatmain.h
+..\object\oshw.o: ..\User\oshw\types.h
+..\object\oshw.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdlib.h

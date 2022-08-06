@@ -1,0 +1,10 @@
+..\object\ethercatmain.o: ..\Components\Ethercat\soem\ethercatmain.c
+..\object\ethercatmain.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\object\ethercatmain.o: E:\Keil5\ARM\ARMCC\Bin\..\include\string.h
+..\object\ethercatmain.o: ..\Components\Ethercat\osal\osal.h
+..\object\ethercatmain.o: ..\Components\Ethercat\osal\osal_defs.h
+..\object\ethercatmain.o: E:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+..\object\ethercatmain.o: ..\Components\Ethercat\oshw\oshw.h
+..\object\ethercatmain.o: ..\Components\Ethercat\soem\ethercattype.h
+..\object\ethercatmain.o: ..\Components\Ethercat\oshw\nicdrv.h
+..\object\ethercatmain.o: ..\Components\Ethercat\soem\ethercatmain.h
