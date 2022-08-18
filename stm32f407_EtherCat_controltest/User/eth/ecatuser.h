@@ -46,9 +46,6 @@ PACKED_END
 
 
 
-void ecat_loop_init();
-
-
 
 void ecat_init(void);
 void ecat_loop(void);

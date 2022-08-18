@@ -1,27 +1,45 @@
-#include "ecatfun.h"
+#include "myethercat.h"
+
+#include "stdio.h"
 #include "string.h"
-#include <stdio.h>
-out_EL2008_t   slave_EL2008_1;
-out_EL2008_t   slave_EL2008_2;
-out_EL2008_t   slave_EL2008_3;
 
-uint32 network_configuration(void)
+
+//PDO_Outputs outputs[6];
+//PDO_Input inputs[6];
+
+#define SYNC0TIME 1000000
+
+#define DEBUG 0
+
+
+int write8(uint16  slave, uint16  index, uint8  subindex, int value)
 {
-	/* Do we got expected number of slaves from config */
-	if (ec_slavecount < NUMBER_OF_SLAVES)
-		return 0;
+	uint8 temp = value;
 
-	/* Verify slave by slave that it is correct*/
-	if (strcmp(ec_slave[EK1100].name,"EK1100"))
-		return 0;
-	else if (strcmp(ec_slave[EL2008_1].name,"EL2008"))
-		return 0;
-	else if (strcmp(ec_slave[EL2008_2].name,"EL2008"))
-		return 0;
-	else if (strcmp(ec_slave[EL2008_3].name,"EL2008"))
-		return 0;
+	int rtn = ec_SDOwrite(slave, index, subindex, FALSE, sizeof(temp), &temp, EC_TIMEOUTRXM * 20);
 
-	return 1;
+	if (rtn == 0) { printf("SDOwrite to %#x failed !!! \r\n", index); }
+	else if (DEBUG) { printf("SDOwrite to slave%d  index:%#x value:%x Successed !!! \r\n", slave, index, temp); }
+	return rtn;
+}
+int write16(uint16  slave, uint16  index, uint8  subindex, int value)
+{
+	uint16 temp = value;
+
+	int rtn = ec_SDOwrite(slave, index, subindex, FALSE, sizeof(temp), &temp, EC_TIMEOUTRXM * 20);
+
+	if (rtn == 0) { printf("SDOwrite to %#x failed !!! \r\n", index); }
+	else if (DEBUG) { printf("SDOwrite to slave%d  index:%#x value:%x Successed !!! \r\n", slave, index, temp); }
+	return rtn;
+}
+int write32(uint16 slave, uint16 index, uint8 subindex, int value)
+{
+	uint32 temp = value;
+
+	int rtn = ec_SDOwrite(slave, index, subindex, FALSE, sizeof(temp), &temp, EC_TIMEOUTRXM * 20);
+	if (rtn == 0) { printf("SDOwrite to %#x failed !!! \r\n", index); }
+	else if (DEBUG) { printf("SDOwrite to slave%d  index:%#x value:%x Successed !!! \r\n", slave, index, temp); }
+	return rtn;
 }
 
 void set_output_int32 (uint16 slave_no, uint8 module_index, int32 value,uint8 offset)
@@ -224,63 +242,11 @@ uint8 get_input_uint8(uint16 slave_no,uint8 module_index,uint8 offset)
 
 	return return_value;
 }
-extern char IOmap[256];
-extern uint16 cur_status;
-extern int32 cur_pos;
-extern uint8 cur_mode;
-extern uint8 flag_time;
-uint8 flag=1;
 
-void ecat_loop(void)
-{
-	if(flag_time == 1)
-	{
-		ec_send_processdata();
-		ec_receive_processdata(EC_TIMEOUTRET);
-		
-		cur_status = IOmap[165] + (IOmap[166] << 8);
 
-		if(flag == 1){
-			if((cur_status & 0x004f) == 0x0040)
-			{
-				IOmap[50] = 0x6;
-				printf("0x06\n");
-			}
-			else if((cur_status & 0x006f) == 0x0021)
-			{
-				IOmap[50] = 0x7;
-				printf("0x07\n");
-			}
-			else if((cur_status & 0x006f) == 0x023)
-			{
-				IOmap[50] = 0xF;
-				printf("0x0F\n");
-			}
-			else if((cur_status & 0x006f) == 0x0027)
-			{
-				IOmap[50] = 0xF;
-				IOmap[51] = 0x1;
-				printf("0x1F\n");
-				cur_pos = IOmap[169] + (IOmap[170] << 8) + 
-						(IOmap[171] << 16) + (IOmap[172] << 24);
-				IOmap[54] = IOmap[169];
-				IOmap[55] = IOmap[170];
-				IOmap[56] = IOmap[171];
-				IOmap[57] = IOmap[172];
-				flag = 2;
-			}
-		}			
 
-		if(flag == 2){
-			cur_pos += 100;
-			IOmap[50] = 0xF;
-			IOmap[51] = 0x1;
-		}
-	}
-	IOmap[54] = IOmap[169];
-	IOmap[55] = IOmap[170];
-	IOmap[56] = IOmap[171];
-	IOmap[57] = IOmap[172];
-	IOmap[52] = 0x8;
-}
+
+
+
+
 

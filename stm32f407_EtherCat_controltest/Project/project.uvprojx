@@ -1040,6 +1040,26 @@
               <FileType>5</FileType>
               <FilePath>..\User\usart\usart.h</FilePath>
             </File>
+            <File>
+              <FileName>servo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\eth\servo.c</FilePath>
+            </File>
+            <File>
+              <FileName>servo_def.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\eth\servo_def.h</FilePath>
+            </File>
+            <File>
+              <FileName>ecatfun.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\eth\ecatfun.c</FilePath>
+            </File>
+            <File>
+              <FileName>ecatfun.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\eth\ecatfun.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

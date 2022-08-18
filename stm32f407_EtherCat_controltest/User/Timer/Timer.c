@@ -133,13 +133,15 @@ uint32_t getuSec(void)
 	return TIM2->CNT;
 }
 
-
+extern int dorun;
 void TIM5_IRQHandler(void)
 {
 	if(TIM_GetITStatus(TIM5,TIM_IT_Update) == SET)
 	{
-
-		
+		if(dorun==1)
+		{
+			ecat_loop();
+		} 
 		TIM_ClearITPendingBit(TIM2,TIM_IT_Update);
 	}
 }
