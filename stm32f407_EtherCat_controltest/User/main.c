@@ -25,21 +25,14 @@
 #include "myethercat.h"
 
 
-
-uint8 flag_time = 0;
-uint16 cur_status;
-int32 cur_pos = 0;
-uint8 cur_mode;
-
 int dorun=0;
-
+int iomap_size;
 
 #define EC_TIMEOUTMON 500
 
-char IOmap[256] = {0}; //映射空间
+char IOmap[512] = {0}; //映射空间
 
-
-int Servosetup(uint16 slave)
+int Servosetup(ecx_contextt *context, uint16 slave)
 {
 	uint8 u8val;
 	uint16 u16val;
@@ -48,35 +41,34 @@ int Servosetup(uint16 slave)
 	// 0x1600-0x17FF:RxPDO映射
 	u8val = 0;
 	ec_SDOwrite(slave, 0x1c12, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1c12数据
-	u8val = 0;
 	ec_SDOwrite(slave, 0x1600, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1600数据
-	ec_SDOwrite(slave, 0x1601, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1601数据
+	ec_SDOwrite(slave, 0x1610, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1601数据
 	
 	u32val = 0x60400010;
 	ec_SDOwrite(slave, 0x1600, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1600子索引
-	u32val = 0x60600020;
+	u32val = 0x60600008;
 	ec_SDOwrite(slave, 0x1600, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1600子索引
-	u32val = 0x607A0030;
+	u32val = 0x607A0020;
 	ec_SDOwrite(slave, 0x1600, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1600子索引
-	u32val = 0x60710040;
+	u32val = 0x60710010;
 	ec_SDOwrite(slave, 0x1600, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1600子索引
 	u8val = 4;
 	ec_SDOwrite(slave, 0x1600, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
 	
 	u32val = 0x68400010;
-	ec_SDOwrite(slave, 0x1601, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
-	u32val = 0x68600020;   
-	ec_SDOwrite(slave, 0x1601, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
-	u32val = 0x687A0030;   
-	ec_SDOwrite(slave, 0x1601, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
-	u32val = 0x68710040;   
-	ec_SDOwrite(slave, 0x1601, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
+	ec_SDOwrite(slave, 0x1610, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
+	u32val = 0x68600008;   
+	ec_SDOwrite(slave, 0x1610, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
+	u32val = 0x687A0020;   
+	ec_SDOwrite(slave, 0x1610, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
+	u32val = 0x68710010;   
+	ec_SDOwrite(slave, 0x1610, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
 	u8val = 4;             
-	ec_SDOwrite(slave, 0x1601, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
+	ec_SDOwrite(slave, 0x1610, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
 	
 	u16val = 0x1600;
 	ec_SDOwrite(slave, 0x1c12, 0x01, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTRXM);//设定为所选的PDO映像配置
-	u16val = 0x1601;
+	u16val = 0x1610;
 	ec_SDOwrite(slave, 0x1c12, 0x02, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTRXM);//设定为所选的PDO映像配置
 	
 	u8val = 2;
@@ -87,43 +79,42 @@ int Servosetup(uint16 slave)
 	// 0x1A00-0x1BFF:TxPDO映射，结构体类型
 	u8val = 0;
 	ec_SDOwrite(slave, 0x1c13, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1c13数据
-	u8val = 0;
 	ec_SDOwrite(slave, 0x1A00, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1A00数据
-	ec_SDOwrite(slave, 0x1A01, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1A01数据
+	ec_SDOwrite(slave, 0x1A10, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1A01数据
 	
 	u32val = 0x60410010;
 	ec_SDOwrite(slave, 0x1A00, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x60770020;
+	u32val = 0x60770010;
 	ec_SDOwrite(slave, 0x1A00, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x60640030;
+	u32val = 0x60640020;
 	ec_SDOwrite(slave, 0x1A00, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x606C0040;
+	u32val = 0x606C0020;
 	ec_SDOwrite(slave, 0x1A00, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x603F0050;
+	u32val = 0x603F0010;
 	ec_SDOwrite(slave, 0x1A00, 0x05, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x60610060;
+	u32val = 0x60610008;
 	ec_SDOwrite(slave, 0x1A00, 0x06, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
 	u8val = 6;
 	ec_SDOwrite(slave, 0x1A00, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
 	
 	u32val = 0x68410010;
-	ec_SDOwrite(slave, 0x1A01, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x68770020;
-	ec_SDOwrite(slave, 0x1A01, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x68640030;    
-	ec_SDOwrite(slave, 0x1A01, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x686C0040;    
-	ec_SDOwrite(slave, 0x1A01, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x683F0050;    
-	ec_SDOwrite(slave, 0x1A01, 0x05, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u32val = 0x68610060;    
-	ec_SDOwrite(slave, 0x1A01, 0x06, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
-	u8val = 6;              
-	ec_SDOwrite(slave, 0x1A01, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
+	ec_SDOwrite(slave, 0x1A10, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	u32val = 0x68770010;   
+	ec_SDOwrite(slave, 0x1A10, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	u32val = 0x68640020;   
+	ec_SDOwrite(slave, 0x1A10, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	u32val = 0x686C0020;   
+	ec_SDOwrite(slave, 0x1A10, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	u32val = 0x683F0010;   
+	ec_SDOwrite(slave, 0x1A10, 0x05, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	u32val = 0x68610008;   
+	ec_SDOwrite(slave, 0x1A10, 0x06, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	u8val = 6;             
+	ec_SDOwrite(slave, 0x1A10, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
 	
 	u16val = 0x1A00;
 	ec_SDOwrite(slave, 0x1c13, 0x01, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTRXM);//设定为所选的PDO映像配置
-	u16val = 0x1A01;
+	u16val = 0x1A10;
 	ec_SDOwrite(slave, 0x1c13, 0x02, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTRXM);//设定为所选的PDO映像配置
 	u8val = 2;
 	ec_SDOwrite(slave, 0x1c13, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//启用PDO配置
@@ -132,13 +123,11 @@ int Servosetup(uint16 slave)
 //	u8val = 8;
 //	ec_SDOwrite(slave, 0x6060, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);
 	return 1;
-}
-
+} 
 
 int Soem_init(char *ifname)
 {
-	int slc, iomap_size,i;
-	ec_timet t1, t2;
+	int slc, i;
 	if(!ec_init(ifname))//初始化soem,将主站绑定到网口
 	{
 		printf("No socket connection on %s\nExecute as root\n", ifname);
@@ -155,19 +144,20 @@ int Soem_init(char *ifname)
 	{
 		if((ec_slave[slc].eep_man == 0x0000001A) && (ec_slave[slc].eep_id == 0x50440200))
 		{
-			printf("Found %s at position %d\n", ec_slave[slc].name, slc);
-//			uint8 u8val;
-//			u8val = 8;
+//			uint8 u8val = 8;
 //			ec_SDOwrite(slc, 0x6060, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);
+//			int pbuff;
+//			int sz = sizeof(pbuff);
+//			ec_SDOread(slc, 0x6502, 0x00, FALSE, &sz, &pbuff, EC_TIMEOUTRXM);
 			// link slave specific setup to preop->safeop hook
-			ec_slave[slc].PO2SOconfig = &Servosetup;
+			ec_slave[slc].PO2SOconfigx = &Servosetup;
 		}
 	}
     iomap_size = ec_config_map(&IOmap); //主站内存空间与从站内存空间映射
     ec_configdc(); //配置DC
 	ec_dcsync0(1, TRUE, 1000000, 0);
 	ec_dcsync0(2, TRUE, 1000000, 0);
-	ec_dcsync0(3, TRUE, 1000000, 0);
+//	ec_dcsync0(3, TRUE, 1000000, 0);
 	printf("Slaves mapped.\n");
 	//等待所有从机进入安全运行状态
 	ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE);
@@ -183,7 +173,6 @@ int Soem_init(char *ifname)
 	if (ec_slave[0].state == EC_STATE_OPERATIONAL )
 	{
 		printf("Operational state reached for all slaves.\n");
-		flag_time = 1;
 		dorun=1;
 		Timer5_Init();
 	}
@@ -199,13 +188,6 @@ int Soem_init(char *ifname)
 			}
 		}
 	}
-	
-//	t1 = osal_current_time();
-//	ec_send_processdata();
-//	ec_receive_processdata(EC_TIMEOUTRET);
-//	t2 = osal_current_time();
-	(void) t1;
-	(void) t2;
 	(void) iomap_size;
 	return 1;
 }
@@ -236,7 +218,7 @@ void System_init(void)
     w5500_init();
     w5500_RegSetup();
     // 延时以保证能扫描到从机
-    delay_ms(2000);
+    delay_ms(1000);
 }
 
 //Rx_PDO_t *outputs[3];
@@ -281,7 +263,7 @@ int main(void)
 
     while (1)
     {
-		if(flag_led)
+		if(!flag_led)
 		{
 			GPIO_SetBits(GPIOA, GPIO_Pin_0);
 			delay_ms(500);

@@ -871,26 +871,6 @@
               <FilePath>..\User\soem\ethercatdc.h</FilePath>
             </File>
             <File>
-              <FileName>ethercateoe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercateoe.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercateoe.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercateoe.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatfoe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercatfoe.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatfoe.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatfoe.h</FilePath>
-            </File>
-            <File>
               <FileName>ethercatmain.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\soem\ethercatmain.c</FilePath>
@@ -911,6 +891,31 @@
               <FilePath>..\User\soem\ethercatprint.h</FilePath>
             </File>
             <File>
+              <FileName>ethercattype.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\soem\ethercattype.h</FilePath>
+            </File>
+            <File>
+              <FileName>ethercateoe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\soem\ethercateoe.c</FilePath>
+            </File>
+            <File>
+              <FileName>ethercateoe.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\soem\ethercateoe.h</FilePath>
+            </File>
+            <File>
+              <FileName>ethercatfoe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\soem\ethercatfoe.c</FilePath>
+            </File>
+            <File>
+              <FileName>ethercatfoe.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\soem\ethercatfoe.h</FilePath>
+            </File>
+            <File>
               <FileName>ethercatsoe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\soem\ethercatsoe.c</FilePath>
@@ -919,11 +924,6 @@
               <FileName>ethercatsoe.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\soem\ethercatsoe.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercattype.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercattype.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1031,16 +1031,6 @@
               <FilePath>..\User\Timer\Timer.h</FilePath>
             </File>
             <File>
-              <FileName>usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\usart\usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>usart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\usart\usart.h</FilePath>
-            </File>
-            <File>
               <FileName>servo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\eth\servo.c</FilePath>
@@ -1059,6 +1049,16 @@
               <FileName>ecatfun.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\eth\ecatfun.h</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\usart\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\usart\usart.h</FilePath>
             </File>
           </Files>
         </Group>
