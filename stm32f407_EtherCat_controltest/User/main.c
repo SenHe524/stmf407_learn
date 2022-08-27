@@ -40,88 +40,88 @@ int Servosetup(ecx_contextt *context, uint16 slave)
 	
 	// 0x1600-0x17FF:RxPDO映射
 	u8val = 0;
-	ec_SDOwrite(slave, 0x1c12, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1c12数据
-	ec_SDOwrite(slave, 0x1600, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1600数据
-	ec_SDOwrite(slave, 0x1610, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1601数据
+	ec_SDOwrite(slave, 0x1c12, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//清除0x1c12数据
+	ec_SDOwrite(slave, 0x1600, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//清除0x1600数据
+	ec_SDOwrite(slave, 0x1610, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//清除0x1601数据
 	
 	u32val = 0x60400010;
-	ec_SDOwrite(slave, 0x1600, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1600子索引
+	ec_SDOwrite(slave, 0x1600, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);//增加0x1600子索引
 	u32val = 0x60600008;
-	ec_SDOwrite(slave, 0x1600, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1600子索引
+	ec_SDOwrite(slave, 0x1600, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);//增加0x1600子索引
 	u32val = 0x607A0020;
-	ec_SDOwrite(slave, 0x1600, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1600子索引
+	ec_SDOwrite(slave, 0x1600, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);//增加0x1600子索引
 	u32val = 0x60710010;
-	ec_SDOwrite(slave, 0x1600, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1600子索引
+	ec_SDOwrite(slave, 0x1600, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);//增加0x1600子索引
 	u8val = 4;
-	ec_SDOwrite(slave, 0x1600, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
+	ec_SDOwrite(slave, 0x1600, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//设定为PDO映射中的映射数
 	
 	u32val = 0x68400010;
-	ec_SDOwrite(slave, 0x1610, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
+	ec_SDOwrite(slave, 0x1610, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);//增加0x1601子索引
 	u32val = 0x68600008;   
-	ec_SDOwrite(slave, 0x1610, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
+	ec_SDOwrite(slave, 0x1610, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);//增加0x1601子索引
 	u32val = 0x687A0020;   
-	ec_SDOwrite(slave, 0x1610, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
+	ec_SDOwrite(slave, 0x1610, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);//增加0x1601子索引
 	u32val = 0x68710010;   
-	ec_SDOwrite(slave, 0x1610, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);//增加0x1601子索引
+	ec_SDOwrite(slave, 0x1610, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);//增加0x1601子索引
 	u8val = 4;             
-	ec_SDOwrite(slave, 0x1610, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
+	ec_SDOwrite(slave, 0x1610, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//设定为PDO映射中的映射数
 	
 	u16val = 0x1600;
-	ec_SDOwrite(slave, 0x1c12, 0x01, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTRXM);//设定为所选的PDO映像配置
+	ec_SDOwrite(slave, 0x1c12, 0x01, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTTXM);//设定为所选的PDO映像配置
 	u16val = 0x1610;
-	ec_SDOwrite(slave, 0x1c12, 0x02, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTRXM);//设定为所选的PDO映像配置
+	ec_SDOwrite(slave, 0x1c12, 0x02, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTTXM);//设定为所选的PDO映像配置
 	
 	u8val = 2;
-	ec_SDOwrite(slave, 0x1c12, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//启用PDO配置
+	ec_SDOwrite(slave, 0x1c12, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//启用PDO配置
 
 	/**********************************************************************************************************/
 	
 	// 0x1A00-0x1BFF:TxPDO映射，结构体类型
 	u8val = 0;
-	ec_SDOwrite(slave, 0x1c13, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1c13数据
-	ec_SDOwrite(slave, 0x1A00, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1A00数据
-	ec_SDOwrite(slave, 0x1A10, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//清除0x1A01数据
+	ec_SDOwrite(slave, 0x1c13, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//清除0x1c13数据
+	ec_SDOwrite(slave, 0x1A00, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//清除0x1A00数据
+	ec_SDOwrite(slave, 0x1A10, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//清除0x1A01数据
 	
 	u32val = 0x60410010;
-	ec_SDOwrite(slave, 0x1A00, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A00, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x60770010;
-	ec_SDOwrite(slave, 0x1A00, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A00, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x60640020;
-	ec_SDOwrite(slave, 0x1A00, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A00, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x606C0020;
-	ec_SDOwrite(slave, 0x1A00, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A00, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x603F0010;
-	ec_SDOwrite(slave, 0x1A00, 0x05, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A00, 0x05, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x60610008;
-	ec_SDOwrite(slave, 0x1A00, 0x06, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A00, 0x06, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u8val = 6;
-	ec_SDOwrite(slave, 0x1A00, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
+	ec_SDOwrite(slave, 0x1A00, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//设定为PDO映射中的映射数
 	
 	u32val = 0x68410010;
-	ec_SDOwrite(slave, 0x1A10, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A10, 0x01, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x68770010;   
-	ec_SDOwrite(slave, 0x1A10, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A10, 0x02, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x68640020;   
-	ec_SDOwrite(slave, 0x1A10, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A10, 0x03, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x686C0020;   
-	ec_SDOwrite(slave, 0x1A10, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A10, 0x04, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x683F0010;   
-	ec_SDOwrite(slave, 0x1A10, 0x05, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A10, 0x05, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u32val = 0x68610008;   
-	ec_SDOwrite(slave, 0x1A10, 0x06, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTRXM);
+	ec_SDOwrite(slave, 0x1A10, 0x06, FALSE, sizeof(u32val), &u32val, EC_TIMEOUTTXM);
 	u8val = 6;             
-	ec_SDOwrite(slave, 0x1A10, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//设定为PDO映射中的映射数
+	ec_SDOwrite(slave, 0x1A10, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//设定为PDO映射中的映射数
 	
 	u16val = 0x1A00;
-	ec_SDOwrite(slave, 0x1c13, 0x01, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTRXM);//设定为所选的PDO映像配置
+	ec_SDOwrite(slave, 0x1c13, 0x01, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTTXM);//设定为所选的PDO映像配置
 	u16val = 0x1A10;
-	ec_SDOwrite(slave, 0x1c13, 0x02, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTRXM);//设定为所选的PDO映像配置
+	ec_SDOwrite(slave, 0x1c13, 0x02, FALSE, sizeof(u16val), &u16val, EC_TIMEOUTTXM);//设定为所选的PDO映像配置
 	u8val = 2;
-	ec_SDOwrite(slave, 0x1c13, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);//启用PDO配置
+	ec_SDOwrite(slave, 0x1c13, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);//启用PDO配置
 	
 	//	配置为周期性同步位置模式：见pdf112
 //	u8val = 8;
-//	ec_SDOwrite(slave, 0x6060, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);
+//	ec_SDOwrite(slave, 0x6060, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);
 	return 1;
 } 
 
@@ -145,10 +145,10 @@ int Soem_init(char *ifname)
 		if((ec_slave[slc].eep_man == 0x0000001A) && (ec_slave[slc].eep_id == 0x50440200))
 		{
 //			uint8 u8val = 8;
-//			ec_SDOwrite(slc, 0x6060, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTRXM);
-//			int pbuff;
-//			int sz = sizeof(pbuff);
-//			ec_SDOread(slc, 0x6502, 0x00, FALSE, &sz, &pbuff, EC_TIMEOUTRXM);
+//			ec_SDOwrite(slc, 0x6060, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);
+			int pbuff = {0};
+			int sz = sizeof(pbuff);
+			ec_SDOread(slc, 0x6502, 0x00, FALSE, &sz, &pbuff, EC_TIMEOUTRXM);
 			// link slave specific setup to preop->safeop hook
 			ec_slave[slc].PO2SOconfigx = &Servosetup;
 		}
