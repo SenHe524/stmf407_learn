@@ -1,16 +1,3 @@
-/** \file
- * \brief Example code for Simple Open EtherCAT master
- *
- * Usage : slaveinfo [ifname] [-sdo] [-map]
- * Ifname is NIC interface, f.e. eth0.
- * Optional -sdo to display CoE object dictionary.
- * Optional -map to display slave PDO mapping
- *
- * This shows the configured slave data.
- *
- * (c)Arthur Ketels 2010 - 2011
- */
-
 #include <inttypes.h>
 
 #include "stm32f4xx.h" // Device header
@@ -22,15 +9,13 @@
 #include "timer.h"
 #include "port_func.h"
 #include "ethercat.h"
-#include "myethercat.h"
-
 
 int dorun=0;
 int iomap_size;
 
 #define EC_TIMEOUTMON 500
 
-char IOmap[512] = {0}; //映射空间
+char IOmap[256] = {0}; //映射空间
 
 int Servosetup(ecx_contextt *context, uint16 slave)
 {
@@ -144,8 +129,6 @@ int Soem_init(char *ifname)
 	{
 		if((ec_slave[slc].eep_man == 0x0000001A) && (ec_slave[slc].eep_id == 0x50440200))
 		{
-//			uint8 u8val = 8;
-//			ec_SDOwrite(slc, 0x6060, 0x00, FALSE, sizeof(u8val), &u8val, EC_TIMEOUTTXM);
 			int pbuff = {0};
 			int sz = sizeof(pbuff);
 			ec_SDOread(slc, 0x6502, 0x00, FALSE, &sz, &pbuff, EC_TIMEOUTRXM);
@@ -155,9 +138,10 @@ int Soem_init(char *ifname)
 	}
     iomap_size = ec_config_map(&IOmap); //主站内存空间与从站内存空间映射
     ec_configdc(); //配置DC
-	ec_dcsync0(1, TRUE, 1000000, 0);
-	ec_dcsync0(2, TRUE, 1000000, 0);
-//	ec_dcsync0(3, TRUE, 1000000, 0);
+	for(slc = 1; slc <= ec_slavecount; slc++)
+	{
+		ec_dcsync0(slc, TRUE, 1000000, 0);
+	}
 	printf("Slaves mapped.\n");
 	//等待所有从机进入安全运行状态
 	ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE);
@@ -218,7 +202,7 @@ void System_init(void)
     w5500_init();
     w5500_RegSetup();
     // 延时以保证能扫描到从机
-    delay_ms(1000);
+    delay_ms(300);
 }
 
 //Rx_PDO_t *outputs[3];
