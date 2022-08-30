@@ -150,9 +150,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>627</LineNumber>
+          <LineNumber>635</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226928</Address>
+          <Address>134226978</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -161,7 +161,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\User\eth\ecatfun.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\project\../User/eth/ecatfun.c\627</Expression>
+          <Expression>\\project\../User/eth/ecatfun.c\635</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -248,72 +248,42 @@
         <Ww>
           <count>16</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[66]</ItemText>
+          <ItemText>slave_,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>17</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[67]</ItemText>
+          <ItemText>index_,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>18</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[81]</ItemText>
+          <ItemText>\\project\../User/eth/ecatfun.c\rotaion,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>19</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[82]</ItemText>
+          <ItemText>speed,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>20</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[96]</ItemText>
+          <ItemText>flag_index</ItemText>
         </Ww>
         <Ww>
           <count>21</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[97]</ItemText>
+          <ItemText>debug_1</ItemText>
         </Ww>
         <Ww>
           <count>22</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[111]</ItemText>
+          <ItemText>debug_2</ItemText>
         </Ww>
         <Ww>
           <count>23</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[112]</ItemText>
-        </Ww>
-        <Ww>
-          <count>24</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>IOmap[126]</ItemText>
-        </Ww>
-        <Ww>
-          <count>25</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>IOmap[127]</ItemText>
-        </Ww>
-        <Ww>
-          <count>26</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>IOmap[141]</ItemText>
-        </Ww>
-        <Ww>
-          <count>27</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>IOmap[142]</ItemText>
-        </Ww>
-        <Ww>
-          <count>28</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>i</ItemText>
-        </Ww>
-        <Ww>
-          <count>29</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>pbuff</ItemText>
+          <ItemText>debug_3</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
