@@ -88,13 +88,13 @@
 //#define	MPA_offset					20
 
 
-void set_output_int32 (uint16_t slave, uint8_t index, int32_t value, uint8 offset);
-void set_output_int16 (uint16_t slave, uint8_t index, int16_t value, uint8 offset);
-void set_output_int8 (uint16_t slave, uint8_t index, int8_t value, uint8 offset);
-void set_output_uint16 (uint16_t slave, uint8_t index, uint16_t value, uint8 offset);
-int32_t get_input_int32(uint16_t slave, uint8_t index, uint8_t offset);
-int8_t get_input_int8(uint16_t slave, uint8_t index, uint8_t offset);
-uint16_t get_input_uint16(uint16_t slave, uint8_t index, uint8_t offset);
+void set_output_int32 (uint8_t slave, uint8_t index, int32_t value, uint8 offset);
+void set_output_int16 (uint8_t slave, uint8_t index, int16_t value, uint8 offset);
+void set_output_int8 (uint8_t slave, uint8_t index, int8_t value, uint8 offset);
+void set_output_uint16 (uint8_t slave, uint8_t index, uint16_t value, uint8 offset);
+int32_t get_input_int32(uint8_t slave, uint8_t index, uint8_t offset);
+int8_t get_input_int8(uint8_t slave, uint8_t index, uint8_t offset);
+uint16_t get_input_uint16(uint8_t slave, uint8_t index, uint8_t offset);
 
 void ecat_loop(void);
 
