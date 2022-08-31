@@ -17,6 +17,21 @@ int iomap_size;
 
 char IOmap[256] = {0}; //映射空间
 
+void Led_Init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure; // GPIO配置结构体
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+    GPIO_InitStructure.GPIO_Speed = GPIO_High_Speed;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+
+    // 开启外设时钟
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+    // GPIO初始化
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
+
 int Servosetup(ecx_contextt *context, uint16 slave)
 {
 	uint8 u8val;
@@ -118,20 +133,15 @@ int Soem_init(char *ifname)
 		printf("No socket connection on %s\nExecute as root\n", ifname);
 		return 0;
 	}
-	printf("ec_init on %s succeeded.\n", ifname);
 	if(ec_config_init(FALSE) <= 0)
 	{
 		printf("No slaves found!\n");
 		return 0;
 	}
-	printf("%d slaves found and configured.\n", ec_slavecount);
 	for(slc = 1; slc <= ec_slavecount; slc++)
 	{
 		if((ec_slave[slc].eep_man == 0x0000001A) && (ec_slave[slc].eep_id == 0x50440200))
 		{
-			int pbuff = {0};
-			int sz = sizeof(pbuff);
-			ec_SDOread(slc, 0x6502, 0x00, FALSE, &sz, &pbuff, EC_TIMEOUTRXM);
 			// link slave specific setup to preop->safeop hook
 			ec_slave[slc].PO2SOconfigx = &Servosetup;
 		}
@@ -145,7 +155,6 @@ int Soem_init(char *ifname)
 	printf("Slaves mapped.\n");
 	//等待所有从机进入安全运行状态
 	ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE);
-
 	printf("Request operational state for all slaves\n");
 	ec_slave[0].state = EC_STATE_OPERATIONAL;
 	ec_send_processdata();
@@ -171,25 +180,12 @@ int Soem_init(char *ifname)
 				printf("Slave %d State=0x%04x StatusCode=0x%04x\n",i, ec_slave[i].state, ec_slave[i].ALstatuscode);
 			}
 		}
+		return 0;
 	}
 	(void) iomap_size;
 	return 1;
 }
 
-void Led_Init(void)
-{
-    GPIO_InitTypeDef GPIO_InitStructure; // GPIO配置结构体
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
-    GPIO_InitStructure.GPIO_Speed = GPIO_High_Speed;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
-
-    // 开启外设时钟
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-    // GPIO初始化
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-}
 void System_init(void)
 {
 	Timer2And3_Init();
@@ -202,11 +198,9 @@ void System_init(void)
     w5500_init();
     w5500_RegSetup();
     // 延时以保证能扫描到从机
-    delay_ms(300);
+    delay_ms(500);
 }
 
-//Rx_PDO_t *outputs[3];
-//Tx_PDO_t *inputs[3];
 int flag_led = 0;
 int Test(char *ifname)
 {
@@ -225,7 +219,6 @@ int Test(char *ifname)
 
 	}
 	
-
 	/* stop SOEM, close socket */
 	ec_slave[0].state = EC_STATE_INIT;
 	ec_writestate(0);//	写入EC_STATE_INIT状态

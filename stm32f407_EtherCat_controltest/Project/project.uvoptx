@@ -150,9 +150,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>635</LineNumber>
+          <LineNumber>253</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226978</Address>
+          <Address>134227166</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -161,7 +161,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\User\eth\ecatfun.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\project\../User/eth/ecatfun.c\635</Expression>
+          <Expression>\\project\../User/eth/ecatfun.c\253</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -253,7 +253,7 @@
         <Ww>
           <count>17</count>
           <WinNumber>1</WinNumber>
-          <ItemText>index_,0x0A</ItemText>
+          <ItemText>index</ItemText>
         </Ww>
         <Ww>
           <count>18</count>
@@ -285,12 +285,52 @@
           <WinNumber>1</WinNumber>
           <ItemText>debug_3</ItemText>
         </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>IOmap[2]</ItemText>
+        </Ww>
+        <Ww>
+          <count>25</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>IOmap[11]</ItemText>
+        </Ww>
+        <Ww>
+          <count>26</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>IOmap[20]</ItemText>
+        </Ww>
+        <Ww>
+          <count>27</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>IOmap[29]</ItemText>
+        </Ww>
+        <Ww>
+          <count>28</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>IOmap[38]</ItemText>
+        </Ww>
+        <Ww>
+          <count>29</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>IOmap[47]</ItemText>
+        </Ww>
+        <Ww>
+          <count>30</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>flag_mo</ItemText>
+        </Ww>
+        <Ww>
+          <count>31</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>i</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>\\project\../User/soem/ethercatmain.c\ec_slave</ItemText>
+          <ItemText>\\project\../User/soem/ethercatmain.c\ec_slave,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
@@ -350,37 +390,37 @@
         <Ww>
           <count>12</count>
           <WinNumber>2</WinNumber>
-          <ItemText>i</ItemText>
+          <ItemText>flag_index</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>2</WinNumber>
-          <ItemText>pos,0x10</ItemText>
+          <ItemText>slave_</ItemText>
         </Ww>
         <Ww>
           <count>14</count>
           <WinNumber>2</WinNumber>
-          <ItemText>cur_pos,0x10</ItemText>
+          <ItemText>rotaion</ItemText>
         </Ww>
         <Ww>
           <count>15</count>
           <WinNumber>2</WinNumber>
-          <ItemText>IOmap[78]</ItemText>
+          <ItemText>speed,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>16</count>
           <WinNumber>2</WinNumber>
-          <ItemText>IOmap[79]</ItemText>
+          <ItemText>debug_1</ItemText>
         </Ww>
         <Ww>
           <count>17</count>
           <WinNumber>2</WinNumber>
-          <ItemText>IOmap[93]</ItemText>
+          <ItemText>debug_2</ItemText>
         </Ww>
         <Ww>
           <count>18</count>
           <WinNumber>2</WinNumber>
-          <ItemText>IOmap[94]</ItemText>
+          <ItemText>debug_3</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>
@@ -1106,7 +1146,7 @@
 
   <Group>
     <GroupName>soem</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
