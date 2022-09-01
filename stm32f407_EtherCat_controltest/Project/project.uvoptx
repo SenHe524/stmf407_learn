@@ -165,152 +165,142 @@
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>flag</ItemText>
+          <ItemText>IOmap[0]</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[0]</ItemText>
+          <ItemText>IOmap[9]</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[9]</ItemText>
+          <ItemText>IOmap[18]</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[18]</ItemText>
+          <ItemText>IOmap[27]</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[27]</ItemText>
+          <ItemText>IOmap[36]</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[36]</ItemText>
+          <ItemText>IOmap[45]</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[45]</ItemText>
+          <ItemText>IOmap[54]</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[54]</ItemText>
+          <ItemText>IOmap[69]</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[69]</ItemText>
+          <ItemText>IOmap[84]</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[84]</ItemText>
+          <ItemText>IOmap[99]</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[99]</ItemText>
+          <ItemText>IOmap[114]</ItemText>
         </Ww>
         <Ww>
           <count>14</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[114]</ItemText>
+          <ItemText>IOmap[129]</ItemText>
         </Ww>
         <Ww>
           <count>15</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[129]</ItemText>
+          <ItemText>slave_,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>16</count>
           <WinNumber>1</WinNumber>
-          <ItemText>slave_,0x0A</ItemText>
+          <ItemText>\\project\../User/eth/ecatfun.c\rotaion,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>17</count>
           <WinNumber>1</WinNumber>
-          <ItemText>index</ItemText>
+          <ItemText>speed,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>18</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\project\../User/eth/ecatfun.c\rotaion,0x0A</ItemText>
+          <ItemText>debug_1</ItemText>
         </Ww>
         <Ww>
           <count>19</count>
           <WinNumber>1</WinNumber>
-          <ItemText>speed,0x0A</ItemText>
+          <ItemText>debug_2</ItemText>
         </Ww>
         <Ww>
           <count>20</count>
           <WinNumber>1</WinNumber>
-          <ItemText>flag_index</ItemText>
+          <ItemText>debug_3</ItemText>
         </Ww>
         <Ww>
           <count>21</count>
           <WinNumber>1</WinNumber>
-          <ItemText>debug_1</ItemText>
+          <ItemText>IOmap[2]</ItemText>
         </Ww>
         <Ww>
           <count>22</count>
           <WinNumber>1</WinNumber>
-          <ItemText>debug_2</ItemText>
+          <ItemText>IOmap[11]</ItemText>
         </Ww>
         <Ww>
           <count>23</count>
           <WinNumber>1</WinNumber>
-          <ItemText>debug_3</ItemText>
+          <ItemText>IOmap[20]</ItemText>
         </Ww>
         <Ww>
           <count>24</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[2]</ItemText>
+          <ItemText>IOmap[29]</ItemText>
         </Ww>
         <Ww>
           <count>25</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[11]</ItemText>
+          <ItemText>IOmap[38]</ItemText>
         </Ww>
         <Ww>
           <count>26</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[20]</ItemText>
+          <ItemText>IOmap[47]</ItemText>
         </Ww>
         <Ww>
           <count>27</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[29]</ItemText>
+          <ItemText>run</ItemText>
         </Ww>
         <Ww>
           <count>28</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[38]</ItemText>
+          <ItemText>disable_1</ItemText>
         </Ww>
         <Ww>
           <count>29</count>
           <WinNumber>1</WinNumber>
-          <ItemText>IOmap[47]</ItemText>
+          <ItemText>disable_2</ItemText>
         </Ww>
         <Ww>
           <count>30</count>
           <WinNumber>1</WinNumber>
-          <ItemText>flag_mo</ItemText>
-        </Ww>
-        <Ww>
-          <count>31</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>i</ItemText>
-        </Ww>
-        <Ww>
-          <count>32</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>run</ItemText>
+          <ItemText>disable_3</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

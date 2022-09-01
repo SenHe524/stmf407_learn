@@ -5,12 +5,11 @@
 
 extern char IOmap[256];
 int32_t cur_pos1, cur_pos2;
-uint8 flag=0x00;
-uint8_t flag_index = 0x08;
-int speed = 5000;
+int speed = 1000;
 boolean rotaion = TRUE;
-uint16_t slave_ = 2;
+uint16_t slave_ = 3;
 boolean debug_1 = FALSE, debug_2 = FALSE, debug_3 = FALSE, run = TRUE;
+boolean disable_1 = FALSE, disable_2 = FALSE, disable_3 = FALSE;
 void set_output_int32 (uint8_t slave, uint8_t index, int32_t value, uint8 offset)
 {
 	uint8_t *data_ptr;
@@ -121,14 +120,26 @@ void clear_fault(uint8_t slave)
 	set_output_int16(slave, 1, 0x06, Controlword_offset);
 }
 
+void Set_Disable(uint8_t slave)
+{
+	if(isEnable(slave))
+	{
+		set_output_int16(slave, 0, 0x06, Controlword_offset);
+		set_output_int16(slave, 1, 0x06, Controlword_offset);
+		cur_pos1 = get_input_int32(slave, 0, P_actual_value_offset);
+		cur_pos2 = get_input_int32(slave, 1, P_actual_value_offset);
+		set_output_int32(slave, 0, cur_pos1, Target_Position_offset);
+		set_output_int32(slave, 1, cur_pos2, Target_Position_offset);
+	}
 
+}
 boolean Set_Enable(uint8_t slave)
 {
 	ec_timet t1, t2;
 	t1 = osal_current_time();
 	t2 = osal_current_time();
-//	while(t2.sec - t1.sec < 3)
-	while(1)
+	while(t2.sec - t1.sec < 3)
+//	while(1)
 	{
 		t2 = osal_current_time();
 		ec_send_processdata();
@@ -170,7 +181,10 @@ boolean Set_Enable(uint8_t slave)
 		{
 			set_output_int8(slave, 0, CYCLIC_SYNC_POSITION_MODE, Modes_Of_Operation_offset);
 			set_output_int8(slave, 1, CYCLIC_SYNC_POSITION_MODE, Modes_Of_Operation_offset);
-			
+			cur_pos1 = get_input_int32(slave, 0, P_actual_value_offset);
+			cur_pos2 = get_input_int32(slave, 1, P_actual_value_offset);
+			set_output_int32(slave, 0, cur_pos1, Target_Position_offset);
+			set_output_int32(slave, 1, cur_pos2, Target_Position_offset);
 			clear_fault(slave);
 		}
 	}
@@ -183,15 +197,7 @@ void set_position(uint8_t slave, uint8_t index, boolean add,uint16_t position_ch
 	int32_t pos = 0;
 	
 	pos = get_input_int32(slave, index, P_actual_value_offset);
-//	add == TRUE?  (pos += position_change):(pos -= position_change);
-	if(add)
-	{
-		pos += position_change;
-	}
-	else
-	{
-		pos -= position_change;
-	}
+	add == TRUE?  (pos += position_change):(pos -= position_change);
 	set_output_uint8(slave, index, 0x1F, Controlword_offset);
 	set_output_int32(slave, index, pos, Target_Position_offset);
 }
@@ -204,23 +210,56 @@ void ecat_loop(void)
 
 	GPIO_SetBits(GPIOA, GPIO_Pin_0);
 	if(debug_1 && !isEnable(1)){
-		if(!Set_Enable(1))
-			debug_1 = FALSE;
+		Set_Enable(1);
 	}
 	if(debug_2 && !isEnable(2)){
-		if(!Set_Enable(2))
-			debug_2 = FALSE;
+		Set_Enable(2);
 	}
 	if(debug_3 && !isEnable(3)){
-		if(!Set_Enable(3))
-			debug_3 = FALSE;
+		Set_Enable(3);
 	}
-
 	if((debug_1 || debug_2 || debug_3) && run){
 		set_position(slave_, 0, rotaion, speed);// TRUE:顺时针  FALSE:逆时针
 		set_position(slave_, 1, rotaion, speed);// TRUE:顺时针  FALSE:逆时针
 	}
-
+//	if(disable_1){
+//		Set_Disable(1);
+//		disable_1 = FALSE;
+//		debug_1 = FALSE;
+//	}
+//	if(disable_2){
+//		Set_Disable(2);
+//		disable_2 = FALSE;
+//		debug_2 = FALSE;
+//	}
+//	if(disable_3){
+//		Set_Disable(3);
+//		disable_3 = FALSE;
+//		debug_3 = FALSE;
+//	}
 	(void )i;
 }
+//void ecat_loop(void)
+//{
+//	int i;
+//	ec_send_processdata();
+//	ec_receive_processdata(EC_TIMEOUTRET);
 
+//	GPIO_SetBits(GPIOA, GPIO_Pin_0);
+//	if(debug_1 && !isEnable(1)){
+//		Set_Enable(1);
+//	}
+//	if(debug_2 && !isEnable(2)){
+//		Set_Enable(2);
+//	}
+//	if(debug_3 && !isEnable(3)){
+//		Set_Enable(3);
+//	}
+
+//	if((debug_1 || debug_2 || debug_3) && run){
+//		set_position(slave_, 0, rotaion, speed);// TRUE:顺时针  FALSE:逆时针
+//		set_position(slave_, 1, rotaion, speed);// TRUE:顺时针  FALSE:逆时针
+//	}
+
+//	(void )i;
+//}

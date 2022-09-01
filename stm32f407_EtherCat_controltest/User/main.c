@@ -146,7 +146,12 @@ int Soem_init(char *ifname)
 			ec_slave[slc].PO2SOconfigx = &Servosetup;
 		}
 	}
+	delay_ms(10);
     iomap_size = ec_config_map(&IOmap); //主站内存空间与从站内存空间映射
+	if(iomap_size != 0x00000090)
+	{
+		return 0;
+	}
     ec_configdc(); //配置DC
 	for(slc = 1; slc <= ec_slavecount; slc++)
 	{
@@ -186,6 +191,22 @@ int Soem_init(char *ifname)
 	return 1;
 }
 
+int Soem_close(void)
+{
+	/* stop SOEM, close socket */
+	ec_slave[0].state = EC_STATE_INIT;
+	ec_writestate(0);//	写入EC_STATE_INIT状态
+	ec_send_processdata();
+	ec_receive_processdata(EC_TIMEOUTRET);
+	//	等待所有从机进入初始化状态
+	if(ec_statecheck(0, EC_STATE_INIT, EC_TIMEOUTSTATE) != EC_STATE_INIT)	return 0;
+	ec_readstate();// 更新所有从机状态
+	
+	ec_close();
+	return 1;
+
+}
+
 void System_init(void)
 {
 	Timer2And3_Init();
@@ -218,18 +239,7 @@ int Test(char *ifname)
 		
 
 	}
-	
-	/* stop SOEM, close socket */
-	ec_slave[0].state = EC_STATE_INIT;
-	ec_writestate(0);//	写入EC_STATE_INIT状态
-	ec_send_processdata();
-	ec_receive_processdata(EC_TIMEOUTRET);
-	//	等待所有从机进入初始化状态
-	if(ec_statecheck(0, EC_STATE_INIT, EC_TIMEOUTSTATE) != EC_STATE_INIT)	return 0;
-	ec_readstate();// 更新所有从机状态
-	
-	ec_close();
-	flag_led = 1;
+	Soem_close();
 	return 1;
 }
 

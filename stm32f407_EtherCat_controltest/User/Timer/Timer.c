@@ -87,7 +87,7 @@ void Timer5_Init(void)
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
 	TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInitStruct.TIM_Period = 10000 - 1; // 定时器计次到1000后产生中断，即此时计时了1ms
+	TIM_TimeBaseInitStruct.TIM_Period = 1000 - 1; // 定时器计次到1000后产生中断，即此时计时了1ms
 	TIM_TimeBaseInitStruct.TIM_Prescaler = 84 - 1; // 84*1000*1000 / ((84-1)+1) = 1000 * 1000 HZ(定时器一秒钟计次1000*1000次)
 	TIM_TimeBaseInitStruct.TIM_RepetitionCounter = 0;
 	// 此函数会在初始化时立马进入一次中断函数以更新预分频的配置
