@@ -9,75 +9,75 @@
 #endif
 
 uint8_t sn;
-int EtherCat_Open(void)
-{
-	socket(sn, Sn_MR_TCP, 8888, SF_TCP_NODELAY);
-	if (listen(sn) != SOCK_OK)
-	{
-		GPIO_ResetBits(GPIOA, GPIO_Pin_0);
-		return 0;
-	}
-	return 1;
-}
+//int EtherCat_Open(void)
+//{
+//	socket(sn, Sn_MR_TCP, 8888, SF_TCP_NODELAY);
+//	if (listen(sn) != SOCK_OK)
+//	{
+//		GPIO_ResetBits(GPIOA, GPIO_Pin_0);
+//		return 0;
+//	}
+//	return 1;
+//}
 
-int EtherCat_Send(uint8_t *pBuff, int Len)
-{
-	int32_t ret, i = 1;
-	int tempsize = Len;
-	uint16_t sentsize=0;
-	while(Len != sentsize)
-	{
-		tempsize = Len - DATA_BUF_SIZE * i;
-		if(tempsize > 0)
-		{
-			while(sentsize != (DATA_BUF_SIZE * i))
-			{
-				ret = send(sn, pBuff+sentsize, (DATA_BUF_SIZE * i)-sentsize);
-				if(ret < 0)
-				{
-					close(sn);
-					return ret;
-				}
-				sentsize += ret;
-			}
-			i++;
-		}
-		else
-		{
-			while(sentsize != Len)
-			{
-				ret = send(sn, pBuff+sentsize, Len-sentsize);
-				if(ret < 0)
-				{
-					close(sn);
-					return ret;
-				}
-				sentsize += ret;
-		
-			}
+//int EtherCat_Send(uint8_t *pBuff, int Len)
+//{
+//	int32_t ret, i = 1;
+//	int tempsize = Len;
+//	uint16_t sentsize=0;
+//	while(Len != sentsize)
+//	{
+//		tempsize = Len - DATA_BUF_SIZE * i;
+//		if(tempsize > 0)
+//		{
+//			while(sentsize != (DATA_BUF_SIZE * i))
+//			{
+//				ret = send(sn, pBuff+sentsize, (DATA_BUF_SIZE * i)-sentsize);
+//				if(ret < 0)
+//				{
+//					close(sn);
+//					return ret;
+//				}
+//				sentsize += ret;
+//			}
+//			i++;
+//		}
+//		else
+//		{
+//			while(sentsize != Len)
+//			{
+//				ret = send(sn, pBuff+sentsize, Len-sentsize);
+//				if(ret < 0)
+//				{
+//					close(sn);
+//					return ret;
+//				}
+//				sentsize += ret;
+//		
+//			}
 
-		}
-	}
-	return 1;
-}
+//		}
+//	}
+//	return 1;
+//}
 
-int EtherCat_Recv(uint8_t *pBuff, int Len)
-{
-	int ret;
-	int size = getSn_RX_RSR(sn);
-	
-	if(size > 0)
-	{
-		if(size > Len) size = Len;
-		ret = recv(sn, pBuff, size);
-		if(ret <= 0) return ret;
-	}
-	else
-	{
-		return 0;
-	}
-	return size;
-}
+//int EtherCat_Recv(uint8_t *pBuff, int Len)
+//{
+//	int ret;
+//	int size = getSn_RX_RSR(sn);
+//	
+//	if(size > 0)
+//	{
+//		if(size > Len) size = Len;
+//		ret = recv(sn, pBuff, size);
+//		if(ret <= 0) return ret;
+//	}
+//	else
+//	{
+//		return 0;
+//	}
+//	return size;
+//}
 
 void EtherCat_Close(void)
 {

@@ -336,7 +336,7 @@
               <MiscControls>--gnu</MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\Libraries\CMSIS\Include;..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\User;..\User\usart;..\User\sys;..\User\delay;..\User\Timer;..\User\myspi;..\User\osal;..\User\oshw;..\User\soem;..\User\w5500;..\User\eth</IncludePath>
+              <IncludePath>..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\Libraries\CMSIS\Include;..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\User;..\User\usart;..\User\sys;..\User\osal;..\User\oshw;..\User\soem;..\User\w5500;..\User\eth;..\User\system</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -931,16 +931,6 @@
           <GroupName>hardware</GroupName>
           <Files>
             <File>
-              <FileName>port_func.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\w5500\port_func.c</FilePath>
-            </File>
-            <File>
-              <FileName>port_func.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\w5500\port_func.h</FilePath>
-            </File>
-            <File>
               <FileName>socket.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\w5500\socket.c</FilePath>
@@ -981,14 +971,49 @@
               <FilePath>..\User\w5500\EtherCatControl.h</FilePath>
             </File>
             <File>
+              <FileName>hardware_conf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\w5500\hardware_conf.c</FilePath>
+            </File>
+            <File>
+              <FileName>hardware_conf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\w5500\hardware_conf.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>system</GroupName>
+          <Files>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\system\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>delay.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\system\delay.h</FilePath>
+            </File>
+            <File>
               <FileName>myspi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\myspi\myspi.c</FilePath>
+              <FilePath>..\User\system\myspi.c</FilePath>
             </File>
             <File>
               <FileName>myspi.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\User\myspi\myspi.h</FilePath>
+              <FilePath>..\User\system\myspi.h</FilePath>
+            </File>
+            <File>
+              <FileName>Timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\system\Timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>Timer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\system\Timer.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1001,16 +1026,6 @@
               <FilePath>..\User\main.c</FilePath>
             </File>
             <File>
-              <FileName>delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\delay\delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>delay.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\delay\delay.h</FilePath>
-            </File>
-            <File>
               <FileName>sys.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\sys\sys.c</FilePath>
@@ -1019,16 +1034,6 @@
               <FileName>sys.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\sys\sys.h</FilePath>
-            </File>
-            <File>
-              <FileName>Timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Timer\Timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>Timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\Timer\Timer.h</FilePath>
             </File>
             <File>
               <FileName>ecatfun.c</FileName>
@@ -1049,6 +1054,16 @@
               <FileName>usart.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\usart\usart.h</FilePath>
+            </File>
+            <File>
+              <FileName>brake.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\eth\brake.c</FilePath>
+            </File>
+            <File>
+              <FileName>brake.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\eth\brake.h</FilePath>
             </File>
           </Files>
         </Group>

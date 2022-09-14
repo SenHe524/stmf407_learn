@@ -1,5 +1,5 @@
-#ifndef __PORT_FUNC_H
-#define __PORT_FUNC_H                
+#ifndef __HARDWARE_CONF_H
+#define __HARDWARE_CONF_H                
 
 /***************----- 网络参数变量定义 -----***************/
 #define Gateway_IP  	{192,168,1,1};	//网关IP地址 

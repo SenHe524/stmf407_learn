@@ -2,7 +2,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "myspi.h"
-#include "port_func.h"
+#include "hardware_conf.h"
 #include "wizchip_conf.h"
 #include "delay.h"
 

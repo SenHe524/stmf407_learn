@@ -1,16 +1,7 @@
 #ifndef _ECATFUN_H
 #define _ECATFUN_H
 #include "osal.h"
-#include "ethercattype.h"
-#include "nicdrv.h"
-#include "ethercatbase.h"
-#include "ethercatmain.h"
-#include "ethercatdc.h"
-#include "ethercatcoe.h"
-#include "ethercatfoe.h"
-#include "ethercatsoe.h"
-#include "ethercatconfig.h"
-#include "ethercatprint.h"
+
 
 /*-----------------------------------------------------------------------------------------
 ------    Defines and Types
@@ -72,30 +63,32 @@
 #define	MOP_Display_offset			14
 
 
-//#define	Controlword_offset			0
-//#define	Modes_Of_Operation_offset	2
-//#define	Target_Position_offset		4
-//#define	Target_Torque_offset		8
-//#define	VelFF_ch1_offset			10
-
-//#define	Statusword_offset			0
-//#define	T_actual_value_offset		2
-//#define	P_actual_value_offset		4
-//#define	V_actual_value_offset		8
-//#define	Error_Code_offset			12
-//#define	MOP_Display_offset			14
-//#define	AccelerometerX_offset		16
-//#define	MPA_offset					20
-
-
 void set_output_int32 (uint8_t slave, uint8_t index, int32_t value, uint8 offset);
 void set_output_int16 (uint8_t slave, uint8_t index, int16_t value, uint8 offset);
 void set_output_int8 (uint8_t slave, uint8_t index, int8_t value, uint8 offset);
+void set_output_uint8 (uint8_t slave, uint8_t index, uint8_t value, uint8 offset);
 void set_output_uint16 (uint8_t slave, uint8_t index, uint16_t value, uint8 offset);
 int32_t get_input_int32(uint8_t slave, uint8_t index, uint8_t offset);
 int8_t get_input_int8(uint8_t slave, uint8_t index, uint8_t offset);
 uint16_t get_input_uint16(uint8_t slave, uint8_t index, uint8_t offset);
 
+void set_controlword(uint8_t slave, uint8_t index, uint16_t value);
+void set_mode_operation(uint8_t slave, uint8_t index, uint16_t value);
+void set_position(uint8_t slave, uint8_t index, boolean direction,uint16_t position_change);
+uint16_t get_statusword(uint8_t slave, uint8_t index);
+int32_t get_position(uint8_t slave, uint8_t index);
+uint16_t get_errorcode(uint8_t slave, uint8_t index);
+uint8_t get_mode_operation(uint8_t slave, uint8_t index);
+
+boolean isEnable(uint8_t slave);
+boolean iswarning(uint8_t slave);
+void clear_fault(uint8_t slave);
+void Set_Disable(uint8_t slave);
+boolean Set_Enable(uint8_t slave);
+
+boolean Soem_init(char *ifname);
+void System_init(void);
+boolean Soem_close(void);
 void ecat_loop(void);
 
 #endif
