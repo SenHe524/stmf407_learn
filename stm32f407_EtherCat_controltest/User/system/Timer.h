@@ -7,6 +7,7 @@ void Timer2_Init(void);
 void Timer5_Init(void);
 void Timer2And3_Init(void);
 void Timer2And3_start(void);
+void Timer2And3_stop(void);
 void Timer5_Init(void);
 uint32_t getSec(void);
 uint32_t getuSec(void);

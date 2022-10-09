@@ -14,7 +14,8 @@ int speed = 10;
 boolean rotaion = TRUE;
 uint16_t slave_ = 3;
 boolean debug_1 = FALSE, debug_2 = FALSE, debug_3 = FALSE, run = TRUE;
-
+boolean debug_4 = FALSE, debug_5 = FALSE, debug_6 = FALSE, close_ = FALSE;
+boolean dis_flag = FALSE;
 int dorun=0;
 int iomap_size;
 
@@ -195,6 +196,8 @@ void Set_Disable(uint8_t slave)
 		set_position(slave, 1, TRUE, 0);
 		set_controlword(slave, 0, COMMAND_SHUTDOWN);
 		set_controlword(slave, 1, COMMAND_SHUTDOWN);
+//		ec_send_processdata();
+//		ec_receive_processdata(EC_TIMEOUTRET);
 	}
 
 }
@@ -205,7 +208,6 @@ boolean Set_Enable(uint8_t slave)
 	t1 = osal_current_time();
 	t2 = osal_current_time();
 	while(t2.sec - t1.sec < 3)
-//	while(1)
 	{
 		t2 = osal_current_time();
 		ec_send_processdata();
@@ -421,9 +423,10 @@ boolean Soem_init(char *ifname)
 
 void System_init(void)
 {
+	//	初始化定时器2，3，并开启定时器
 	Timer2And3_Init();
     Timer2And3_start();
-
+	//	延时函数初始化，LED初始化
     delay_init();
     Led_Init();
 
@@ -436,6 +439,8 @@ void System_init(void)
 
 boolean Soem_close(void)
 {
+	Timer2And3_stop();
+	TIM_DeInit(TIM5);
 	/* stop SOEM, close socket */
 	ec_slave[0].state = EC_STATE_INIT;
 	ec_writestate(0);//	写入EC_STATE_INIT状态
@@ -444,18 +449,107 @@ boolean Soem_close(void)
 	//	等待所有从机进入初始化状态
 	if(ec_statecheck(0, EC_STATE_INIT, EC_TIMEOUTSTATE) != EC_STATE_INIT)	return FALSE;
 	ec_readstate();// 更新所有从机状态
-	
+	Timer2And3_stop();
 	ec_close();
 	return TRUE;
+}
+boolean cln_configdc(ecx_contextt *context)
+{
+   uint16 i, slaveh;
+   uint16 parenthold = 0;
+   uint16 prevDCslave = 0;
+   int32 ht;
+   int64 hrt;
 
+   ec_timet mastertime;
+   uint64 mastertime64;
+
+   context->slavelist[0].hasdc = FALSE;
+   context->grouplist[0].hasdc = FALSE;
+   ht = 0;
+
+   ecx_BWR(context->port, 0, ECT_REG_DCTIME0, sizeof(ht), &ht, EC_TIMEOUTRET);  /* latch DCrecvTimeA of all slaves */
+   mastertime = osal_current_time();
+   mastertime.sec -= 946684800UL;  /* EtherCAT uses 2000-01-01 as epoch start instead of 1970-01-01 */
+   mastertime64 = (((uint64)mastertime.sec * 1000000) + (uint64)mastertime.usec) * 1000;
+   for (i = 1; i <= *(context->slavecount); i++)
+   {
+      context->slavelist[i].consumedports = context->slavelist[i].activeports;
+      if (context->slavelist[i].hasdc)
+      {
+         if (!context->slavelist[0].hasdc)
+         {
+            context->slavelist[0].hasdc = TRUE;
+            context->slavelist[0].DCnext = i;
+            context->slavelist[i].DCprevious = 0;
+            context->grouplist[context->slavelist[i].group].hasdc = TRUE;
+            context->grouplist[context->slavelist[i].group].DCnext = i;
+         }
+         else
+         {
+            context->slavelist[prevDCslave].DCnext = i;
+            context->slavelist[i].DCprevious = prevDCslave;
+         }
+         /* this branch has DC slave so remove parenthold */
+         parenthold = 0;
+         prevDCslave = i;
+         slaveh = context->slavelist[i].configadr;
+         (void)ecx_FPRD(context->port, slaveh, ECT_REG_DCTIME0, sizeof(ht), &ht, EC_TIMEOUTRET);//读取端口0的接收时间 0x0900
+         context->slavelist[i].DCrtA = etohl(ht);
+         /* 64bit latched DCrecvTimeA of each specific slave */
+         (void)ecx_FPRD(context->port, slaveh, ECT_REG_DCSOF, sizeof(hrt), &hrt, EC_TIMEOUTRET);//前导位到达的本地时间 数据帧处理单元接收时间 0x0918
+         /* use it as offset in order to set local time around 0 + mastertime */
+         hrt = htoell(-etohll(hrt) + mastertime64);
+         /* save it in the offset register */
+         (void)ecx_FPWR(context->port, slaveh, ECT_REG_DCSYSOFFSET, sizeof(hrt), &hrt, EC_TIMEOUTRET);//0x0920
+ 
+      }
+   }
+
+   return context->slavelist[0].hasdc;
 }
 
+//boolean cln_configdc(ecx_contextt *context)
+//{
+//	uint16 i, slaveh;
+//	int64 hrt;
+
+//	ec_timet mastertime;
+//	uint64 mastertime64;
+
+//	context->slavelist[0].hasdc = FALSE;
+//	context->grouplist[0].hasdc = FALSE;
+
+//	// ecx_BWR(context->port, 0, ECT_REG_DCTIME0, sizeof(ht), &ht, EC_TIMEOUTRET);  /* latch DCrecvTimeA of all slaves */
+//	mastertime = osal_current_time();
+//	// mastertime.sec -= 946684800UL;  /* EtherCAT uses 2000-01-01 as epoch start instead of 1970-01-01 */
+//	mastertime64 = (((uint64)mastertime.sec * 1000000) + (uint64)mastertime.usec) * 1000;
+//	for (i = 1; i <= *(context->slavecount); i++)
+//	{
+//		if (context->slavelist[i].hasdc)
+//		{
+//			/* this branch has DC slave so remove parenthold */
+//			slaveh = context->slavelist[i].configadr;
+//			/* 64bit latched DCrecvTimeA of each specific slave */
+//			(void)ecx_FPRD(context->port, slaveh, ECT_REG_DCSOF, sizeof(hrt), &hrt, EC_TIMEOUTRET);//ǰռλսկքѾ֘ʱݤ ˽ߝ֡ԦmեԪޓ˕ʱݤ 0x0918
+//			/* use it as offset in order to set local time around 0 + mastertime */
+//			hrt = htoell(-etohll(hrt) + mastertime64);
+//			/* save it in the offset register */
+//			(void)ecx_FPWR(context->port, slaveh, ECT_REG_DCSYSOFFSET, sizeof(hrt), &hrt, EC_TIMEOUTRET);//0x0920
+//		}
+//	}
+//	return context->slavelist[0].hasdc;
+//}
+int dc_flag;
 void ecat_loop(void)
 {
-	int i;
+	int i = 0;
 	ec_send_processdata();
 	ec_receive_processdata(EC_TIMEOUTRET);
-
+	if(++dc_flag%5==0)
+	{
+		cln_configdc(&ecx_context);
+	}
 	GPIO_SetBits(GPIOA, GPIO_Pin_0);
 	if(debug_1 && !isEnable(1)){
 		Set_Enable(1);
@@ -471,7 +565,32 @@ void ecat_loop(void)
 		set_position(slave_, 0, rotaion, speed);// TRUE:顺时针  FALSE:逆时针
 		set_position(slave_, 1, rotaion, speed);// TRUE:顺时针  FALSE:逆时针
 	}
-
+	if(dis_flag)
+	{
+		Set_Disable(3);
+		dis_flag = FALSE;
+	}
+	if(debug_6)
+	{
+		Open_brake2(3);
+		debug_6 = FALSE;
+	}
+	if(debug_5)
+	{
+		Close_brake2(3);
+		debug_5 = FALSE;
+	}
+	if(debug_4)
+	{
+		Open_brake2(3);
+		Close_brake2(3);
+		debug_4 = FALSE;
+	}
+	if(close_)
+	{
+		Soem_close();
+		close_ = FALSE;
+	}
 	(void )i;
 }
 

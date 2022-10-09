@@ -336,7 +336,7 @@
               <MiscControls>--gnu</MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\Libraries\CMSIS\Include;..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\User;..\User\usart;..\User\sys;..\User\delay;..\User\Timer;..\User\myspi;..\User\osal;..\User\oshw;..\User\soem;..\User\w5500;..\User\eth</IncludePath>
+              <IncludePath>..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\Libraries\STM32F4xx_StdPeriph_Driver\src;..\Libraries\CMSIS\Device\STM32F4xx\Include;..\Libraries\CMSIS\Device\STM32F4xx\Source\arm;..\Libraries\CMSIS\Device\STM32F4xx\Source;..\Libraries\CMSIS\Include;..\User;..\User\usart;..\User\sys;..\User\delay</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,9 +381,9 @@
           <GroupName>STARTUP</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32f40xx.s</FileName>
+              <FileName>startup_stm32f40_41xxx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f40xx.s</FilePath>
+              <FilePath>..\Libraries\CMSIS\Device\STM32F4xx\Source\arm\startup_stm32f40_41xxx.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -393,7 +393,7 @@
             <File>
               <FileName>system_stm32f4xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</FilePath>
+              <FilePath>..\Libraries\CMSIS\Device\STM32F4xx\Source\system_stm32f4xx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -768,237 +768,17 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>osal</GroupName>
-          <Files>
-            <File>
-              <FileName>osal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\osal\osal.c</FilePath>
-            </File>
-            <File>
-              <FileName>osal.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\osal\osal.h</FilePath>
-            </File>
-            <File>
-              <FileName>osal_defs.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\osal\osal_defs.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>oshw</GroupName>
-          <Files>
-            <File>
-              <FileName>nicdrv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\oshw\nicdrv.c</FilePath>
-            </File>
-            <File>
-              <FileName>nicdrv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\oshw\nicdrv.h</FilePath>
-            </File>
-            <File>
-              <FileName>oshw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\oshw\oshw.c</FilePath>
-            </File>
-            <File>
-              <FileName>oshw.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\oshw\oshw.h</FilePath>
-            </File>
-            <File>
-              <FileName>types.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\oshw\types.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>soem</GroupName>
-          <Files>
-            <File>
-              <FileName>ethercat.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercat.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatbase.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercatbase.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatbase.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatbase.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatcoe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercatcoe.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatcoe.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatcoe.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatconfig.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercatconfig.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatconfig.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatconfig.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatconfiglist.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatconfiglist.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatdc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercatdc.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatdc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatdc.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercateoe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercateoe.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercateoe.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercateoe.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatfoe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercatfoe.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatfoe.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatfoe.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatmain.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercatmain.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatmain.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatmain.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatprint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercatprint.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatprint.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatprint.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatsoe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\soem\ethercatsoe.c</FilePath>
-            </File>
-            <File>
-              <FileName>ethercatsoe.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercatsoe.h</FilePath>
-            </File>
-            <File>
-              <FileName>ethercattype.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\soem\ethercattype.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>hardware</GroupName>
-          <Files>
-            <File>
-              <FileName>port_func.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\w5500\port_func.c</FilePath>
-            </File>
-            <File>
-              <FileName>port_func.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\w5500\port_func.h</FilePath>
-            </File>
-            <File>
-              <FileName>socket.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\w5500\socket.c</FilePath>
-            </File>
-            <File>
-              <FileName>socket.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\w5500\socket.h</FilePath>
-            </File>
-            <File>
-              <FileName>w5500.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\w5500\w5500.c</FilePath>
-            </File>
-            <File>
-              <FileName>w5500.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\w5500\w5500.h</FilePath>
-            </File>
-            <File>
-              <FileName>wizchip_conf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\w5500\wizchip_conf.c</FilePath>
-            </File>
-            <File>
-              <FileName>wizchip_conf.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\w5500\wizchip_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>EtherCatControl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\w5500\EtherCatControl.c</FilePath>
-            </File>
-            <File>
-              <FileName>EtherCatControl.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\w5500\EtherCatControl.h</FilePath>
-            </File>
-            <File>
-              <FileName>myspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\myspi\myspi.c</FilePath>
-            </File>
-            <File>
-              <FileName>myspi.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\myspi\myspi.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>USER</GroupName>
           <Files>
             <File>
-              <FileName>slaveinfo.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\slaveinfo.c</FilePath>
+              <FilePath>..\User\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\main.h</FilePath>
             </File>
             <File>
               <FileName>delay.c</FileName>
@@ -1019,16 +799,6 @@
               <FileName>sys.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\sys\sys.h</FilePath>
-            </File>
-            <File>
-              <FileName>Timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Timer\Timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>Timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\Timer\Timer.h</FilePath>
             </File>
             <File>
               <FileName>usart.c</FileName>

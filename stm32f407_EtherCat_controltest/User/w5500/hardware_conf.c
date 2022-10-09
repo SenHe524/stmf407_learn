@@ -82,6 +82,7 @@ void w5500_init(void)
     reg_wizchip_cs_cbfunc(SPI3_CS_Select, SPI3_CS_Deselect);
     reg_wizchip_spi_cbfunc(SPI3_Read_Byte, SPI3_Write_Byte);
     reg_wizchip_spiburst_cbfunc(Spi_ReadBurst, Spi_WriteBurst);
+	//	硬件重置w5500
 	W5500_Hardware_Reset();
 }
 
