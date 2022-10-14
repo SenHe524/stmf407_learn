@@ -148,21 +148,10 @@ uint8_t Profile_Velocity_Init(uint8_t ID)
 uint8_t RPDO1_Config(uint8_t ID)
 {
 	//	RPDO传输参数
-	Message pdo_para_mes = {0x600+ID,0,8,{0x23,0x00,0x14,0x01,0x00+ID,0x02,0x00,0x80}};
+	Message pdo_para_mes = {0x600+ID,0,8,{0x2F,0x00,0x14,0x02,0xFE,0x00,0x00,0x00}};
 	//	RPDO映射参数
 	Message pdo_map_mes = {0x600+ID,0,8,{0x2F,0x00,0x16,0x00,0x00,0x00,0x00,0x00}};
-	//  失能RPDO0
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	//  设置RPDO的传输方式为事件触发
-	pdo_para_mes.data[0] = 0x2F;
-	pdo_para_mes.data[1] = 0x00;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x02;
-	pdo_para_mes.data[4] = 0xFE;
-	pdo_para_mes.data[5] = 0x00;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_para_mes);
 	delay_ms(5);
 	//	清空RPDO映射
@@ -222,17 +211,6 @@ uint8_t RPDO1_Config(uint8_t ID)
 	pdo_map_mes.data[6] = 0x00;
 	pdo_map_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-	//  使能RPDO
-	pdo_para_mes.data[0] = 0x23;
-	pdo_para_mes.data[1] = 0x00;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x01;
-	pdo_para_mes.data[4] = 0x00+ID;
-	pdo_para_mes.data[5] = 0x02;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
-	canSend(CAN1, &pdo_para_mes);
 	delay_ms(5);
 	return 0x00;
 }
@@ -241,21 +219,10 @@ uint8_t RPDO1_Config(uint8_t ID)
 uint8_t RPDO2_Config(uint8_t ID)
 {
 	//	RPDO传输参数
-	Message pdo_para_mes = {0x600+ID,0,8,{0x23,0x01,0x14,0x01,0x00+ID,0x03,0x00,0x80}};
+	Message pdo_para_mes = {0x600+ID,0,8,{0x2F,0x01,0x14,0x02,0xFE,0x00,0x00,0x00}};
 	//	RPDO映射参数
 	Message pdo_map_mes = {0x600+ID,0,8,{0x2F,0x01,0x16,0x00,0x00,0x00,0x00,0x00}};
-	//  失能RPDO0
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	//  设置RPDO的传输方式为事件触发
-	pdo_para_mes.data[0] = 0x2F;
-	pdo_para_mes.data[1] = 0x01;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x02;
-	pdo_para_mes.data[4] = 0xFE;
-	pdo_para_mes.data[5] = 0x00;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_para_mes);
 	delay_ms(5);
 	//	清空RPDO映射
@@ -316,29 +283,15 @@ uint8_t RPDO2_Config(uint8_t ID)
 	pdo_map_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//  使能RPDO
-	pdo_para_mes.data[0] = 0x23;
-	pdo_para_mes.data[1] = 0x01;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x01;
-	pdo_para_mes.data[4] = 0x00+ID;
-	pdo_para_mes.data[5] = 0x03;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	return 0x00;
 }
 
 uint8_t RPDO3_Config(uint8_t ID)
 {
 	//	RPDO传输参数
-	Message pdo_para_mes = {0x600+ID,0,8,{0x23,0x02,0x14,0x01,0x00+ID,0x04,0x00,0x80}};
+	Message pdo_para_mes = {0x600+ID,0,8,{0x2F,0x02,0x14,0x02,0xFE,0x00,0x00,0x00}};
 	//	RPDO映射参数
 	Message pdo_map_mes = {0x600+ID,0,8,{0x2F,0x02,0x16,0x00,0x00,0x00,0x00,0x00}};
-	//  失能RPDO0
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	//  设置RPDO的传输方式为事件触发
 	pdo_para_mes.data[0] = 0x2F;
 	pdo_para_mes.data[1] = 0x02;
@@ -408,38 +361,16 @@ uint8_t RPDO3_Config(uint8_t ID)
 	pdo_map_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//  使能RPDO
-	pdo_para_mes.data[0] = 0x23;
-	pdo_para_mes.data[1] = 0x02;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x01;
-	pdo_para_mes.data[4] = 0x00+ID;
-	pdo_para_mes.data[5] = 0x04;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	return 0x00;
 }
 
 uint8_t RPDO4_Config(uint8_t ID)
 {
 	//	RPDO传输参数
-	Message pdo_para_mes = {0x600+ID,0,8,{0x23,0x03,0x14,0x01,0x00+ID,0x05,0x00,0x80}};
+	Message pdo_para_mes = {0x600+ID,0,8,{0x2F,0x03,0x14,0x02,0xFE,0x00,0x00,0x00}};
 	//	RPDO映射参数
 	Message pdo_map_mes = {0x600+ID,0,8,{0x2F,0x03,0x16,0x00,0x00,0x00,0x00,0x00}};
-	//  失能RPDO0
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	//  设置RPDO的传输方式为事件触发
-	pdo_para_mes.data[0] = 0x2F;
-	pdo_para_mes.data[1] = 0x03;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x02;
-	pdo_para_mes.data[4] = 0xFE;
-	pdo_para_mes.data[5] = 0x00;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_para_mes);
 	delay_ms(5);
 	//	清空RPDO映射
@@ -500,17 +431,6 @@ uint8_t RPDO4_Config(uint8_t ID)
 	pdo_map_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//  使能RPDO
-	pdo_para_mes.data[0] = 0x23;
-	pdo_para_mes.data[1] = 0x03;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x01;
-	pdo_para_mes.data[4] = 0x00+ID;
-	pdo_para_mes.data[5] = 0x05;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	return 0x00;
 }
 
@@ -518,30 +438,10 @@ uint8_t RPDO4_Config(uint8_t ID)
 uint8_t TPDO1_Config(uint8_t ID)
 {
 	//	TPDO传输参数
-	Message pdo_para_mes = {0x600+ID,0,8,{0x23,0x00,0x18,0x01,0x80+ID,0x01,0x00,0x80}};
+	Message pdo_para_mes = {0x600+ID,0,8,{0x2F,0x00,0x18,0x02,0xFF,0x00,0x00,0x00}};
 	//	TPDO映射参数
 	Message pdo_map_mes = {0x600+ID,0,8,{0x2F,0x00,0x1A,0x00,0x00,0x00,0x00,0x00}};
-	//  失能TPDO0
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x01;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x02;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x03;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
 	//  设置TPDO的传输方式为定时触发
-	pdo_para_mes.data[0] = 0x2F;
-	pdo_para_mes.data[1] = 0x00;
-	pdo_para_mes.data[2] = 0x18;
-	pdo_para_mes.data[3] = 0x02;
-	pdo_para_mes.data[4] = 0xFF;
-	pdo_para_mes.data[5] = 0x00;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_para_mes);
 	delay_ms(5);
 	//  设置TPDO的定时100*0.5 = 50ms
@@ -613,17 +513,6 @@ uint8_t TPDO1_Config(uint8_t ID)
 	pdo_map_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//  使能TPDO
-	pdo_para_mes.data[0] = 0x23;
-	pdo_para_mes.data[1] = 0x00;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x01;
-	pdo_para_mes.data[4] = 0x80+ID;
-	pdo_para_mes.data[5] = 0x01;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	return 0x00;
 }
 
@@ -631,35 +520,15 @@ uint8_t TPDO1_Config(uint8_t ID)
 uint8_t TPDO2_Config(uint8_t ID)
 {
 	//	TPDO传输参数
-	Message pdo_para_mes = {0x600+ID,0,8,{0x23,0x01,0x18,0x01,0x80+ID,0x02,0x00,0x80}};
+	Message pdo_para_mes = {0x600+ID,0,8,{0x2F,0x01,0x18,0x02,0xFF,0x00,0x00,0x00}};
 	//	TPDO映射参数
 	Message pdo_map_mes = {0x600+ID,0,8,{0x2F,0x01,0x1A,0x00,0x00,0x00,0x00,0x00}};
-	//  失能TPDO0
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x00;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x02;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x03;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
 	//  设置TPDO的传输方式为定时触发
-	pdo_para_mes.data[0] = 0x2F;
-	pdo_para_mes.data[1] = 0x01;
-	pdo_para_mes.data[2] = 0x18;
-	pdo_para_mes.data[3] = 0x02;
-	pdo_para_mes.data[4] = 0xFF;
-	pdo_para_mes.data[5] = 0x00;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_para_mes);
 	delay_ms(5);
 	//  设置TPDO的定时100*0.5 = 50ms
 	pdo_para_mes.data[0] = 0x2B;
-	pdo_para_mes.data[1] = 0x00;
+	pdo_para_mes.data[1] = 0x01;
 	pdo_para_mes.data[2] = 0x18;
 	pdo_para_mes.data[3] = 0x05;
 	pdo_para_mes.data[4] = 0x64;
@@ -726,51 +595,20 @@ uint8_t TPDO2_Config(uint8_t ID)
 	pdo_map_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//  使能TPDO
-	pdo_para_mes.data[0] = 0x23;
-	pdo_para_mes.data[1] = 0x01;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x01;
-	pdo_para_mes.data[4] = 0x80+ID;
-	pdo_para_mes.data[5] = 0x02;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	return 0x00;
 }
 uint8_t TPDO3_Config(uint8_t ID)
 {
 	//	TPDO传输参数
-	Message pdo_para_mes = {0x600+ID,0,8,{0x23,0x02,0x18,0x01,0x80+ID,0x03,0x00,0x80}};
+	Message pdo_para_mes = {0x600+ID,0,8,{0x2F,0x02,0x18,0x02,0xFF,0x00,0x00,0x00}};
 	//	TPDO映射参数
 	Message pdo_map_mes = {0x600+ID,0,8,{0x2F,0x02,0x1A,0x00,0x00,0x00,0x00,0x00}};
-	//  失能TPDO0
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x00;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x01;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x03;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
 	//  设置TPDO的传输方式为定时触发
-	pdo_para_mes.data[0] = 0x2F;
-	pdo_para_mes.data[1] = 0x02;
-	pdo_para_mes.data[2] = 0x18;
-	pdo_para_mes.data[3] = 0x02;
-	pdo_para_mes.data[4] = 0xFF;
-	pdo_para_mes.data[5] = 0x00;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_para_mes);
 	delay_ms(5);
 	//  设置TPDO的定时100*0.5 = 50ms
 	pdo_para_mes.data[0] = 0x2B;
-	pdo_para_mes.data[1] = 0x00;
+	pdo_para_mes.data[1] = 0x02;
 	pdo_para_mes.data[2] = 0x18;
 	pdo_para_mes.data[3] = 0x05;
 	pdo_para_mes.data[4] = 0x64;
@@ -837,52 +675,21 @@ uint8_t TPDO3_Config(uint8_t ID)
 	pdo_map_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//  使能TPDO
-	pdo_para_mes.data[0] = 0x23;
-	pdo_para_mes.data[1] = 0x02;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x01;
-	pdo_para_mes.data[4] = 0x80+ID;
-	pdo_para_mes.data[5] = 0x03;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	return 0x00;
 }
 
 uint8_t TPDO4_Config(uint8_t ID)
 {
 	//	TPDO传输参数
-	Message pdo_para_mes = {0x600+ID,0,8,{0x23,0x03,0x18,0x01,0x80+ID,0x04,0x00,0x80}};
+	Message pdo_para_mes = {0x600+ID,0,8,{0x2F,0x03,0x18,0x02,0xFF,0x00,0x00,0x00}};
 	//	TPDO映射参数
 	Message pdo_map_mes = {0x600+ID,0,8,{0x2F,0x03,0x1A,0x00,0x00,0x00,0x00,0x00}};
-	//  失能TPDO0
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x00;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x01;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
-//	pdo_para_mes.data[1] = 0x02;
-//	canSend(CAN1, &pdo_para_mes);
-//	delay_ms(5);
 	//  设置TPDO的传输方式为定时触发
-	pdo_para_mes.data[0] = 0x2F;
-	pdo_para_mes.data[1] = 0x03;
-	pdo_para_mes.data[2] = 0x18;
-	pdo_para_mes.data[3] = 0x02;
-	pdo_para_mes.data[4] = 0xFF;
-	pdo_para_mes.data[5] = 0x00;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_para_mes);
 	delay_ms(5);
 	//  设置TPDO的定时100*0.5 = 50ms
 	pdo_para_mes.data[0] = 0x2B;
-	pdo_para_mes.data[1] = 0x00;
+	pdo_para_mes.data[1] = 0x03;
 	pdo_para_mes.data[2] = 0x18;
 	pdo_para_mes.data[3] = 0x05;
 	pdo_para_mes.data[4] = 0x64;
@@ -949,17 +756,6 @@ uint8_t TPDO4_Config(uint8_t ID)
 	pdo_map_mes.data[7] = 0x00;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//  使能TPDO
-	pdo_para_mes.data[0] = 0x23;
-	pdo_para_mes.data[1] = 0x03;
-	pdo_para_mes.data[2] = 0x14;
-	pdo_para_mes.data[3] = 0x01;
-	pdo_para_mes.data[4] = 0x80+ID;
-	pdo_para_mes.data[5] = 0x04;
-	pdo_para_mes.data[6] = 0x00;
-	pdo_para_mes.data[7] = 0x00;
-	canSend(CAN1, &pdo_para_mes);
-	delay_ms(5);
 	return 0x00;
 }
 
@@ -967,64 +763,45 @@ uint8_t TPDO4_Config(uint8_t ID)
 
 void Profile_Velocity_Test(uint8_t ID)
 {
-	Message mes_1 = {0x200+1,0,7,{0x0F,0x00,0x03,0x0A,0x00,0x00,0x00}};
-	Message mes_2 = {0x300+2,0,7,{0x0F,0x00,0x03,0x0A,0x00,0x00,0x00}};
-	Message mes_3 = {0x400+3,0,7,{0x0F,0x00,0x03,0x0A,0x00,0x00,0x00}};
-	Message mes_4 = {0x500+4,0,7,{0x0F,0x00,0x03,0x0A,0x00,0x00,0x00}};
+	Message mes_1 = {0x200+1,0,7,{0x0F,0x00,0x03,0x64,0x00,0x00,0x00}};
+	Message mes_2 = {0x300+2,0,7,{0x0F,0x00,0x03,0x64,0x00,0x00,0x00}};
+	Message mes_3 = {0x400+3,0,7,{0x0F,0x00,0x03,0x64,0x00,0x00,0x00}};
+	Message mes_4 = {0x500+4,0,7,{0x0F,0x00,0x03,0x64,0x00,0x00,0x00}};
 	canSend(CAN1, &mes_1);
+//	delay_ms(1);
 	canSend(CAN1, &mes_2);
+//	delay_ms(1);
 	canSend(CAN1, &mes_3);
+	delay_ms(1);
 	canSend(CAN1, &mes_4);
 	delay_ms(5000);
-	mes_1.data[3] = 0xF6;
+	mes_1.data[3] = 0x9C;
 	mes_1.data[4] = 0xFF;
 	mes_1.data[5] = 0xFF;
 	mes_1.data[6] = 0xFF;
 	
-	mes_2.data[3] = 0xF6;
+	mes_2.data[3] = 0x9C;
 	mes_2.data[4] = 0xFF;
 	mes_2.data[5] = 0xFF;
 	mes_2.data[6] = 0xFF;
 	
-	mes_3.data[3] = 0xF6;
+	mes_3.data[3] = 0x9C;
 	mes_3.data[4] = 0xFF;
 	mes_3.data[5] = 0xFF;
 	mes_3.data[6] = 0xFF;
 	
-	mes_4.data[3] = 0xF6;
+	mes_4.data[3] = 0x9C;
 	mes_4.data[4] = 0xFF;
 	mes_4.data[5] = 0xFF;
 	mes_4.data[6] = 0xFF;
 	canSend(CAN1, &mes_1);
+//	delay_ms(1);
 	canSend(CAN1, &mes_2);
+//	delay_ms(1);
 	canSend(CAN1, &mes_3);
+	delay_ms(1);
 	canSend(CAN1, &mes_4);
 	delay_ms(5000);
-	/*************************SDO****************************
-	Message mes_1 = {0x600+4,0,8,{0x23,0xFF,0x60,0x00,0xC8,0x00,0x00,0x00}};
-	Message mes_2 = {0x600+3,0,8,{0x23,0xFF,0x60,0x00,0xC8,0x00,0x00,0x00}};
-	canSend(CAN1, &mes_1);
-	canSend(CAN1, &mes_2);
-	delay_ms(5000);
-	mes_1.data[0] = 0x23;
-	mes_1.data[1] = 0xFF;
-	mes_1.data[2] = 0x60;
-	mes_1.data[3] = 0x00;
-	mes_1.data[4] = 0x9C;
-	mes_1.data[5] = 0xFF;
-	mes_1.data[6] = 0xFF;
-	mes_1.data[7] = 0xFF;
-	mes_2.data[0] = 0x23;
-	mes_2.data[1] = 0xFF;
-	mes_2.data[2] = 0x60;
-	mes_2.data[3] = 0x00;
-	mes_2.data[4] = 0x9C;
-	mes_2.data[5] = 0xFF;
-	mes_2.data[6] = 0xFF;
-	mes_2.data[7] = 0xFF;
-	canSend(CAN1, &mes_1);
-	canSend(CAN1, &mes_2);
-	delay_ms(5000);
-	 *****************************************************/
+
 }
 

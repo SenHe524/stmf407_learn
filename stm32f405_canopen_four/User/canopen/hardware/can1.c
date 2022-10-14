@@ -4,7 +4,10 @@
 
 static CO_Data *co_data = NULL;
 extern Message rxm;
-
+extern uint8_t status_1[7];
+extern uint8_t status_2[7];
+extern uint8_t status_3[7];
+extern uint8_t status_4[7];
 //Initialize the CAN hardware 
 unsigned char CAN1_Init(CO_Data * d)
 {
@@ -93,9 +96,9 @@ unsigned char canSend(CAN_PORT notused, Message *m)
 	TxMessage.DLC = m->len;
 	for(i=0 ; i<m->len ; i++)
 		TxMessage.Data[i] = m->data[i];
-	printf("send:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",TxMessage.StdId, TxMessage.DLC,TxMessage.Data[0],TxMessage.Data[1]
-										,TxMessage.Data[2], TxMessage.Data[3],TxMessage.Data[4],
-			TxMessage.Data[5],TxMessage.Data[6], TxMessage.Data[7]);	
+//	printf("send:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",TxMessage.StdId, TxMessage.DLC,TxMessage.Data[0],TxMessage.Data[1]
+//										,TxMessage.Data[2], TxMessage.Data[3],TxMessage.Data[4],
+//			TxMessage.Data[5],TxMessage.Data[6], TxMessage.Data[7]);	
 	i = 0;
 	ret = CAN_Transmit(CANx, &TxMessage);
 	while((CAN_TransmitStatus(CANx, ret) == CAN_TxStatus_Failed) && (i < 0xFFF))
@@ -104,19 +107,6 @@ unsigned char canSend(CAN_PORT notused, Message *m)
 	return 1;//success
 }
 
-//can口接收数据查询
-//buf：数据缓存区
-//返回值：0，无数据被接收，其它，接收的数据长度
-unsigned char CAN1_Receive_Msg(unsigned char *buf){
-
-	u32 i;
-	CanRxMsg RxMessage;
-	if(CAN_MessagePending(CAN1,CAN_FIFO0==0))return 0;//没有接收到数据，直接退出
-	CAN_Receive(CAN1,CAN_FIFO0,&RxMessage);//从CAN1 FIF0接收数据
-	for(i=0; i<RxMessage.DLC; i++)
-	buf[i] = RxMessage.Data[i];
-	return RxMessage.DLC;//返回接收的数据长度
-}
 
 unsigned char canChangeBaudRate_driver( CAN_HANDLE fd, char* baud)
 {
@@ -140,12 +130,37 @@ void CAN1_RX0_IRQHandler(void)
 	if(RxMessage.RTR == CAN_RTR_REMOTE)//远程帧
 		rxm.rtr = 1;
 	rxm.len = RxMessage.DLC;
-	for(i=0 ; i<8 ; i++)
-		 rxm.data[i] = 0;
+//	for(i=0 ; i<8 ; i++)
+//		 rxm.data[i] = 0;
 	for(i=0 ; i<rxm.len ; i++)
 		 rxm.data[i] = RxMessage.Data[i];
-	printf("rec:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",rxm.cob_id,rxm.len,rxm.data[0], rxm.data[1],rxm.data[2],rxm.data[3]
-										,rxm.data[4], rxm.data[5],rxm.data[6],rxm.data[7]);	
+//	switch(rxm.cob_id)
+//	{
+//		case 0x181:{
+//			for(i=0 ; i<rxm.len ; i++)
+//			status_1[i] = rxm.data[i];
+//			break;
+//		}
+//		case 0x282:{
+//			for(i=0 ; i<rxm.len ; i++)
+//			status_2[i] = rxm.data[i];
+//			break;
+//		}
+//		case 0x383:{
+//			for(i=0 ; i<rxm.len ; i++)
+//			status_3[i] = rxm.data[i];
+//			break;
+//		}
+//		case 0x484:{
+//			for(i=0 ; i<rxm.len ; i++)
+//			status_4[i] = rxm.data[i];
+//			break;
+//		}
+//		default:
+//			break;
+//	}
+//	printf("rec:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",rxm.cob_id,rxm.len,rxm.data[0], rxm.data[1],rxm.data[2],rxm.data[3]
+//										,rxm.data[4], rxm.data[5],rxm.data[6],rxm.data[7]);	
 		canDispatch(co_data, &rxm);
 }
 

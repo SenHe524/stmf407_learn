@@ -1,7 +1,10 @@
 #include "main.h"
 //DEBUG_ERR_CONSOLE_ON
 Message rxm = {0};
-Message MES = {0x601,0,8,{0x40,0x17,0x20,0x00,0x00,0x00,0x00,0x00}};
+uint8_t status_1[7] = {0};
+uint8_t status_2[7] = {0};
+uint8_t status_3[7] = {0};
+uint8_t status_4[7] = {0};
 uint8_t i = 1;
 int main(void)
 {
@@ -11,17 +14,10 @@ int main(void)
 	TIM3_Init();
 	USART1_Init(115200);
 	CAN1_Init(&Master_Data);
-	
 	unsigned char nodeID = 0x05; 
 	setNodeId(&Master_Data, nodeID);
 	setState(&Master_Data, Initialisation);
 	delay_ms(2000);
-	NMT_Control(0x82, 0x00);
-	delay_ms(10);
-	NMT_Control(0x81, 0x00);
-	delay_ms(10);
-	NMT_Control(0x80, 0x00);
-	delay_ms(500);
 //	heartbeat_timeset();
 //	delay_ms(500);
 //	tr_pdo_mapping();

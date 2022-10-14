@@ -181,42 +181,42 @@
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Target_velocity</ItemText>
+          <ItemText>status_1</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Controlword</ItemText>
+          <ItemText>status_2</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Modes_of_operation</ItemText>
+          <ItemText>status_3</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Statusword</ItemText>
+          <ItemText>status_4</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Modes_of_operation_display</ItemText>
+          <ItemText>mes_1</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Velocity_actual_value</ItemText>
+          <ItemText>mes_2</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Position_actual_value</ItemText>
+          <ItemText>mes_3</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>mes</ItemText>
+          <ItemText>mes_4</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
