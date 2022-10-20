@@ -6,14 +6,30 @@
 /**************************************************************************/
 /* Declaration of mapped variables                                        */
 /**************************************************************************/
-UNS16 Controlword = 0x0;		/* Mapped at index 0x6040, subindex 0x00 */
-UNS16 Statusword = 0x0;		/* Mapped at index 0x6041, subindex 0x00 */
-INTEGER8 Modes_of_operation = 0x0;		/* Mapped at index 0x6060, subindex 0x00 */
-INTEGER8 Modes_of_operation_display = 0x0;		/* Mapped at index 0x6061, subindex 0x00 */
-INTEGER32 Position_actual_value = 0x0;		/* Mapped at index 0x6064, subindex 0x00 */
-INTEGER32 Velocity_actual_value = 0x0;		/* Mapped at index 0x606C, subindex 0x00 */
-INTEGER32 Target_position = 0x0;		/* Mapped at index 0x607A, subindex 0x00 */
-INTEGER32 Target_velocity = 0x0;		/* Mapped at index 0x60FF, subindex 0x00 */
+UNS16 motor1_control = 0x0;		/* Mapped at index 0x3000, subindex 0x00 */
+UNS16 motor1_status = 0x0;		/* Mapped at index 0x3001, subindex 0x00 */
+INTEGER8 motor1_mode = 0x0;		/* Mapped at index 0x3002, subindex 0x00 */
+INTEGER8 motor1_mode_display = 0x0;		/* Mapped at index 0x3003, subindex 0x00 */
+INTEGER32 motor1_position = 0x0;		/* Mapped at index 0x3004, subindex 0x00 */
+INTEGER32 motor1_velocity = 0x0;		/* Mapped at index 0x3005, subindex 0x00 */
+UNS16 motor2_control = 0x0;		/* Mapped at index 0x3006, subindex 0x00 */
+UNS16 motor2_status = 0x0;		/* Mapped at index 0x3007, subindex 0x00 */
+INTEGER8 motor2_mode = 0x0;		/* Mapped at index 0x3008, subindex 0x00 */
+INTEGER8 motor2_mode_display = 0x0;		/* Mapped at index 0x3009, subindex 0x00 */
+INTEGER32 motor2_position = 0x0;		/* Mapped at index 0x3010, subindex 0x00 */
+INTEGER32 motor2_velocity = 0x0;		/* Mapped at index 0x3011, subindex 0x00 */
+UNS16 motor3_control = 0x0;		/* Mapped at index 0x3012, subindex 0x00 */
+UNS16 motor3_status = 0x0;		/* Mapped at index 0x3013, subindex 0x00 */
+INTEGER8 motor3_mode = 0x0;		/* Mapped at index 0x3014, subindex 0x00 */
+INTEGER8 motor3_mode_display = 0x0;		/* Mapped at index 0x3015, subindex 0x00 */
+INTEGER32 motor3_position = 0x0;		/* Mapped at index 0x3016, subindex 0x00 */
+INTEGER32 motor3_velocity = 0x0;		/* Mapped at index 0x3017, subindex 0x00 */
+UNS16 motor4_control = 0x0;		/* Mapped at index 0x3018, subindex 0x00 */
+UNS16 motor4_status = 0x0;		/* Mapped at index 0x3019, subindex 0x00 */
+INTEGER8 motor4_mode = 0x0;		/* Mapped at index 0x3020, subindex 0x00 */
+INTEGER8 motor4_mode_display = 0x0;		/* Mapped at index 0x3021, subindex 0x00 */
+INTEGER32 motor4_position = 0x0;		/* Mapped at index 0x3022, subindex 0x00 */
+INTEGER32 motor4_velocity = 0x0;		/* Mapped at index 0x3023, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
@@ -128,7 +144,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1400 :   Receive PDO 1 Parameter. */
                     UNS8 Master_highestSubIndex_obj1400 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1400_COB_ID_used_by_PDO = 0x201;	/* 513 */
+                    UNS32 Master_obj1400_COB_ID_used_by_PDO = 0x181;	/* 385 */
                     UNS8 Master_obj1400_Transmission_Type = 0xFE;	/* 254 */
                     UNS16 Master_obj1400_Inhibit_Time = 0xA;	/* 10 */
                     UNS8 Master_obj1400_Compatibility_Entry = 0x0;	/* 0 */
@@ -147,7 +163,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1401 :   Receive PDO 2 Parameter. */
                     UNS8 Master_highestSubIndex_obj1401 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1401_COB_ID_used_by_PDO = 0x302;	/* 770 */
+                    UNS32 Master_obj1401_COB_ID_used_by_PDO = 0x282;	/* 642 */
                     UNS8 Master_obj1401_Transmission_Type = 0xFE;	/* 254 */
                     UNS16 Master_obj1401_Inhibit_Time = 0xA;	/* 10 */
                     UNS8 Master_obj1401_Compatibility_Entry = 0x0;	/* 0 */
@@ -166,7 +182,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1402 :   Receive PDO 3 Parameter. */
                     UNS8 Master_highestSubIndex_obj1402 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1402_COB_ID_used_by_PDO = 0x403;	/* 1027 */
+                    UNS32 Master_obj1402_COB_ID_used_by_PDO = 0x383;	/* 899 */
                     UNS8 Master_obj1402_Transmission_Type = 0xFE;	/* 254 */
                     UNS16 Master_obj1402_Inhibit_Time = 0xA;	/* 10 */
                     UNS8 Master_obj1402_Compatibility_Entry = 0x0;	/* 0 */
@@ -185,7 +201,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1403 :   Receive PDO 4 Parameter. */
                     UNS8 Master_highestSubIndex_obj1403 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1403_COB_ID_used_by_PDO = 0x504;	/* 1284 */
+                    UNS32 Master_obj1403_COB_ID_used_by_PDO = 0x484;	/* 1156 */
                     UNS8 Master_obj1403_Transmission_Type = 0xFE;	/* 254 */
                     UNS16 Master_obj1403_Inhibit_Time = 0xA;	/* 10 */
                     UNS8 Master_obj1403_Compatibility_Entry = 0x0;	/* 0 */
@@ -206,9 +222,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1600 = 3; /* number of subindex - 1*/
                     UNS32 Master_obj1600[] = 
                     {
-                      0x60400010,	/* 1614807056 */
-                      0x60600008,	/* 1616904200 */
-                      0x60FF0020	/* 1627324448 */
+                      0x30010010,	/* 805371920 */
+                      0x30030008,	/* 805502984 */
+                      0x30040020	/* 805568544 */
                     };
                     subindex Master_Index1600[] = 
                      {
@@ -222,9 +238,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1601 = 3; /* number of subindex - 1*/
                     UNS32 Master_obj1601[] = 
                     {
-                      0x60400010,	/* 1614807056 */
-                      0x60600008,	/* 1616904200 */
-                      0x60FF0020	/* 1627324448 */
+                      0x30070010,	/* 805765136 */
+                      0x30090008,	/* 805896200 */
+                      0x30100020	/* 806354976 */
                     };
                     subindex Master_Index1601[] = 
                      {
@@ -238,9 +254,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1602 = 3; /* number of subindex - 1*/
                     UNS32 Master_obj1602[] = 
                     {
-                      0x60400010,	/* 1614807056 */
-                      0x60600008,	/* 1616904200 */
-                      0x60FF0020	/* 1627324448 */
+                      0x30130010,	/* 806551568 */
+                      0x30150008,	/* 806682632 */
+                      0x30160020	/* 806748192 */
                     };
                     subindex Master_Index1602[] = 
                      {
@@ -254,9 +270,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1603 = 3; /* number of subindex - 1*/
                     UNS32 Master_obj1603[] = 
                     {
-                      0x60400010,	/* 1614807056 */
-                      0x60600008,	/* 1616904200 */
-                      0x60FF0020	/* 1627324448 */
+                      0x30190010,	/* 806944784 */
+                      0x30210008,	/* 807469064 */
+                      0x30220020	/* 807534624 */
                     };
                     subindex Master_Index1603[] = 
                      {
@@ -268,11 +284,11 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
                     UNS8 Master_highestSubIndex_obj1800 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1800_COB_ID_used_by_PDO = 0x181;	/* 385 */
-                    UNS8 Master_obj1800_Transmission_Type = 0xFE;	/* 254 */
-                    UNS16 Master_obj1800_Inhibit_Time = 0xA;	/* 10 */
+                    UNS32 Master_obj1800_COB_ID_used_by_PDO = 0x201;	/* 513 */
+                    UNS8 Master_obj1800_Transmission_Type = 0xFF;	/* 255 */
+                    UNS16 Master_obj1800_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 Master_obj1800_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1800_Event_Timer = 0x0;	/* 0 */
+                    UNS16 Master_obj1800_Event_Timer = 0x64;	/* 100 */
                     UNS8 Master_obj1800_SYNC_start_value = 0x0;	/* 0 */
                     subindex Master_Index1800[] = 
                      {
@@ -287,11 +303,11 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1801 :   Transmit PDO 2 Parameter. */
                     UNS8 Master_highestSubIndex_obj1801 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1801_COB_ID_used_by_PDO = 0x282;	/* 642 */
-                    UNS8 Master_obj1801_Transmission_Type = 0xFE;	/* 254 */
-                    UNS16 Master_obj1801_Inhibit_Time = 0xA;	/* 10 */
+                    UNS32 Master_obj1801_COB_ID_used_by_PDO = 0x302;	/* 770 */
+                    UNS8 Master_obj1801_Transmission_Type = 0xFF;	/* 255 */
+                    UNS16 Master_obj1801_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 Master_obj1801_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1801_Event_Timer = 0x0;	/* 0 */
+                    UNS16 Master_obj1801_Event_Timer = 0x64;	/* 100 */
                     UNS8 Master_obj1801_SYNC_start_value = 0x0;	/* 0 */
                     subindex Master_Index1801[] = 
                      {
@@ -306,11 +322,11 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1802 :   Transmit PDO 3 Parameter. */
                     UNS8 Master_highestSubIndex_obj1802 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1802_COB_ID_used_by_PDO = 0x383;	/* 899 */
-                    UNS8 Master_obj1802_Transmission_Type = 0xFE;	/* 254 */
-                    UNS16 Master_obj1802_Inhibit_Time = 0xA;	/* 10 */
+                    UNS32 Master_obj1802_COB_ID_used_by_PDO = 0x403;	/* 1027 */
+                    UNS8 Master_obj1802_Transmission_Type = 0xFF;	/* 255 */
+                    UNS16 Master_obj1802_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 Master_obj1802_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1802_Event_Timer = 0x0;	/* 0 */
+                    UNS16 Master_obj1802_Event_Timer = 0x64;	/* 100 */
                     UNS8 Master_obj1802_SYNC_start_value = 0x0;	/* 0 */
                     subindex Master_Index1802[] = 
                      {
@@ -325,11 +341,11 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1803 :   Transmit PDO 4 Parameter. */
                     UNS8 Master_highestSubIndex_obj1803 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1803_COB_ID_used_by_PDO = 0x484;	/* 1156 */
-                    UNS8 Master_obj1803_Transmission_Type = 0xFE;	/* 254 */
-                    UNS16 Master_obj1803_Inhibit_Time = 0xA;	/* 10 */
+                    UNS32 Master_obj1803_COB_ID_used_by_PDO = 0x504;	/* 1284 */
+                    UNS8 Master_obj1803_Transmission_Type = 0xFF;	/* 255 */
+                    UNS16 Master_obj1803_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 Master_obj1803_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1803_Event_Timer = 0x0;	/* 0 */
+                    UNS16 Master_obj1803_Event_Timer = 0x64;	/* 100 */
                     UNS8 Master_obj1803_SYNC_start_value = 0x0;	/* 0 */
                     subindex Master_Index1803[] = 
                      {
@@ -346,9 +362,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1A00 = 3; /* number of subindex - 1*/
                     UNS32 Master_obj1A00[] = 
                     {
-                      0x60410010,	/* 1614872592 */
-                      0x60610008,	/* 1616969736 */
-                      0x60640020	/* 1617166368 */
+                      0x30000010,	/* 805306384 */
+                      0x30020008,	/* 805437448 */
+                      0x30050020	/* 805634080 */
                     };
                     subindex Master_Index1A00[] = 
                      {
@@ -362,9 +378,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1A01 = 3; /* number of subindex - 1*/
                     UNS32 Master_obj1A01[] = 
                     {
-                      0x60410010,	/* 1614872592 */
-                      0x60610008,	/* 1616969736 */
-                      0x60640020	/* 1617166368 */
+                      0x30060010,	/* 805699600 */
+                      0x30080008,	/* 805830664 */
+                      0x30110020	/* 806420512 */
                     };
                     subindex Master_Index1A01[] = 
                      {
@@ -378,9 +394,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1A02 = 3; /* number of subindex - 1*/
                     UNS32 Master_obj1A02[] = 
                     {
-                      0x60410010,	/* 1614872592 */
-                      0x60610008,	/* 1616969736 */
-                      0x60640020	/* 1617166368 */
+                      0x30120010,	/* 806486032 */
+                      0x30140008,	/* 806617096 */
+                      0x30170020	/* 806813728 */
                     };
                     subindex Master_Index1A02[] = 
                      {
@@ -394,9 +410,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1A03 = 3; /* number of subindex - 1*/
                     UNS32 Master_obj1A03[] = 
                     {
-                      0x60410010,	/* 1614872592 */
-                      0x60610008,	/* 1616969736 */
-                      0x60640020	/* 1617166368 */
+                      0x30180010,	/* 806879248 */
+                      0x30200008,	/* 807403528 */
+                      0x30230020	/* 807600160 */
                     };
                     subindex Master_Index1A03[] = 
                      {
@@ -406,52 +422,148 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A03[2], NULL }
                      };
 
-/* index 0x6040 :   Mapped variable Controlword */
-                    subindex Master_Index6040[] = 
+/* index 0x3000 :   Mapped variable motor1_control */
+                    subindex Master_Index3000[] = 
                      {
-                       { RW, uint16, sizeof (UNS16), (void*)&Controlword, NULL }
+                       { RW, uint16, sizeof (UNS16), (void*)&motor1_control, NULL }
                      };
 
-/* index 0x6041 :   Mapped variable Statusword */
-                    subindex Master_Index6041[] = 
+/* index 0x3001 :   Mapped variable motor1_status */
+                    subindex Master_Index3001[] = 
                      {
-                       { RO, uint16, sizeof (UNS16), (void*)&Statusword, NULL }
+                       { RW, uint16, sizeof (UNS16), (void*)&motor1_status, NULL }
                      };
 
-/* index 0x6060 :   Mapped variable Modes of operation */
-                    subindex Master_Index6060[] = 
+/* index 0x3002 :   Mapped variable motor1_mode */
+                    subindex Master_Index3002[] = 
                      {
-                       { RW, int8, sizeof (INTEGER8), (void*)&Modes_of_operation, NULL }
+                       { RW, int8, sizeof (INTEGER8), (void*)&motor1_mode, NULL }
                      };
 
-/* index 0x6061 :   Mapped variable Modes of operation display */
-                    subindex Master_Index6061[] = 
+/* index 0x3003 :   Mapped variable motor1_mode_display */
+                    subindex Master_Index3003[] = 
                      {
-                       { RO, int8, sizeof (INTEGER8), (void*)&Modes_of_operation_display, NULL }
+                       { RW, int8, sizeof (INTEGER8), (void*)&motor1_mode_display, NULL }
                      };
 
-/* index 0x6064 :   Mapped variable Position actual value */
-                    subindex Master_Index6064[] = 
+/* index 0x3004 :   Mapped variable motor1_position */
+                    subindex Master_Index3004[] = 
                      {
-                       { RO, int32, sizeof (INTEGER32), (void*)&Position_actual_value, NULL }
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor1_position, NULL }
                      };
 
-/* index 0x606C :   Mapped variable Velocity actual value */
-                    subindex Master_Index606C[] = 
+/* index 0x3005 :   Mapped variable motor1_velocity */
+                    subindex Master_Index3005[] = 
                      {
-                       { RO, int32, sizeof (INTEGER32), (void*)&Velocity_actual_value, NULL }
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor1_velocity, NULL }
                      };
 
-/* index 0x607A :   Mapped variable Target position */
-                    subindex Master_Index607A[] = 
+/* index 0x3006 :   Mapped variable motor2_control */
+                    subindex Master_Index3006[] = 
                      {
-                       { RW, int32, sizeof (INTEGER32), (void*)&Target_position, NULL }
+                       { RW, uint16, sizeof (UNS16), (void*)&motor2_control, NULL }
                      };
 
-/* index 0x60FF :   Mapped variable Target velocity */
-                    subindex Master_Index60FF[] = 
+/* index 0x3007 :   Mapped variable motor2_status */
+                    subindex Master_Index3007[] = 
                      {
-                       { RW, int32, sizeof (INTEGER32), (void*)&Target_velocity, NULL }
+                       { RW, uint16, sizeof (UNS16), (void*)&motor2_status, NULL }
+                     };
+
+/* index 0x3008 :   Mapped variable motor2_mode */
+                    subindex Master_Index3008[] = 
+                     {
+                       { RW, int8, sizeof (INTEGER8), (void*)&motor2_mode, NULL }
+                     };
+
+/* index 0x3009 :   Mapped variable motor2_mode_display */
+                    subindex Master_Index3009[] = 
+                     {
+                       { RW, int8, sizeof (INTEGER8), (void*)&motor2_mode_display, NULL }
+                     };
+
+/* index 0x3010 :   Mapped variable motor2_position */
+                    subindex Master_Index3010[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor2_position, NULL }
+                     };
+
+/* index 0x3011 :   Mapped variable motor2_velocity */
+                    subindex Master_Index3011[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor2_velocity, NULL }
+                     };
+
+/* index 0x3012 :   Mapped variable motor3_control */
+                    subindex Master_Index3012[] = 
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&motor3_control, NULL }
+                     };
+
+/* index 0x3013 :   Mapped variable motor3_status */
+                    subindex Master_Index3013[] = 
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&motor3_status, NULL }
+                     };
+
+/* index 0x3014 :   Mapped variable motor3_mode */
+                    subindex Master_Index3014[] = 
+                     {
+                       { RW, int8, sizeof (INTEGER8), (void*)&motor3_mode, NULL }
+                     };
+
+/* index 0x3015 :   Mapped variable motor3_mode_display */
+                    subindex Master_Index3015[] = 
+                     {
+                       { RW, int8, sizeof (INTEGER8), (void*)&motor3_mode_display, NULL }
+                     };
+
+/* index 0x3016 :   Mapped variable motor3_position */
+                    subindex Master_Index3016[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor3_position, NULL }
+                     };
+
+/* index 0x3017 :   Mapped variable motor3_velocity */
+                    subindex Master_Index3017[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor3_velocity, NULL }
+                     };
+
+/* index 0x3018 :   Mapped variable motor4_control */
+                    subindex Master_Index3018[] = 
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&motor4_control, NULL }
+                     };
+
+/* index 0x3019 :   Mapped variable motor4_status */
+                    subindex Master_Index3019[] = 
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&motor4_status, NULL }
+                     };
+
+/* index 0x3020 :   Mapped variable motor4_mode */
+                    subindex Master_Index3020[] = 
+                     {
+                       { RW, int8, sizeof (INTEGER8), (void*)&motor4_mode, NULL }
+                     };
+
+/* index 0x3021 :   Mapped variable motor4_mode_display */
+                    subindex Master_Index3021[] = 
+                     {
+                       { RW, int8, sizeof (INTEGER8), (void*)&motor4_mode_display, NULL }
+                     };
+
+/* index 0x3022 :   Mapped variable motor4_position */
+                    subindex Master_Index3022[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor4_position, NULL }
+                     };
+
+/* index 0x3023 :   Mapped variable motor4_velocity */
+                    subindex Master_Index3023[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor4_velocity, NULL }
                      };
 
 /**************************************************************************/
@@ -482,14 +594,30 @@ const indextable Master_objdict[] =
   { (subindex*)Master_Index1A01,sizeof(Master_Index1A01)/sizeof(Master_Index1A01[0]), 0x1A01},
   { (subindex*)Master_Index1A02,sizeof(Master_Index1A02)/sizeof(Master_Index1A02[0]), 0x1A02},
   { (subindex*)Master_Index1A03,sizeof(Master_Index1A03)/sizeof(Master_Index1A03[0]), 0x1A03},
-  { (subindex*)Master_Index6040,sizeof(Master_Index6040)/sizeof(Master_Index6040[0]), 0x6040},
-  { (subindex*)Master_Index6041,sizeof(Master_Index6041)/sizeof(Master_Index6041[0]), 0x6041},
-  { (subindex*)Master_Index6060,sizeof(Master_Index6060)/sizeof(Master_Index6060[0]), 0x6060},
-  { (subindex*)Master_Index6061,sizeof(Master_Index6061)/sizeof(Master_Index6061[0]), 0x6061},
-  { (subindex*)Master_Index6064,sizeof(Master_Index6064)/sizeof(Master_Index6064[0]), 0x6064},
-  { (subindex*)Master_Index606C,sizeof(Master_Index606C)/sizeof(Master_Index606C[0]), 0x606C},
-  { (subindex*)Master_Index607A,sizeof(Master_Index607A)/sizeof(Master_Index607A[0]), 0x607A},
-  { (subindex*)Master_Index60FF,sizeof(Master_Index60FF)/sizeof(Master_Index60FF[0]), 0x60FF},
+  { (subindex*)Master_Index3000,sizeof(Master_Index3000)/sizeof(Master_Index3000[0]), 0x3000},
+  { (subindex*)Master_Index3001,sizeof(Master_Index3001)/sizeof(Master_Index3001[0]), 0x3001},
+  { (subindex*)Master_Index3002,sizeof(Master_Index3002)/sizeof(Master_Index3002[0]), 0x3002},
+  { (subindex*)Master_Index3003,sizeof(Master_Index3003)/sizeof(Master_Index3003[0]), 0x3003},
+  { (subindex*)Master_Index3004,sizeof(Master_Index3004)/sizeof(Master_Index3004[0]), 0x3004},
+  { (subindex*)Master_Index3005,sizeof(Master_Index3005)/sizeof(Master_Index3005[0]), 0x3005},
+  { (subindex*)Master_Index3006,sizeof(Master_Index3006)/sizeof(Master_Index3006[0]), 0x3006},
+  { (subindex*)Master_Index3007,sizeof(Master_Index3007)/sizeof(Master_Index3007[0]), 0x3007},
+  { (subindex*)Master_Index3008,sizeof(Master_Index3008)/sizeof(Master_Index3008[0]), 0x3008},
+  { (subindex*)Master_Index3009,sizeof(Master_Index3009)/sizeof(Master_Index3009[0]), 0x3009},
+  { (subindex*)Master_Index3010,sizeof(Master_Index3010)/sizeof(Master_Index3010[0]), 0x3010},
+  { (subindex*)Master_Index3011,sizeof(Master_Index3011)/sizeof(Master_Index3011[0]), 0x3011},
+  { (subindex*)Master_Index3012,sizeof(Master_Index3012)/sizeof(Master_Index3012[0]), 0x3012},
+  { (subindex*)Master_Index3013,sizeof(Master_Index3013)/sizeof(Master_Index3013[0]), 0x3013},
+  { (subindex*)Master_Index3014,sizeof(Master_Index3014)/sizeof(Master_Index3014[0]), 0x3014},
+  { (subindex*)Master_Index3015,sizeof(Master_Index3015)/sizeof(Master_Index3015[0]), 0x3015},
+  { (subindex*)Master_Index3016,sizeof(Master_Index3016)/sizeof(Master_Index3016[0]), 0x3016},
+  { (subindex*)Master_Index3017,sizeof(Master_Index3017)/sizeof(Master_Index3017[0]), 0x3017},
+  { (subindex*)Master_Index3018,sizeof(Master_Index3018)/sizeof(Master_Index3018[0]), 0x3018},
+  { (subindex*)Master_Index3019,sizeof(Master_Index3019)/sizeof(Master_Index3019[0]), 0x3019},
+  { (subindex*)Master_Index3020,sizeof(Master_Index3020)/sizeof(Master_Index3020[0]), 0x3020},
+  { (subindex*)Master_Index3021,sizeof(Master_Index3021)/sizeof(Master_Index3021[0]), 0x3021},
+  { (subindex*)Master_Index3022,sizeof(Master_Index3022)/sizeof(Master_Index3022[0]), 0x3022},
+  { (subindex*)Master_Index3023,sizeof(Master_Index3023)/sizeof(Master_Index3023[0]), 0x3023},
 };
 
 const indextable * Master_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorCode)
@@ -519,14 +647,30 @@ const indextable * Master_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorCo
 		case 0x1A01: i = 19;break;
 		case 0x1A02: i = 20;break;
 		case 0x1A03: i = 21;break;
-		case 0x6040: i = 22;break;
-		case 0x6041: i = 23;break;
-		case 0x6060: i = 24;break;
-		case 0x6061: i = 25;break;
-		case 0x6064: i = 26;break;
-		case 0x606C: i = 27;break;
-		case 0x607A: i = 28;break;
-		case 0x60FF: i = 29;break;
+		case 0x3000: i = 22;break;
+		case 0x3001: i = 23;break;
+		case 0x3002: i = 24;break;
+		case 0x3003: i = 25;break;
+		case 0x3004: i = 26;break;
+		case 0x3005: i = 27;break;
+		case 0x3006: i = 28;break;
+		case 0x3007: i = 29;break;
+		case 0x3008: i = 30;break;
+		case 0x3009: i = 31;break;
+		case 0x3010: i = 32;break;
+		case 0x3011: i = 33;break;
+		case 0x3012: i = 34;break;
+		case 0x3013: i = 35;break;
+		case 0x3014: i = 36;break;
+		case 0x3015: i = 37;break;
+		case 0x3016: i = 38;break;
+		case 0x3017: i = 39;break;
+		case 0x3018: i = 40;break;
+		case 0x3019: i = 41;break;
+		case 0x3020: i = 42;break;
+		case 0x3021: i = 43;break;
+		case 0x3022: i = 44;break;
+		case 0x3023: i = 45;break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;

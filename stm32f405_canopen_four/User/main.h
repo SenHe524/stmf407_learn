@@ -7,12 +7,18 @@
 #include "delay.h"
 #include "usart.h"
 
-
+#include "data.h"
 #include "timer_user.h"
 #include "can1.h"
-#include "data.h"
 #include "Master.h"
 #include "canfestival.h"
 #include "CANopen.h"
+#include "getINFO.h"
+
+
+#define MOTOR1	0x01
+#define MOTOR2	0x02
+#define MOTOR3	0x03
+#define MOTOR4	0x04
 
 #endif

@@ -28,6 +28,8 @@ void TIM3_Init(void)
 	/* Time base configuration */
 	TIM_TimeBaseStructure.TIM_Period = 100-1;
 	TIM_TimeBaseStructure.TIM_Prescaler = 84-1;//84M频率/84为1000k(与timerscfg.h配置一致即可)，即1us间隔
+//	TIM_TimeBaseStructure.TIM_Period = 65535;
+//	TIM_TimeBaseStructure.TIM_Prescaler = 840;//84M频率/84为1000k(与timerscfg.h配置一致即可)，即1us间隔
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 

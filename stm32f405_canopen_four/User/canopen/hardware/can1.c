@@ -4,10 +4,10 @@
 
 static CO_Data *co_data = NULL;
 extern Message rxm;
-extern uint8_t status_1[7];
-extern uint8_t status_2[7];
-extern uint8_t status_3[7];
-extern uint8_t status_4[7];
+uint8_t status_1[7] = {0};
+uint8_t status_2[7] = {0};
+uint8_t status_3[7] = {0};
+uint8_t status_4[7] = {0};
 //Initialize the CAN hardware 
 unsigned char CAN1_Init(CO_Data * d)
 {
@@ -103,15 +103,11 @@ unsigned char canSend(CAN_PORT notused, Message *m)
 	ret = CAN_Transmit(CANx, &TxMessage);
 	while((CAN_TransmitStatus(CANx, ret) == CAN_TxStatus_Failed) && (i < 0xFFF))
 		i++;
-	if(i > 0xfff) return 0;//fail
+	if(i > 0xfff)
+		return 0;//fail
 	return 1;//success
 }
 
-
-unsigned char canChangeBaudRate_driver( CAN_HANDLE fd, char* baud)
-{
-	return 0;
-}
 
 /**
 * @brief  This function handles CAN1 RX0 interrupt request.
@@ -130,37 +126,14 @@ void CAN1_RX0_IRQHandler(void)
 	if(RxMessage.RTR == CAN_RTR_REMOTE)//远程帧
 		rxm.rtr = 1;
 	rxm.len = RxMessage.DLC;
-//	for(i=0 ; i<8 ; i++)
-//		 rxm.data[i] = 0;
+	for(i=0 ; i<8 ; i++)
+		 rxm.data[i] = 0;
 	for(i=0 ; i<rxm.len ; i++)
 		 rxm.data[i] = RxMessage.Data[i];
-//	switch(rxm.cob_id)
-//	{
-//		case 0x181:{
-//			for(i=0 ; i<rxm.len ; i++)
-//			status_1[i] = rxm.data[i];
-//			break;
-//		}
-//		case 0x282:{
-//			for(i=0 ; i<rxm.len ; i++)
-//			status_2[i] = rxm.data[i];
-//			break;
-//		}
-//		case 0x383:{
-//			for(i=0 ; i<rxm.len ; i++)
-//			status_3[i] = rxm.data[i];
-//			break;
-//		}
-//		case 0x484:{
-//			for(i=0 ; i<rxm.len ; i++)
-//			status_4[i] = rxm.data[i];
-//			break;
-//		}
-//		default:
-//			break;
-//	}
+
 //	printf("rec:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",rxm.cob_id,rxm.len,rxm.data[0], rxm.data[1],rxm.data[2],rxm.data[3]
 //										,rxm.data[4], rxm.data[5],rxm.data[6],rxm.data[7]);	
 		canDispatch(co_data, &rxm);
 }
+
 

@@ -1,4 +1,4 @@
-// Includes for the Canfestival driver
+
 #include "CANopen.h"
 
 void tr_pdo_mapping(void)
@@ -76,52 +76,65 @@ void heartbeat_error(CO_Data* d, UNS8 heartbeatID)
 	printf("heartbeat_error heartbeatID:%d\r\n",heartbeatID);
 }
 
+void motor_control(uint16_t* controlword, int32_t* velocity)
+{
+	*controlword = 0x00;
+	delay_ms(10);
+	*controlword = 0x06;
+	*velocity = 0;
+	delay_ms(10);
+	*controlword = 0x07;
+	delay_ms(10);
+	*controlword = 0x0F;
+	delay_ms(10);
+}
+
+
 uint8_t Driver_Enable(uint8_t ID)
 {
 	//*************************SDO****************************
-	Message mes_1 = {0x600+ID,0,8,{0x2B,0x40,0x60,0x00,0x00,0x00,0x00,0x00}};
-	canSend(CAN1, &mes_1);
-	delay_ms(5);	
-	mes_1.data[4] = 0x06;
-	canSend(CAN1, &mes_1);
+	Message mes = {0x600+ID,0,8,{0x2B,0x40,0x60,0x00,0x00,0x00,0x00,0x00}};
+//	canSend(CAN1, &mes);
+//	delay_ms(5);	
+	mes.data[4] = 0x06;
+	canSend(CAN1, &mes);
 	delay_ms(5);
-	mes_1.data[4] = 0x07;
-	canSend(CAN1, &mes_1);
+	mes.data[4] = 0x07;
+	canSend(CAN1, &mes);
 	delay_ms(5);
-	mes_1.data[4] = 0x0F;
+	mes.data[4] = 0x0F;
 
-	return canSend(CAN1, &mes_1);
+	return canSend(CAN1, &mes);
 	/*************************SDO****************************/
 
-//	Message mes_1 = {0x200+ID,0,7,{0x06,0x00,0x03,0x00,0x00,0x00,0x00}};
-//	canSend(CAN1, &mes_1);
-//	delay_ms(50);
-//	mes_1.data[0] = 0x07;
-//	mes_1.data[1] = 0x00;
-//	canSend(CAN1, &mes_1);
-//	delay_ms(50);
-//	mes_1.data[0] = 0x0F;
-//	mes_1.data[1] = 0x00;
-//	canSend(CAN1, &mes_1);
-//	delay_ms(50);
-//	return 0x00;
+	/**/
+//	switch(ID)
+//	{
+//		case MOTOR1:
+//			motor_control(&motor1_control, &motor1_velocity);
+//			break;
+//		case MOTOR2:
+//			motor_control(&motor2_control, &motor2_velocity);
+//			break;
+//		case MOTOR3:
+//			motor_control(&motor3_control, &motor3_velocity);
+//			break;
+//		case MOTOR4:
+//			motor_control(&motor4_control, &motor4_velocity);
+//			break;
+//		default:
+//			break;
+//	}
+//	return 0;
+	/**/
 }
+
 
 uint8_t Profile_Velocity_Init(uint8_t ID)
 {
-	Message mes = {0x600+ID,0,8,{0x2F,0x60,0x60,0x00,0x00,0x00,0x00,0x00}};
+	Message mes = {0x600+ID,0,8,{0x23,0x83,0x60,0x00,0x64,0x00,0x00,0x00}};
 	canSend(CAN1, &mes);
-	delay_ms(5);
-	mes.data[0] = 0x23;
-	mes.data[1] = 0x83;
-	mes.data[2] = 0x60;
-	mes.data[3] = 0x00;
-	mes.data[4] = 0x64;
-	mes.data[5] = 0x00;
-	mes.data[6] = 0x00;
-	mes.data[7] = 0x00;
-	canSend(CAN1, &mes);
-	delay_ms(5);
+	delay_ms(50);
 	mes.data[0] = 0x23;
 	mes.data[1] = 0x84;
 	mes.data[2] = 0x60;
@@ -131,17 +144,7 @@ uint8_t Profile_Velocity_Init(uint8_t ID)
 	mes.data[6] = 0x00;
 	mes.data[7] = 0x00;
 	canSend(CAN1, &mes);
-	delay_ms(5);
-	mes.data[0] = 0x2F;
-	mes.data[1] = 0x60;
-	mes.data[2] = 0x60;
-	mes.data[3] = 0x00;
-	mes.data[4] = 0x03;
-	mes.data[5] = 0x00;
-	mes.data[6] = 0x00;
-	mes.data[7] = 0x00;
-	canSend(CAN1, &mes);
-	delay_ms(5);
+	delay_ms(50);
 	return 0x00;
 }
 
@@ -759,49 +762,4 @@ uint8_t TPDO4_Config(uint8_t ID)
 	return 0x00;
 }
 
-
-
-void Profile_Velocity_Test(uint8_t ID)
-{
-	Message mes_1 = {0x200+1,0,7,{0x0F,0x00,0x03,0x64,0x00,0x00,0x00}};
-	Message mes_2 = {0x300+2,0,7,{0x0F,0x00,0x03,0x64,0x00,0x00,0x00}};
-	Message mes_3 = {0x400+3,0,7,{0x0F,0x00,0x03,0x64,0x00,0x00,0x00}};
-	Message mes_4 = {0x500+4,0,7,{0x0F,0x00,0x03,0x64,0x00,0x00,0x00}};
-	canSend(CAN1, &mes_1);
-//	delay_ms(1);
-	canSend(CAN1, &mes_2);
-//	delay_ms(1);
-	canSend(CAN1, &mes_3);
-	delay_ms(1);
-	canSend(CAN1, &mes_4);
-	delay_ms(5000);
-	mes_1.data[3] = 0x9C;
-	mes_1.data[4] = 0xFF;
-	mes_1.data[5] = 0xFF;
-	mes_1.data[6] = 0xFF;
-	
-	mes_2.data[3] = 0x9C;
-	mes_2.data[4] = 0xFF;
-	mes_2.data[5] = 0xFF;
-	mes_2.data[6] = 0xFF;
-	
-	mes_3.data[3] = 0x9C;
-	mes_3.data[4] = 0xFF;
-	mes_3.data[5] = 0xFF;
-	mes_3.data[6] = 0xFF;
-	
-	mes_4.data[3] = 0x9C;
-	mes_4.data[4] = 0xFF;
-	mes_4.data[5] = 0xFF;
-	mes_4.data[6] = 0xFF;
-	canSend(CAN1, &mes_1);
-//	delay_ms(1);
-	canSend(CAN1, &mes_2);
-//	delay_ms(1);
-	canSend(CAN1, &mes_3);
-	delay_ms(1);
-	canSend(CAN1, &mes_4);
-	delay_ms(5000);
-
-}
 
