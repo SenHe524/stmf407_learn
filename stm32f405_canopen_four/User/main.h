@@ -14,7 +14,7 @@
 #include "canfestival.h"
 #include "CANopen.h"
 #include "getINFO.h"
-
+#include "sysdep.h"
 
 #define MOTOR1	0x01
 #define MOTOR2	0x02

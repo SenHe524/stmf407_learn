@@ -4,7 +4,7 @@
 #include "main.h"
 
 void tr_pdo_mapping(void);
-uint8_t NMT_Control(uint8_t Data0, uint8_t Data1);
+uint8_t NMT_Control(uint8_t cs, uint8_t nodeid);
 uint8_t Save_EEPROM(void);
 uint8_t Reset_Save(uint8_t ID, uint8_t select);
 void heartbeat_timeset(void);

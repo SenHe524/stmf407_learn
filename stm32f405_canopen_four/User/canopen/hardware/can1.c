@@ -4,10 +4,8 @@
 
 static CO_Data *co_data = NULL;
 extern Message rxm;
-uint8_t status_1[7] = {0};
-uint8_t status_2[7] = {0};
-uint8_t status_3[7] = {0};
-uint8_t status_4[7] = {0};
+uint8_t buf_temp[4] = {0};
+uint8_t rpdo_flag[4] = {0};
 //Initialize the CAN hardware 
 unsigned char CAN1_Init(CO_Data * d)
 {
@@ -59,9 +57,9 @@ unsigned char CAN1_Init(CO_Data * d)
 	CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
 	CAN_InitStructure.CAN_SJW = CAN_SJW_1tq;
 	/* CAN Baudrate (CAN clocked at 42 MHz)  42e6 / ( prescaler * (1+BS1+BS2))  */
-	CAN_InitStructure.CAN_BS1 = CAN_BS1_16tq;
-	CAN_InitStructure.CAN_BS2 = CAN_BS2_4tq;
-	CAN_InitStructure.CAN_Prescaler = 4;
+	CAN_InitStructure.CAN_BS1 = CAN_BS1_5tq;
+	CAN_InitStructure.CAN_BS2 = CAN_BS2_1tq;
+	CAN_InitStructure.CAN_Prescaler = 12;
 	CAN_Init(CANx, &CAN_InitStructure);
 
 	/* CAN filter init */
@@ -96,18 +94,63 @@ unsigned char canSend(CAN_PORT notused, Message *m)
 	TxMessage.DLC = m->len;
 	for(i=0 ; i<m->len ; i++)
 		TxMessage.Data[i] = m->data[i];
+
 //	printf("send:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",TxMessage.StdId, TxMessage.DLC,TxMessage.Data[0],TxMessage.Data[1]
 //										,TxMessage.Data[2], TxMessage.Data[3],TxMessage.Data[4],
-//			TxMessage.Data[5],TxMessage.Data[6], TxMessage.Data[7]);	
+//			TxMessage.Data[5],TxMessage.Data[6], TxMessage.Data[7]);
 	i = 0;
 	ret = CAN_Transmit(CANx, &TxMessage);
-	while((CAN_TransmitStatus(CANx, ret) == CAN_TxStatus_Failed) && (i < 0xFFF))
+
+	while((CAN_TransmitStatus(CANx, ret) != CAN_TxStatus_Ok) && (i < 0xFFF))
 		i++;
-	if(i > 0xfff)
+	if(i >= 0xfff)
 		return 0;//fail
 	return 1;//success
 }
 
+
+void sdodata_handle(Message *m)
+{
+	UNS16 cob_id = UNS16_LE(m->cob_id);
+	uint8_t len = 0;
+	uint8_t i = 0;
+	switch(cob_id)
+	{
+		case 0x581:
+			rpdo_flag[0] = 1;
+			break;
+		case 0x582:
+			rpdo_flag[1] = 1;
+			break;
+		case 0x583:
+			rpdo_flag[2] = 1;
+			break;
+		case 0x584:
+			rpdo_flag[3] = 1;
+			break;
+		default:
+			break;
+	}
+	switch(m->data[0])
+	{
+		case 0x4F:
+			len = 1;
+			break;
+		case 0x4B:
+			len = 2;
+			break;
+		case 0x47:
+			len = 3;
+			break;
+		case 0x43:
+			len = 4;
+			break;
+		default:
+			break;
+	}
+	for(i = 0; i< len; i++)
+		buf_temp[i] = m->data[i+4];
+}
 
 /**
 * @brief  This function handles CAN1 RX0 interrupt request.
@@ -133,7 +176,11 @@ void CAN1_RX0_IRQHandler(void)
 
 //	printf("rec:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",rxm.cob_id,rxm.len,rxm.data[0], rxm.data[1],rxm.data[2],rxm.data[3]
 //										,rxm.data[4], rxm.data[5],rxm.data[6],rxm.data[7]);	
-		canDispatch(co_data, &rxm);
+	if(rxm.cob_id >> 7 == 0xB)
+	{
+		sdodata_handle(&rxm);
+	}
+	canDispatch(co_data, &rxm);
 }
 
 

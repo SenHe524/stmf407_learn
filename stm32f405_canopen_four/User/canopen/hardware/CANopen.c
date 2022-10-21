@@ -1,25 +1,6 @@
 
 #include "CANopen.h"
 
-void tr_pdo_mapping(void)
-{
-	RPDO1_Config(0x01);
-	delay_ms(100);
-	RPDO2_Config(0x02);
-	delay_ms(100);
-	RPDO3_Config(0x03);
-	delay_ms(100);
-	RPDO4_Config(0x04);
-	delay_ms(100);
-	TPDO1_Config(0x01);
-	delay_ms(100);
-	TPDO2_Config(0x02);
-	delay_ms(100);
-	TPDO3_Config(0x03);
-	delay_ms(100);
-	TPDO4_Config(0x04);
-	delay_ms(100);
-}
 
 //保存新写入功能码参数配置至EEPROM
 uint8_t Save_EEPROM(void)
@@ -78,8 +59,8 @@ void heartbeat_error(CO_Data* d, UNS8 heartbeatID)
 
 void motor_control(uint16_t* controlword, int32_t* velocity)
 {
-	*controlword = 0x00;
-	delay_ms(10);
+//	*controlword = 0x00;
+//	delay_ms(10);
 	*controlword = 0x06;
 	*velocity = 0;
 	delay_ms(10);
@@ -93,40 +74,42 @@ void motor_control(uint16_t* controlword, int32_t* velocity)
 uint8_t Driver_Enable(uint8_t ID)
 {
 	//*************************SDO****************************
-	Message mes = {0x600+ID,0,8,{0x2B,0x40,0x60,0x00,0x00,0x00,0x00,0x00}};
+//	Message mes = {0x600+ID,0,8,{0x23,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}};
 //	canSend(CAN1, &mes);
-//	delay_ms(5);	
-	mes.data[4] = 0x06;
-	canSend(CAN1, &mes);
-	delay_ms(5);
-	mes.data[4] = 0x07;
-	canSend(CAN1, &mes);
-	delay_ms(5);
-	mes.data[4] = 0x0F;
+//	delay_ms(5);
+//	mes.data[0] = 0x2B;
+//	mes.data[1] = 0x40;
+//	mes.data[4] = 0x06;
+//	canSend(CAN1, &mes);
+//	delay_ms(5);
+//	mes.data[4] = 0x07;
+//	canSend(CAN1, &mes);
+//	delay_ms(5);
+//	mes.data[4] = 0x0F;
 
-	return canSend(CAN1, &mes);
-	/*************************SDO****************************/
+//	return canSend(CAN1, &mes);
+	/*****************************************************/
 
-	/**/
-//	switch(ID)
-//	{
-//		case MOTOR1:
-//			motor_control(&motor1_control, &motor1_velocity);
-//			break;
-//		case MOTOR2:
-//			motor_control(&motor2_control, &motor2_velocity);
-//			break;
-//		case MOTOR3:
-//			motor_control(&motor3_control, &motor3_velocity);
-//			break;
-//		case MOTOR4:
-//			motor_control(&motor4_control, &motor4_velocity);
-//			break;
-//		default:
-//			break;
-//	}
-//	return 0;
-	/**/
+	/**********************PDO*************************/
+	switch(ID)
+	{
+		case MOTOR1:
+			motor_control(&motor1_control, &motor1_velocity);
+			break;
+		case MOTOR2:
+			motor_control(&motor2_control, &motor2_velocity);
+			break;
+		case MOTOR3:
+			motor_control(&motor3_control, &motor3_velocity);
+			break;
+		case MOTOR4:
+			motor_control(&motor4_control, &motor4_velocity);
+			break;
+		default:
+			break;
+	}
+	return 0;
+	/*************************************************/
 }
 
 
@@ -760,6 +743,25 @@ uint8_t TPDO4_Config(uint8_t ID)
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
 	return 0x00;
+}
+void tr_pdo_mapping(void)
+{
+	RPDO1_Config(0x01);
+	delay_ms(100);
+	RPDO2_Config(0x02);
+	delay_ms(100);
+	RPDO3_Config(0x03);
+	delay_ms(100);
+	RPDO4_Config(0x04);
+	delay_ms(100);
+	TPDO1_Config(0x01);
+	delay_ms(100);
+	TPDO2_Config(0x02);
+	delay_ms(100);
+	TPDO3_Config(0x03);
+	delay_ms(100);
+	TPDO4_Config(0x04);
+	delay_ms(100);
 }
 
 
