@@ -3,9 +3,10 @@
 
 
 static CO_Data *co_data = NULL;
-extern Message rxm;
+Message rxm;
 uint8_t buf_temp[4] = {0};
 uint8_t rpdo_flag[4] = {0};
+uint8_t write_flag = 0xFF;
 //Initialize the CAN hardware 
 unsigned char CAN1_Init(CO_Data * d)
 {
@@ -144,6 +145,20 @@ void sdodata_handle(Message *m)
 			break;
 		case 0x43:
 			len = 4;
+			break;
+		case 0x60:
+			write_flag = 1;
+			rpdo_flag[0] = 1;
+			rpdo_flag[1] = 1;
+			rpdo_flag[2] = 1;
+			rpdo_flag[3] = 1;
+			break;
+		case 0x80:
+			write_flag = 0;
+			rpdo_flag[0] = 1;
+			rpdo_flag[1] = 1;
+			rpdo_flag[2] = 1;
+			rpdo_flag[3] = 1;
 			break;
 		default:
 			break;
