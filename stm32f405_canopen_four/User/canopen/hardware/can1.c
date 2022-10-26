@@ -4,8 +4,11 @@
 
 static CO_Data *co_data = NULL;
 Message rxm;
+//	SDO数据缓存
 uint8_t buf_temp[4] = {0};
+//	rpdo的标志位
 uint8_t rpdo_flag[4] = {0};
+//	
 uint8_t write_flag = 0xFF;
 //Initialize the CAN hardware 
 unsigned char CAN1_Init(CO_Data * d)
@@ -148,17 +151,17 @@ void sdodata_handle(Message *m)
 			break;
 		case 0x60:
 			write_flag = 1;
-			rpdo_flag[0] = 1;
-			rpdo_flag[1] = 1;
-			rpdo_flag[2] = 1;
-			rpdo_flag[3] = 1;
+			rpdo_flag[0] = 0;
+			rpdo_flag[1] = 0;
+			rpdo_flag[2] = 0;
+			rpdo_flag[3] = 0;
 			break;
 		case 0x80:
 			write_flag = 0;
-			rpdo_flag[0] = 1;
-			rpdo_flag[1] = 1;
-			rpdo_flag[2] = 1;
-			rpdo_flag[3] = 1;
+			rpdo_flag[0] = 0;
+			rpdo_flag[1] = 0;
+			rpdo_flag[2] = 0;
+			rpdo_flag[3] = 0;
 			break;
 		default:
 			break;

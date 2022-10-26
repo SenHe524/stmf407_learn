@@ -861,16 +861,6 @@
               <FilePath>..\User\canopen\hardware\config.h</FilePath>
             </File>
             <File>
-              <FileName>CANopen.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\canopen\hardware\CANopen.c</FilePath>
-            </File>
-            <File>
-              <FileName>CANopen.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\canopen\hardware\CANopen.h</FilePath>
-            </File>
-            <File>
               <FileName>timerscfg.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\canopen\inc\stm\timerscfg.h</FilePath>
@@ -881,9 +871,24 @@
               <FilePath>..\User\canopen\inc\stm\applicfg.h</FilePath>
             </File>
             <File>
-              <FileName>getINFO.c</FileName>
+              <FileName>pdo_set.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\canopen\hardware\getINFO.c</FilePath>
+              <FilePath>..\User\canopen\hardware\pdo_set.c</FilePath>
+            </File>
+            <File>
+              <FileName>pdo_set.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\canopen\hardware\pdo_set.h</FilePath>
+            </File>
+            <File>
+              <FileName>set_get_info.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\canopen\hardware\set_get_info.c</FilePath>
+            </File>
+            <File>
+              <FileName>set_get_info.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\canopen\hardware\set_get_info.h</FilePath>
             </File>
           </Files>
         </Group>

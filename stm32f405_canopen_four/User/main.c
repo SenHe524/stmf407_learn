@@ -1,10 +1,12 @@
 #include "main.h"
 //DEBUG_ERR_CONSOLE_ON
 
-int i = 0;
-//uint16_t reg = 0x6083;
-//uint8_t len = 4;
-//uint8_t buf[4] = {0};
+int i = 0, j = 0;
+uint32_t s = 0;
+motorID id = MOTOR1;
+uint16_t reg = 0x6083;
+uint16_t buf[10] = {0};
+int32_t velo = 0;
 int main(void)
 {
 //	int j = 0;
@@ -36,57 +38,71 @@ int main(void)
 	motor2_mode = 3;
 	motor3_mode = 3;
 	motor4_mode = 3;
-	//	速度模式下的加减速时间配置
-	Profile_Velocity_Init(MOTOR1);
-	Profile_Velocity_Init(MOTOR2);
-	Profile_Velocity_Init(MOTOR3);
-	Profile_Velocity_Init(MOTOR4);
 	delay_ms(150);
 	//	使能电机
-	Driver_Enable(MOTOR1);
-	Driver_Enable(MOTOR2);
-	Driver_Enable(MOTOR3);
-	Driver_Enable(MOTOR4);
+	motor_enable(MOTOR1);
+	motor_enable(MOTOR2);
+	motor_enable(MOTOR3);
+	motor_enable(MOTOR4);
 //	Reset_Save(0x01, 2);
 //	Reset_Save(0x02, 2);
 //	Reset_Save(0x03, 2);
 //	Reset_Save(0x04, 2);
 	while(1)
 	{
-//		for(j = 0; j < 4; j++)
-//		{
-//			printf("%d----", set_reg(j+1, reg, len, buf));
-//		}
-		printf("%d-%d-%d-%d\n",motor1_position,motor2_position,motor3_position,motor4_position);
+		buf[0] = get_motor_temp(id);
+		buf[1] = get_motor_status(id);
+		buf[2] = get_hall_status(id);
+		buf[3] = get_errorcode(id);
+		velo = get_actual_velocity(id);
+
+		printf("%d&&&&%d&&&&%d&&&&%d\n",motor1_position,motor2_position,motor3_position,motor4_position);
+		printf("%d&&&&%d&&&&%d&&&&%d\n",get_rad(MOTOR1),get_rad(MOTOR2),
+					get_rad(MOTOR3),get_rad(MOTOR4));
+		printf("%d&&&&%d&&&&%d&&&&%d\n",get_meter(MOTOR1),get_meter(MOTOR2),
+					get_meter(MOTOR3),get_meter(MOTOR4));
+		
 		if(i == 1)
 		{
-			motor1_velocity = 100;
-			motor2_velocity = 100;
-			motor3_velocity = 100;
-			motor4_velocity = 100;
+			set_velocity_motor1(100);
+			set_velocity_motor2(100);
+			set_velocity_motor3(100);
+			set_velocity_motor4(100);
 			delay_ms(2000);
-			motor1_velocity = 0;
-			motor2_velocity = 0;
-			motor3_velocity = 0;
-			motor4_velocity = 0;
+			velo = get_actual_velocity(id);
+			if(j == 1)
+			{
+				quickstop_to_enable(id);
+			}
+			delay_ms(2000);
+			set_velocity_motor1(0);
+			set_velocity_motor2(0);
+			set_velocity_motor3(0);
+			set_velocity_motor4(0);
 			delay_ms(2000);
 		}
 		
 		if(i == 2)
 		{
-			motor1_velocity = -200;
-			motor2_velocity = -200;
-			motor3_velocity = -200;
-			motor4_velocity = -200;
+			set_velocity_motor1(-200);
+			set_velocity_motor2(-200);
+			set_velocity_motor3(-200);
+			set_velocity_motor4(-200);
 			delay_ms(2000);
-			motor1_velocity = 0;
-			motor2_velocity = 0;
-			motor3_velocity = 0;
-			motor4_velocity = 0;
+			velo = get_actual_velocity(id);
+			if(j == 2)
+			{
+				quick_stop(id);
+			}
+			delay_ms(2000);
+			set_velocity_motor1(0);
+			set_velocity_motor2(0);
+			set_velocity_motor3(0);
+			set_velocity_motor4(0);
 			delay_ms(2000);
 		}
 
 	}
-
+//	NVIC_ClearPendingIRQ
 	return 0;
 }
