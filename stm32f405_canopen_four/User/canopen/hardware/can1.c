@@ -9,7 +9,7 @@ uint8_t buf_temp[4] = {0};
 //	rpdo的标志位
 uint8_t rpdo_flag[4] = {0};
 //	
-uint8_t write_flag = 0xFF;
+int8_t write_flag = -2;
 //Initialize the CAN hardware 
 unsigned char CAN1_Init(CO_Data * d)
 {

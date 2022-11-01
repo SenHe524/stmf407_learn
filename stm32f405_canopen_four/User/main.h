@@ -15,6 +15,11 @@ typedef enum MOTOR
 	MOTOR4 = 0x04
 }motorID;
 
+#define IS_MOTOR_ID(ID)		(((ID) == MOTOR1) || \
+							 ((ID) == MOTOR2) || \
+							 ((ID) == MOTOR3) || \
+							 ((ID) == MOTOR4))
+
 #include "data.h"
 #include "timer_user.h"
 #include "can1.h"

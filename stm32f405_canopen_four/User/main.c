@@ -5,7 +5,7 @@ int i = 0, j = 0;
 uint32_t s = 0;
 motorID id = MOTOR1;
 uint16_t reg = 0x6083;
-uint16_t buf[10] = {0};
+uint16_t buf[4] = {0};
 int32_t velo = 0;
 int main(void)
 {
@@ -54,34 +54,45 @@ int main(void)
 		buf[1] = get_motor_status(id);
 		buf[2] = get_hall_status(id);
 		buf[3] = get_errorcode(id);
-		velo = get_actual_velocity(id);
 
-		printf("%d&&&&%d&&&&%d&&&&%d\n",motor1_position,motor2_position,motor3_position,motor4_position);
+		printf("%d&&&&%d&&&&%d&&&&%d\n",get_count(MOTOR1),get_count(MOTOR2),
+					get_count(MOTOR3),get_count(MOTOR4));
 		printf("%d&&&&%d&&&&%d&&&&%d\n",get_rad(MOTOR1),get_rad(MOTOR2),
 					get_rad(MOTOR3),get_rad(MOTOR4));
-		printf("%d&&&&%d&&&&%d&&&&%d\n",get_meter(MOTOR1),get_meter(MOTOR2),
-					get_meter(MOTOR3),get_meter(MOTOR4));
+		printf("%d&&&&%d&&&&%d&&&&%d\n",get_distance(MOTOR1),get_distance(MOTOR2),
+					get_distance(MOTOR3),get_distance(MOTOR4));
 		
 		if(i == 1)
 		{
-			set_velocity_motor1(100);
-			set_velocity_motor2(100);
-			set_velocity_motor3(100);
-			set_velocity_motor4(100);
+			set_velocity_motor1(velo);
+			set_velocity_motor2(velo);
+			set_velocity_motor3(velo);
+			set_velocity_motor4(velo);
 			delay_ms(2000);
-			velo = get_actual_velocity(id);
 			if(j == 1)
 			{
-				quickstop_to_enable(id);
+				quickstop_to_enable(MOTOR1);
+				quickstop_to_enable(MOTOR2);
+				quickstop_to_enable(MOTOR3);
+				quickstop_to_enable(MOTOR4);
+				j = 0;
+			}
+			if(j == 3)
+			{
+				motor_enable(MOTOR1);
+				motor_enable(MOTOR2);
+				motor_enable(MOTOR3);
+				motor_enable(MOTOR4);
+				j = 0;
 			}
 			delay_ms(2000);
-			set_velocity_motor1(0);
-			set_velocity_motor2(0);
-			set_velocity_motor3(0);
-			set_velocity_motor4(0);
-			delay_ms(2000);
+//			set_velocity_motor1(0);
+//			set_velocity_motor2(0);
+//			set_velocity_motor3(0);
+//			set_velocity_motor4(0);
+//			delay_ms(2000);
+
 		}
-		
 		if(i == 2)
 		{
 			set_velocity_motor1(-200);
@@ -92,7 +103,19 @@ int main(void)
 			velo = get_actual_velocity(id);
 			if(j == 2)
 			{
-				quick_stop(id);
+				quick_stop(MOTOR1);
+				quick_stop(MOTOR2);
+				quick_stop(MOTOR3);
+				quick_stop(MOTOR4);
+				j = 0;
+			}
+			if(j == 4)
+			{
+				motor_disable(MOTOR1);
+				motor_disable(MOTOR2);
+				motor_disable(MOTOR3);
+				motor_disable(MOTOR4);
+				j = 0;
 			}
 			delay_ms(2000);
 			set_velocity_motor1(0);
@@ -101,8 +124,8 @@ int main(void)
 			set_velocity_motor4(0);
 			delay_ms(2000);
 		}
+		
 
 	}
-//	NVIC_ClearPendingIRQ
 	return 0;
 }
