@@ -133,9 +133,6 @@ int8_t set_reg(motorID ID, uint16_t reg, uint8_t len, uint8_t* val_buf)
 	}
 	return write_flag;
 }
-
-
-
 int8_t motor_control(uint16_t* controlword, uint16_t *statusword, int32_t* velocity)
 {
 //	*controlword = 0x00;
@@ -158,6 +155,39 @@ int8_t motor_control(uint16_t* controlword, uint16_t *statusword, int32_t* veloc
 	return 1;
 }
 
+int8_t motor_set(uint16_t *controlword, uint16_t *statusword, uint8_t cmd, uint8_t cmd_status)
+{
+	uint16_t i = 0;
+	*controlword = cmd;
+	while((*statusword & 0xFF) != cmd_status)
+	{
+		delay_ms(1);
+		i++;
+		if(i > 0xFF)
+			return 0;
+	}
+	return 1;
+}
+
+
+int8_t isenable(motorID ID)
+{
+	uint16_t status = get_status(ID);
+	int8_t ret = 0;
+	switch(status & 0xFF)
+	{
+		case 0xFF:
+			ret = -1;
+			break;
+		case 0x27:
+			ret = 1;
+			break;
+		default:
+			break;
+	}
+	return ret;
+
+}
 
 int8_t motor_enable(motorID ID)
 {
@@ -203,19 +233,7 @@ int8_t motor_enable(motorID ID)
 	/*************************************************/
 }
 
-int8_t motor_set(uint16_t *controlword, uint16_t *statusword, uint8_t com, uint8_t com_status)
-{
-	uint16_t i = 0;
-	*controlword = com;
-	while((*statusword & 0xFF) != com_status)
-	{
-		delay_ms(1);
-		i++;
-		if(i > 0xFF)
-			return 0;
-	}
-	return 1;
-}
+
 int8_t motor_disable(motorID ID)
 {
 	int8_t ret = 0;
@@ -244,6 +262,117 @@ int8_t motor_disable(motorID ID)
 	}
 	return ret;
 }
+
+int8_t isfault(motorID ID)
+{
+	uint16_t status = get_status(ID);
+	int8_t ret = 0;
+	switch(status & 0xFF)
+	{
+		case 0xFF:
+			ret = -1;
+			break;
+		case 0x80:
+			ret = 1;
+			break;
+		default:
+			break;
+	}
+	return ret;
+
+}
+
+int8_t clear_fault(motorID ID)
+{
+	int8_t ret = 0;
+	if(!IS_MOTOR_ID(ID))
+		return -1;
+	switch(ID)
+	{
+		case MOTOR1:
+			ret = motor_set(&motor1_control, &motor1_status,
+						0x80, 0x40);
+			break;
+		case MOTOR2:
+			ret = motor_set(&motor2_control, &motor2_status,
+						0x80, 0x40);
+			break;
+		case MOTOR3:
+			ret = motor_set(&motor3_control, &motor3_status,
+						0x80, 0x40);
+			break;
+		case MOTOR4:
+			ret = motor_set(&motor4_control, &motor4_status,
+						0x80, 0x40);
+			break;
+		default:
+			break;
+	}
+	return ret;
+}
+int8_t quick_stop(motorID ID)
+{
+	int8_t ret = 0;
+	if(!IS_MOTOR_ID(ID))
+		return -1;
+	switch(ID)
+	{
+		case MOTOR1:
+			ret = motor_set(&motor1_control, &motor1_status,
+						0x02, 0x07);
+			break;
+		case MOTOR2:
+			ret = motor_set(&motor2_control, &motor2_status,
+						0x02, 0x07);
+			break;
+		case MOTOR3:
+			ret = motor_set(&motor3_control, &motor3_status,
+						0x02, 0x07);
+			break;
+		case MOTOR4:
+			ret = motor_set(&motor4_control, &motor4_status,
+						0x02, 0x07);
+			break;
+		default:
+			break;
+	}
+	return ret;
+}
+
+int8_t quickstop_to_enable(motorID ID)
+{
+	int8_t ret = 0;
+	if(!IS_MOTOR_ID(ID))
+		return -1;
+	switch(ID)
+	{
+		case MOTOR1:
+			if((motor1_status & 0xFF) == 0x07)
+				ret = motor_set(&motor1_control, &motor1_status,
+						0x0F, 0x27);
+			break;
+		case MOTOR2:
+			if((motor2_status & 0xFF) == 0x07)
+				ret = motor_set(&motor2_control, &motor2_status,
+						0x0F, 0x27);
+			break;
+		case MOTOR3:
+			if((motor3_status & 0xFF) == 0x07)
+				ret = motor_set(&motor3_control, &motor3_status,
+						0x0F, 0x27);
+			break;
+		case MOTOR4:
+			if((motor4_status & 0xFF) == 0x07)
+				ret = motor_set(&motor4_control, &motor4_status,
+						0x0F, 0x27);
+			break;
+		default:
+			break;
+	}
+	return ret;
+}
+
+
 
 
 
@@ -413,6 +542,8 @@ uint16_t get_errorcode(motorID ID)
 	return get_u16(ID, 0x603F);
 }
 
+
+
 int32_t get_actual_velocity(motorID ID)
 {
 	if(!IS_MOTOR_ID(ID))
@@ -420,6 +551,12 @@ int32_t get_actual_velocity(motorID ID)
 	return get_i32(ID, 0x606C);
 }
 
+uint16_t get_lock(motorID ID)
+{
+	if(!IS_MOTOR_ID(ID))
+		return 0xFFFF;
+	return get_u16(ID, 0x200F);
+}
 
 uint32_t get_accelerate_time(motorID ID)
 {
@@ -509,6 +646,17 @@ uint16_t get_Pfeedforward_Kf(motorID ID)
 }
 
 
+
+int8_t set_lock(motorID ID, uint16_t lock)
+{
+	uint8_t buf[2] = {0};
+	if(lock > 30000)
+		return -3;
+	buf[0] = lock & 0xFF;
+	buf[1] = (lock >> 8)& 0xFF;
+
+	return set_reg(ID, 0x200F, 2, buf);
+}
 int8_t set_accelerate_time(motorID ID, uint32_t time)
 {
 	uint8_t buf[4] = {0};
@@ -535,7 +683,7 @@ int8_t set_decelerate_time(motorID ID, uint32_t time)
 
 int8_t set_Vsmooth_factor(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -546,7 +694,7 @@ int8_t set_Vsmooth_factor(motorID ID, uint16_t factor)
 
 int8_t set_Eratio_gain(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -556,7 +704,7 @@ int8_t set_Eratio_gain(motorID ID, uint16_t factor)
 }
 int8_t set_Eintegral_gain(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -566,7 +714,7 @@ int8_t set_Eintegral_gain(motorID ID, uint16_t factor)
 }
 int8_t set_feedforward_ratio(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -576,7 +724,7 @@ int8_t set_feedforward_ratio(motorID ID, uint16_t factor)
 }
 int8_t set_torque_ratio(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -586,7 +734,7 @@ int8_t set_torque_ratio(motorID ID, uint16_t factor)
 }
 int8_t set_VKp(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -596,7 +744,7 @@ int8_t set_VKp(motorID ID, uint16_t factor)
 }
 int8_t set_VKi(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -606,7 +754,7 @@ int8_t set_VKi(motorID ID, uint16_t factor)
 }
 int8_t set_Vfeedforward_Kf(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -617,7 +765,7 @@ int8_t set_Vfeedforward_Kf(motorID ID, uint16_t factor)
 
 int8_t set_PKp(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -628,7 +776,7 @@ int8_t set_PKp(motorID ID, uint16_t factor)
 
 int8_t set_Pfeedforward_Kf(motorID ID, uint16_t factor)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
 	buf[0] = factor & 0xFF;
@@ -638,142 +786,6 @@ int8_t set_Pfeedforward_Kf(motorID ID, uint16_t factor)
 }
 
 
-
-int8_t clear_count(motorID ID)
-{
-	uint8_t buf[4] = {0};
-	return set_reg(ID, 0x6064, 4, buf);
-}
-
-int8_t clear_fault(motorID ID)
-{
-	int8_t ret = 0;
-	if(!IS_MOTOR_ID(ID))
-		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			ret = motor_set(&motor1_control, &motor1_status,
-						0x80, 0x40);
-			break;
-		case MOTOR2:
-			ret = motor_set(&motor2_control, &motor2_status,
-						0x80, 0x40);
-			break;
-		case MOTOR3:
-			ret = motor_set(&motor3_control, &motor3_status,
-						0x80, 0x40);
-			break;
-		case MOTOR4:
-			ret = motor_set(&motor4_control, &motor4_status,
-						0x80, 0x40);
-			break;
-		default:
-			break;
-	}
-	return ret;
-}
-
-int8_t quick_stop(motorID ID)
-{
-	int8_t ret = 0;
-	if(!IS_MOTOR_ID(ID))
-		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			ret = motor_set(&motor1_control, &motor1_status,
-						0x02, 0x07);
-			break;
-		case MOTOR2:
-			ret = motor_set(&motor2_control, &motor2_status,
-						0x02, 0x07);
-			break;
-		case MOTOR3:
-			ret = motor_set(&motor3_control, &motor3_status,
-						0x02, 0x07);
-			break;
-		case MOTOR4:
-			ret = motor_set(&motor4_control, &motor4_status,
-						0x02, 0x07);
-			break;
-		default:
-			break;
-	}
-	return ret;
-}
-
-int8_t quickstop_to_enable(motorID ID)
-{
-	int8_t ret = 0;
-	if(!IS_MOTOR_ID(ID))
-		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			if((motor1_status & 0xFF) == 0x07)
-				ret = motor_set(&motor1_control, &motor1_status,
-						0x0F, 0x27);
-			break;
-		case MOTOR2:
-			if((motor2_status & 0xFF) == 0x07)
-				ret = motor_set(&motor2_control, &motor2_status,
-						0x0F, 0x27);
-			break;
-		case MOTOR3:
-			if((motor3_status & 0xFF) == 0x07)
-				ret = motor_set(&motor3_control, &motor3_status,
-						0x0F, 0x27);
-			break;
-		case MOTOR4:
-			if((motor4_status & 0xFF) == 0x07)
-				ret = motor_set(&motor4_control, &motor4_status,
-						0x0F, 0x27);
-			break;
-		default:
-			break;
-	}
-	return ret;
-}
-
-
-int8_t isenable(motorID ID)
-{
-	uint16_t status = get_status(ID);
-	int8_t ret = 0;
-	switch(status & 0xFF)
-	{
-		case 0xFF:
-			ret = -1;
-			break;
-		case 0x27:
-			ret = 1;
-			break;
-		default:
-			break;
-	}
-	return ret;
-
-}
-
-int8_t isfault(motorID ID)
-{
-	uint16_t status = get_status(ID);
-	int8_t ret = 0;
-	switch(status & 0xFF)
-	{
-		case 0xFF:
-			ret = -1;
-			break;
-		case 0x80:
-			ret = 1;
-			break;
-		default:
-			break;
-	}
-	return ret;
-
-}
 
 void set_velocity_motor1(int32_t velocity)
 {

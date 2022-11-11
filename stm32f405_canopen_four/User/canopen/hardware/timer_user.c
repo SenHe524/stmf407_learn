@@ -6,7 +6,6 @@
 
 uint32_t cur_time = 0;//时间计数
 uint32_t next_time_set  = 0;//下一次触发时间计数
-//uint32_t TIMER_MAX_COUNT = 90000;//最大时间计数
 static TIMEVAL last_time_set = TIMEVAL_MAX;//上一次的时间计数
 
 
@@ -64,7 +63,7 @@ TIMEVAL getElapsedTime(void)
 // This function handles Timer 3 interrupt request.
 void TIM3_IRQHandler(void)
 {
-	if(TIM_GetFlagStatus(TIM3, TIM_SR_UIF) == RESET)
+	if(TIM_GetFlagStatus(TIM3, TIM_SR_UIF) == RESET)//	过滤更新中断外的其他中断
 		return;
 	last_time_set = cur_time;
 	cur_time++;
@@ -77,7 +76,6 @@ void TIM3_IRQHandler(void)
 		TimeDispatch();
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_SR_UIF);
-	
 }
 
 

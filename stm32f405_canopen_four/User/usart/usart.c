@@ -91,7 +91,7 @@ void USART2_IRQHandler(void)                	//串口1中断服务程序
 int fputc(int ch, FILE *f)
 { 	
 	while((USART1->SR&0X40)==0);//循环发送,直到发送完毕   
-	USART1->DR = (u8) ch;      
+	USART1->DR = (uint8_t) ch;      
 	return ch;
 }
 #endif
@@ -142,14 +142,24 @@ void USART1_Init(u32 bound){
 	
 }
 
+void USART1_sendbuf(uint8_t* data, uint8_t len)
+{
+	uint8_t i = 0;
+	for(i = 0; i < len; i++)
+	{
+		while((USART1->SR&0X40)==0);//循环发送,直到发送完毕   
+		USART1->DR = data[i];  
+	}
+}
 
 void USART1_IRQHandler(void)                	//串口1中断服务程序
 {
-	u8 Res;
+	uint8_t Res;
 
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  //接收中断
 	{
-		Res =USART_ReceiveData(USART1);//(USART1->DR);	//读取接收到的数据
-		USART1->DR = Res;
+		Res =USART_ReceiveData(USART1);//读取接收到的数据
+		usart_rcv(Res);
+//		USART1->DR = Res;
 		}   		 
   } 

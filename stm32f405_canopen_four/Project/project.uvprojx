@@ -14,16 +14,16 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F407IE</Device>
+          <Device>STM32F407ZE</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32F4xx_DFP.1.0.8</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x20000000,0x20000) IRAM2(0x10000000,0x10000) IROM(0x08000000,0x80000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32F407IE$Flash\STM32F4xx_1024.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32F407ZE$Flash\STM32F4xx_1024.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32F407IE$Device\Include\stm32f4xx.h</RegisterFile>
+          <RegisterFile>$$Device:STM32F407ZE$Device\Include\stm32f4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32F407IE$SVD\STM32F40x.svd</SFDFile>
+          <SFDFile>$$Device:STM32F407ZE$SVD\STM32F40x.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -336,7 +336,7 @@
               <MiscControls>--gnu</MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\Include;..\Libraries\CMSIS\Device\STM32F4xx\Include;..\Libraries\CMSIS\Device\STM32F4xx\Source;..\Libraries\CMSIS\Device\STM32F4xx\Source\arm;..\User;..\User\sys;..\User\delay;..\User\usart;..\User\canopen\src;..\User\canopen\inc;..\User\canopen\inc\stm;..\User\canopen\hardware;..\User\canopen\dictionary</IncludePath>
+              <IncludePath>..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\Include;..\Libraries\CMSIS\Device\STM32F4xx\Include;..\Libraries\CMSIS\Device\STM32F4xx\Source;..\Libraries\CMSIS\Device\STM32F4xx\Source\arm;..\User;..\User\sys;..\User\delay;..\User\usart;..\User\flash;..\User\canopen\src;..\User\canopen\inc;..\User\canopen\inc\stm;..\User\canopen\hardware;..\User\canopen\dictionary</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -934,6 +934,26 @@
               <FileName>usart.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\usart\usart.h</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\flash\stm32f4_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\flash\stm32f4_flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\usart\protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>protocol.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\usart\protocol.h</FilePath>
             </File>
           </Files>
         </Group>
