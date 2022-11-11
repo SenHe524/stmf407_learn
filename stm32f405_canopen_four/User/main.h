@@ -19,7 +19,7 @@ typedef enum MOTOR
 								 ((ID) == MOTOR2) || \
 								 ((ID) == MOTOR3) || \
 								 ((ID) == MOTOR4))
-#define SAVE_ALLPARAM 			0x2009
+#define SAVE_RESET_ALLPARAM		0x2009
 #define LOCK_METHOD 			0x200F
 #define SAVE_NEWPARAM 			0x2010
 #define VELO_SMOOTH_FACTOR 		0x2018
@@ -40,7 +40,7 @@ typedef enum MOTOR
 #define MOTOR_CONTROL 			0x6041
 #define MOTOR_MODE				0x6060
 #define MODE_DISPLAY 			0x6061
-#define ACTUAL_POSITION			0x6064
+#define ACTUAL_COUNT			0x6064
 #define ACTUAL_VELOCITY			0x606C
 #define ACC_TIME	 			0x6083
 #define DE_TIME					0x6084
@@ -61,13 +61,11 @@ typedef enum MOTOR
 								 ((REG) == IS_MOTOR_MOVE) || \
 								 ((REG) == MOTOR_HALL_STATUS) || \
 								 ((REG) == ERROR_CODE) || \
-								 ((REG) == MOTOR_STATUS))
+								 ((REG) == MOTOR_STATUS) || \
+								 ((REG) == ACC_TIME) || \
+								 ((REG) == DE_TIME))
 
-//#define IS_GET_UINT32(REG)		(((REG) == MODE_DISPLAY) || \
-//								 ((REG) == ACTUAL_POSITION) || \
-//								 ((REG) == ACTUAL_VELOCITY) || \
-//								 ((REG) == ACC_TIME) || \
-//								 ((REG) == DE_TIME))
+
 
 #include "data.h"
 #include "timer_user.h"

@@ -58,7 +58,6 @@ int main(void)
 			analysis_cmd(get_rxbuf(), get_rxlen());
 			clear_cmd();
 		}
-
 	}
 	return 0;
 }

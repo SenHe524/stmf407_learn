@@ -37,7 +37,7 @@ typedef union
 
 typedef union 
 {
-    uint32_t data_int32;
+    int32_t data_int32;
     unsigned char data8[4];
 }union_int32;
 
