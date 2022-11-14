@@ -146,24 +146,7 @@
           <Name></Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>589</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134233738</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\User\usart\protocol.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\\../User/usart/protocol.c\589</Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <WatchWindow1>
         <Ww>
           <count>0</count>
@@ -265,6 +248,26 @@
           <WinNumber>1</WinNumber>
           <ItemText>k</ItemText>
         </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>velocity</ItemText>
+        </Ww>
+        <Ww>
+          <count>21</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>data_temp</ItemText>
+        </Ww>
+        <Ww>
+          <count>22</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>mes</ItemText>
+        </Ww>
+        <Ww>
+          <count>23</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>cnt_</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -350,7 +353,7 @@
         <Ww>
           <count>16</count>
           <WinNumber>2</WinNumber>
-          <ItemText>motor3_position</ItemText>
+          <ItemText>motor3_position,0x10</ItemText>
         </Ww>
         <Ww>
           <count>17</count>
@@ -380,7 +383,7 @@
         <Ww>
           <count>22</count>
           <WinNumber>2</WinNumber>
-          <ItemText>motor4_position</ItemText>
+          <ItemText>motor4_position,0x10</ItemText>
         </Ww>
         <Ww>
           <count>23</count>

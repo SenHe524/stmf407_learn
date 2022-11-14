@@ -7,17 +7,14 @@ uint8_t rxbuf[BUF_MAX_LEN] = {0};
 uint8_t txbuf[BUF_MAX_LEN] = {0};
 // 接收数据下标
 uint8_t rxindex = 0;
+// 返回值数组下标
+uint8_t cnt_ = 0;
 // 新命令数据长度
 uint8_t rxlen = 0;
 // 新命令接收标志
 uint8_t cmdflag = 0;
-// 上位机读取控制状态标志及数据缓存
-uint8_t ctrl_ret[3] = {0};
-uint8_t ctrl_flag = 0;
 //	上位机设置读取参数值
 union_int8 data8;
-union_uint16 data16;
-union_int32 data32;
 uint8_t datatype_flag = 0xFF;
 // ------------------------查表法crc8校验-------
 static const uint8_t  crc8tab[] = 
@@ -108,8 +105,7 @@ void usart_rcv(uint8_t rxdata)
 		}
 		case FRAME_FUNC:// 标识位
 		{
-			if (rxdata == FUNC_CONTROL || rxdata == FUNC_SPEED 
-				|| rxdata == FUNC_PARAM) {
+			if ((rxdata >= 0x01) && (rxdata <= 0x0A)) {
 				rxbuf[rxindex++] = rxdata;
 				rxflag = 2;
 				rxindex = 2;
@@ -124,7 +120,7 @@ void usart_rcv(uint8_t rxdata)
 		case FRAME_LEN:// 数据位长度
 		{
 			// New_CMD_length为数据帧总字节数 = 帧头+标识位+长度+校验位+帧尾(5 bytes)+数据位
-			rxlen = rxdata+5;
+			rxlen = rxdata + 5;
 			if (rxlen < BUF_MAX_LEN) {
 				rxbuf[rxindex++] = rxdata;
 				rxflag = 3;
@@ -157,464 +153,581 @@ void usart_rcv(uint8_t rxdata)
 }
 void control_cmd(const uint8_t *data_buf, uint8_t data_len)
 {
-	if(data_len != 3)
+	union_int8 control_buf[4];
+	uint8_t temp_buf[4] = {0};
+	uint8_t frame_len = 0;
+	if(data_len != 4)
 		return ;
-	switch(data_buf[3] & 0xF0)
+	switch(data_buf[1])
 	{
-		case 0x10:
+		case SET_ENABLE:
 			for(int i = 0; i < 4; i++)
 			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[3] & (0x01 << i))
+				if(data_buf[3+i] == 0x01)
 				{
-					//与motor_disable返回值不同的初始值
-					int8_t ret = 3;
-					ret = motor_disable((motorID)(i+1));
-					if(ret == 1){
-						ctrl_ret[0] |= (0x01 << i);
-					}
+					control_buf[i].data_int8 = motor_enable((motorID)(i+1));
+					temp_buf[i] = control_buf[i].data8;
 				}
 			}
-			ctrl_flag = 1;
-			ctrl_ret[0] |= 0x80;
 			break;
-		case 0x20:
+		case SET_DISENABLE:
 			for(int i = 0; i < 4; i++)
 			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[3] & (0x01 << i))
+				if(data_buf[3+i] == 0x01)
 				{
-					//与motor_enable返回值不同的初始值
-					int8_t ret = 3;
-					ret = motor_enable((motorID)(i+1));
-					if(ret == 1){
-						ctrl_ret[0] |= (0x01 << i);
-					}
+					control_buf[i].data_int8 = motor_disable((motorID)(i+1));
+					temp_buf[i] = control_buf[i].data8;
 				}
 			}
-			ctrl_flag = 1;
-			ctrl_ret[0] |= 0x40;
 			break;
-		case 0x30:
+		case IS_ENABLE:
 			for(int i = 0; i < 4; i++)
 			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[3] & (0x01 << i))
+				if(data_buf[3+i] == 0x01)
 				{
-					int8_t ret = 3;//与isenable返回值不同的初始值
-					ret = isenable((motorID)(i+1));
-					if(ret == 1){
-						ctrl_ret[0] |= (0x01 << i);
-					}
+					control_buf[i].data_int8 = isenable((motorID)(i+1));
+					temp_buf[i] = control_buf[i].data8;
 				}
 			}
-			ctrl_flag = 1;
-			ctrl_ret[0] |= 0x20;
+			break;
+		case CLEAR_FAULT:
+			for(int i = 0; i < 4; i++)
+			{
+				if(data_buf[3+i] == 0x01)
+				{
+					control_buf[i].data_int8 = clear_fault((motorID)(i+1));
+					temp_buf[i] = control_buf[i].data8;
+				}
+			}
+			break;
+		case IS_FAULT:
+			for(int i = 0; i < 4; i++)
+			{
+				if(data_buf[3+i] == 0x01)
+				{
+					control_buf[i].data_int8 = isfault((motorID)(i+1));
+					temp_buf[i] = control_buf[i].data8;
+				}
+			}
+			break;
+		case SET_STOP:
+			for(int i = 0; i < 4; i++)
+			{
+				if(data_buf[3+i] == 0x01)
+				{
+					control_buf[i].data_int8 = quick_stop((motorID)(i+1));
+					temp_buf[i] = control_buf[i].data8;
+				}
+			}
+			break;
+		case STOP_TO_ENABLE:
+			for(int i = 0; i < 4; i++)
+			{
+				if(data_buf[3+i] == 0x01)
+				{
+					control_buf[i].data_int8 = quickstop_to_enable((motorID)(i+1));
+					temp_buf[i] = control_buf[i].data8;
+				}
+			}
 			break;
 		default:
 			break;
 	}
-	switch(data_buf[4] & 0xF0)
-	{
-		case 0x10:
-			for(int i = 0; i < 4; i++)
-			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[4] & (0x01 << i))
-				{
-					int8_t ret = 3;//与clear_fault返回值不同的初始值
-					ret = clear_fault((motorID)(i+1));
-					if(ret == 1){
-						ctrl_ret[1] |= (0x01 << i);
-					}
-					delay_ms(1);
-				}
-			}
-			ctrl_flag = 1;
-			ctrl_ret[1] |= 0x80;
-			break;
-		case 0x20:
-			for(int i = 0; i < 4; i++)
-			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[4] & (0x01 << i))
-				{
-					int8_t ret = 3;//与isfault返回值不同的初始值
-					ret = isfault((motorID)(i+1));
-					if(ret == 1){
-						ctrl_ret[1] |= (0x01 << i);
-					}
-					delay_ms(1);
-				}
-			}
-			ctrl_flag = 1;
-			ctrl_ret[1] |= 0x40;
-			break;
-		default:
-			break;
-	}
-	switch(data_buf[5] & 0xF0)
-	{
-		case 0x10:
-			for(int i = 0; i < 4; i++)
-			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[5] & (0x01 << i))
-				{
-					int8_t ret = 3;//与quick_stop返回值不同的初始值
-					ret = quick_stop((motorID)(i+1));
-					if(ret == 1){
-						ctrl_ret[2] |= (0x01 << i);
-					}
-					delay_ms(1);
-				}
-			}
-			ctrl_flag = 1;
-			ctrl_ret[2] |= 0x80;
-			break;
-		case 0x20:
-			for(int i = 0; i < 4; i++)
-			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[5] & (0x01 << i))
-				{
-					int8_t ret = 3;
-					ret = quickstop_to_enable((motorID)(i+1));
-					if(ret == 1){
-						ctrl_ret[2] |= (0x01 << i);
-					}
-					delay_ms(1);
-				}
-			}
-			ctrl_flag = 1;
-			ctrl_ret[2] |= 0x40;
-			break;
-		default:
-			break;
-	}
+	frame_len = frame_packing(temp_buf, txbuf, 4, data_buf[1]);
+	USART1_sendbuf(txbuf, frame_len);
 }
 void velo_cmd(const uint8_t *data_buf, uint8_t data_len)
 {
 	if(data_len != 8)
 		return ;
-	union_int32 velocity[4];
+	union_int16 velocity[4];
 	for(int i = 0; i < 4; i++)
 	{
+		velocity[i].data_int16 = 0;
 		velocity[i].data8[0] = data_buf[i*2+3];
 		velocity[i].data8[1] = data_buf[i*2+4];
-		velocity[i].data8[2] = 0;
-		velocity[i].data8[3] = 0;
-		
 	}
-	if(abs(velocity[0].data_int32) <= VELOCITY_MAX)
-	set_velocity_motor1(velocity[0].data_int32);
-	if(abs(velocity[1].data_int32) <= VELOCITY_MAX)
-	set_velocity_motor2(velocity[1].data_int32);
-	if(abs(velocity[2].data_int32) <= VELOCITY_MAX)
-	set_velocity_motor3(velocity[2].data_int32);
-	if(abs(velocity[3].data_int32) <= VELOCITY_MAX)
-	set_velocity_motor4(velocity[3].data_int32);
+	if(abs(velocity[0].data_int16) <= VELOCITY_MAX)
+	set_velocity_motor1(velocity[0].data_int16);
+	if(abs(velocity[1].data_int16) <= VELOCITY_MAX)
+	set_velocity_motor2(velocity[1].data_int16);
+	if(abs(velocity[2].data_int16) <= VELOCITY_MAX)
+	set_velocity_motor3(velocity[2].data_int16);
+	if(abs(velocity[3].data_int16) <= VELOCITY_MAX)
+	set_velocity_motor4(velocity[3].data_int16);
 }
 
 
 
-int8_t param_set(motorID id, const uint16_t reg, const uint8_t *data_buf, uint8_t regselect)
+void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_temp)
 {
-	int8_t ret = 0x03;
 	union_uint16 data;
 	switch(reg)
 	{
 		case SAVE_RESET_ALLPARAM:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			if(data.data_uint16 == 1)
-				Reset_Save(id, 1);
-			else if(data.data_uint16 == 2)
-				Reset_Save(id, 2);
-			else
-				ret = 0;
-			ret = 1;
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				if(data.data_uint16 == 1)
+					Reset_Save((motorID)(i+1), 1);
+				else if(data.data_uint16 == 2)
+					Reset_Save((motorID)(i+1), 2);
+				else
+					data8.data_int8 = 0;
+				data8.data_int8 = 1;
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case LOCK_METHOD:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			if(data.data_uint16 == 0)
-				ret = set_lock(id, 0);
-			else if(data.data_uint16 == 1)
-				ret = set_lock(id, 1);
-			else
-				ret = 0;
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				if(data.data_uint16 == 0)
+					data8.data_int8 = set_lock((motorID)(i+1), 0);
+				else if(data.data_uint16 == 1)
+					data8.data_int8 = set_lock((motorID)(i+1), 1);
+				else
+					data8.data_int8 = 0;
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case SAVE_NEWPARAM:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			if(data.data_uint16 == 0){
-				Save_EEPROM();
-				ret = 1;
-			}else{
-				ret = 0;
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				if(data.data_uint16 == 0){
+					Save_EEPROM();
+					data8.data_int8 = 1;
+				}else{
+					data8.data_int8 = 0;
+				}
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
 			}
 			break;
 		}
 		case VELO_SMOOTH_FACTOR:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_Vsmooth_factor(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_Vsmooth_factor((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case ELEC_ERATIO_GAIN:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_Eratio_gain(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_Eratio_gain((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case ELEC_INTEGRAL:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_Eintegral_gain(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_Eintegral_gain((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case FEEDFORWARD_RATIO:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_feedforward_ratio(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_feedforward_ratio((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case TORQUE_RATIO:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_torque_ratio(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_torque_ratio((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case VELO_KP:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_VKp(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_VKp((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case VELO_KI:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_VKi(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_VKi((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case VELO_FEEDFORWARD_KF:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_Vfeedforward_Kf(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_Vfeedforward_Kf((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case POSI_KP:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_PKp(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_PKp((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case POSI_FEEDFORWARD_KF:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_Pfeedforward_Kf(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_Pfeedforward_Kf((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case ACC_TIME:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_accelerate_time(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_accelerate_time((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		case DE_TIME:{
-			data.data8[0] = data_buf[6+5*regselect];
-			data.data8[1] = data_buf[7+5*regselect];
-			ret = set_decelerate_time(id, data.data_uint16);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data8[0] = data_buf[5+i*2];
+				data.data8[1] = data_buf[6+i*2];
+				data8.data_int8 = set_decelerate_time((motorID)(i+1), data.data_uint16);
+				data_temp[cnt_++] = data8.data8;
+				delay_ms(1);
+			}
 			break;
 		}
 		default:
-			ret = 0;
 			break;
 	}
-	return ret;
 }
 
-uint16_t param_get_uint16(motorID id, const uint16_t reg)
+void param_get_uint16(const uint16_t reg, uint8_t *data_temp)
 {
 	union_uint16 data;
 	switch(reg)
 	{
 		case LOCK_METHOD:{
-			data.data_uint16 = get_lock(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_lock((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
+			
 			break;
 		}
 		case VELO_SMOOTH_FACTOR:{
-			data.data_uint16 = get_Vsmooth_factor(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_Vsmooth_factor((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case ELEC_ERATIO_GAIN:{
-			data.data_uint16 = get_Eratio_gain(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_Eratio_gain((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case ELEC_INTEGRAL:{
-			data.data_uint16 = get_Eintegral_gain(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_Eintegral_gain((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case FEEDFORWARD_RATIO:{
-			data.data_uint16 = get_feedforward_ratio(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_feedforward_ratio((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case TORQUE_RATIO:{
-			data.data_uint16 = get_torque_ratio(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_torque_ratio((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case VELO_KP:{
-			data.data_uint16 = get_VKp(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_VKp((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case VELO_KI:{
-			data.data_uint16 = get_VKi(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_VKi((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case VELO_FEEDFORWARD_KF:{
-			data.data_uint16 = get_Vfeedforward_Kf(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_Vfeedforward_Kf((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case POSI_KP:{
-			data.data_uint16 = get_PKp(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_PKp((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case POSI_FEEDFORWARD_KF:{
-			data.data_uint16 = get_Pfeedforward_Kf(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_Pfeedforward_Kf((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case MOTOR_TEMP:{
-			data.data_uint16 = get_motor_temp(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_motor_temp((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case IS_MOTOR_MOVE:{
-			data.data_uint16 = get_motor_status(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_motor_status((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case MOTOR_HALL_STATUS:{
-			data.data_uint16 = get_hall_status(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_hall_status((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case ERROR_CODE:{
-			data.data_uint16 = get_errorcode(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_errorcode((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case MOTOR_STATUS:{
-			data.data_uint16 = get_status(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_status((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case ACC_TIME:{
-			data.data_uint16 = get_accelerate_time(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_accelerate_time((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		case DE_TIME:{
-			data.data_uint16 = get_decelerate_time(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_decelerate_time((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
 			break;
 		}
 		default:
 			break;
 	}
-	return data.data_uint16;
 }
 
-uint16_t param_get_int32(motorID id, const uint16_t reg)
+void param_get_int32(const uint16_t reg, uint8_t *data_temp)
 {
 	union_int32 data;
 	switch(reg)
 	{
 		case MODE_DISPLAY:{
-			data.data_int32 = get_mode(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_int32 = get_mode((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				data_temp[cnt_++] = data.data8[2];
+				data_temp[cnt_++] = data.data8[3];
+				delay_ms(1);
+			}
 			break;
 		}
 		case ACTUAL_COUNT:{
-			data.data_int32 = get_count(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_int32 = get_count((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				data_temp[cnt_++] = data.data8[2];
+				data_temp[cnt_++] = data.data8[3];
+			}
 			break;
 		}
 		case ACTUAL_VELOCITY:{
-			data.data_int32 = get_actual_velocity(id);
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_int32 = get_actual_velocity((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				data_temp[cnt_++] = data.data8[2];
+				data_temp[cnt_++] = data.data8[3];
+				delay_ms(1);
+			}
 			break;
 		}
 		default:
 			break;
 	}
-	return data.data_int32;
 }
 
 
 void param_cmd(const uint8_t *data_buf, uint8_t data_len)
 {
 	union_uint16 reg;
-	uint8_t cnt = 0, cnt_ = 0;
-	uint8_t temp[64] = {0};
+	uint8_t cnt = 0;
+	uint8_t ret_buf[27] = {0};
 	reg.data_uint16 = 0;
-	reg.data_uint16 = 0;
-	if(data_len < 5)
-		return ;
-	switch(data_buf[3] & 0xF0)
+	cnt_ = 0;
+	switch(data_buf[1])
 	{
-		case 0x10:{//	set
-			//如果data_buf[3]有数据，则作为返回帧的第一个数据
-			temp[cnt_++] = data_buf[3];
+		case SET_PARAM:{//	set
+			if((data_len % 10) != 0)
+				return ;
 			//解析reg数据，并将其原路返回
-			reg.data8[0] = data_buf[4];
-			reg.data8[1] = data_buf[5];
-			temp[cnt_++] = reg.data8[0];
-			temp[cnt_++] = reg.data8[1];
-			for(int i = 0; i < 4; i++)
-			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[3] & (0x01 << i))
-				{
-					// 每个电机的数据按顺序排列
-					data8.data_int8 = param_set((motorID)(i+1), reg.data_uint16, data_buf, 0);
-					temp[cnt_++] = data8.data8;
-					delay_ms(1);
-				}
-			}
+			reg.data8[0] = data_buf[3];
+			reg.data8[1] = data_buf[4];
+			ret_buf[cnt_++] = reg.data8[0];
+			ret_buf[cnt_++] = reg.data8[1];
+				// 每个电机的数据按顺序排列
+			param_set(reg.data_uint16, data_buf, ret_buf);
 			break;
 		}
-		case 0x20:{//	get
-			//如果data_buf[3]有数据，则作为返回帧的第一个数据
-			temp[cnt_++] = data_buf[3];
+		case GET_PARAM:{//	get
 			//解析reg数据，并将其原路返回
-			reg.data8[0] = data_buf[4];
-			reg.data8[1] = data_buf[5];
-			temp[cnt_++] = reg.data8[0];
-			temp[cnt_++] = reg.data8[1];
+			reg.data8[0] = data_buf[3];
+			reg.data8[1] = data_buf[4];
+			ret_buf[cnt_++] = reg.data8[0];
+			ret_buf[cnt_++] = reg.data8[1];
 			//判断所需数据格式
 			datatype_flag =  IS_GET_UINT16(reg.data_uint16);
 			//数据类型存入buf
-			temp[cnt_++] = datatype_flag;
-			for(int i = 0; i < 4; i++)
+			ret_buf[cnt_++] = datatype_flag;
+			// 每个电机的数据按顺序排列
+			if(datatype_flag == 1)//16位数据
 			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[3] & (0x01 << i))
-				{
-					// 每个电机的数据按顺序排列
-					if(datatype_flag == 1)//16位数据
-					{
-						//获取数据
-						data16.data_uint16 = param_get_uint16((motorID)(i+1), reg.data_uint16);
-						//存入buf
-						temp[cnt_++] = data16.data8[0];
-						temp[cnt_++] = data16.data8[1];
-						delay_ms(1);
-					}
-					else if(datatype_flag == 0)//32位数据
-					{
-						//获取数据
-						data32.data_int32 = param_get_int32((motorID)(i+1), reg.data_uint16);
-						//存入buf
-						temp[cnt_++] = data32.data8[0];
-						temp[cnt_++] = data32.data8[1];
-						temp[cnt_++] = data32.data8[2];
-						temp[cnt_++] = data32.data8[3];
-						delay_ms(1);
-					}
-				}
+				//获取数据
+				param_get_uint16(reg.data_uint16, ret_buf);
+			}
+			else if(datatype_flag == 0)//32位数据
+			{
+				//获取数据
+				param_get_int32(reg.data_uint16, ret_buf);
 			}
 			datatype_flag = 0xFF;
 			break;
@@ -622,91 +735,14 @@ void param_cmd(const uint8_t *data_buf, uint8_t data_len)
 		default:
 			break;
 	}
-	if(data_len < 10)
-	{
-		cnt = frame_packing(temp, txbuf, cnt_, FUNC_PARAM);
-		USART1_sendbuf(txbuf, cnt);
-		return;
-	}
-	switch(data_buf[8] & 0xF0)
-	{
-		case 0x10:{//	set
-			//如果data_buf[8]有数据，原路返回
-			temp[cnt_++] = data_buf[8];
-			//解析reg数据，并将其原路返回
-			reg.data8[0] = data_buf[9];
-			reg.data8[1] = data_buf[10];
-			temp[cnt_++] = reg.data8[0];
-			temp[cnt_++] = reg.data8[1];
-			for(int i = 0; i < 4; i++)
-			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[3] & (0x01 << i))
-				{
-					// 每个电机的数据按顺序排列
-					data8.data_int8 = param_set((motorID)(i+1), reg.data_uint16, data_buf, 1);
-					temp[cnt_++] = data8.data8;
-					delay_ms(1);
-				}
-			}
-			break;
-		}
-		case 0x20:{//	get
-			//如果data_buf[8]有数据，则作为返回帧的第一个数据
-			temp[cnt_++] = data_buf[8];
-			//解析reg数据，并将其原路返回
-			reg.data8[0] = data_buf[9];
-			reg.data8[1] = data_buf[10];
-			temp[cnt_++] = reg.data8[0];
-			temp[cnt_++] = reg.data8[1];
-			//判断所需数据格式
-			datatype_flag =  IS_GET_UINT16(reg.data_uint16);
-			//数据类型存入buf
-			temp[cnt_++] = datatype_flag;
-			for(int i = 0; i < 4; i++)
-			{
-				//	通过位判断控制哪一个电机
-				if(data_buf[8] & (0x01 << i))
-				{
-					// 每个电机的数据按顺序排列
-					if(datatype_flag == 1)//16位数据
-					{
-						//获取数据
-						data16.data_uint16 = param_get_uint16((motorID)(i+1), reg.data_uint16);
-						//存入buf
-						temp[cnt_++] = data16.data8[0];
-						temp[cnt_++] = data16.data8[1];
-						delay_ms(1);
-					}
-					else if(datatype_flag == 0)//32位数据
-					{
-						//获取数据
-						data32.data_int32 = param_get_int32((motorID)(i+1), reg.data_uint16);
-						//存入buf
-						temp[cnt_++] = data32.data8[0];
-						temp[cnt_++] = data32.data8[1];
-						temp[cnt_++] = data32.data8[2];
-						temp[cnt_++] = data32.data8[3];
-						delay_ms(1);
-					}
-				}
-			}
-			datatype_flag = 0xFF;
-			break;
-		}
-		default:
-			break;
-	}
-	cnt = frame_packing(temp, txbuf, cnt_, FUNC_PARAM);
+	cnt = frame_packing(ret_buf, txbuf, cnt_, data_buf[1]);
 	USART1_sendbuf(txbuf, cnt);
-
 }
 // 指令解析，传入接收到的完整指令，及其长度
 void analysis_cmd(const uint8_t *data_buf, uint8_t len)
 {
-	uint8_t func_id, data_len;
-	func_id = data_buf[1];
-	data_len = len - 5;
+	uint8_t data_len;
+	data_len = data_buf[2];
 	#if ENABLE_CHECKSUM
 	// 计算校验
 	uint8_t crc8buf[32] = {0};
@@ -717,33 +753,26 @@ void analysis_cmd(const uint8_t *data_buf, uint8_t len)
 		return;
 	#endif
 
-	switch (func_id)
+	switch (data_buf[1])
 	{
-		case FUNC_CONTROL:
-		{
+		case SET_ENABLE:
+		case SET_DISENABLE:
+		case IS_ENABLE:
+		case CLEAR_FAULT:
+		case IS_FAULT:
+		case SET_STOP:
+		case STOP_TO_ENABLE:
 			control_cmd(data_buf, data_len);
-			if(ctrl_flag)
-			{
-				uint8_t cnt = 0;
-				cnt = frame_packing(ctrl_ret, txbuf, 3, FUNC_CONTROL);
-				USART1_sendbuf(txbuf, cnt);
-				ctrl_ret[0] = 0;
-				ctrl_ret[1] = 0;
-				ctrl_ret[2] = 0;
-				ctrl_flag = 0;
-			}
 			break;
-		}
-		case FUNC_SPEED:
+		case SPEED:
 		{
 			velo_cmd(data_buf, data_len);
 			break;
 		}
-		case FUNC_PARAM:
-		{
+		case SET_PARAM:
+		case GET_PARAM:
 			param_cmd(data_buf, data_len);
 			break;
-		}
 		default:
 			break;
 	}

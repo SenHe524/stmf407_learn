@@ -4,23 +4,31 @@
 
 #include "main.h"	
 
-#define BUF_MAX_LEN			64
-
-#define FRAME_HEADER		0
-#define FRAME_FUNC			1
-#define FRAME_LEN			2
-#define	FRAME_DATA			3
+#define BUF_MAX_LEN				32
+	
+#define FRAME_HEADER			0
+#define FRAME_FUNC				1
+#define FRAME_LEN				2
+#define	FRAME_DATA				3
 
 #define FIRST_CODE 0x55
 #define END_CODE 0xBB
 
 
-#define VELOCITY_MAX		600
+#define VELOCITY_MAX			600
 
-#define FUNC_CONTROL		0x01
-#define FUNC_SPEED			0x02
-#define FUNC_PARAM			0x03
-#define ENABLE_CHECKSUM		1
+#define SET_ENABLE				0x01
+#define SET_DISENABLE			0x02
+#define IS_ENABLE				0x03
+#define CLEAR_FAULT				0x04
+#define IS_FAULT				0x05
+#define SET_STOP				0x06
+#define STOP_TO_ENABLE			0x07
+#define SPEED					0x08
+#define SET_PARAM				0x09
+#define GET_PARAM				0x0A
+
+#define ENABLE_CHECKSUM			1
 
 typedef union 
 {
@@ -33,6 +41,12 @@ typedef union
     uint16_t data_uint16;
     unsigned char data8[2];
 }union_uint16;
+
+typedef union 
+{
+    int16_t data_int16;
+    unsigned char data8[2];
+}union_int16;
 
 
 typedef union 
