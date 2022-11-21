@@ -19,9 +19,9 @@ typedef enum MOTOR
 								 ((ID) == MOTOR2) || \
 								 ((ID) == MOTOR3) || \
 								 ((ID) == MOTOR4))
-#define SAVE_RESET_ALLPARAM		0x2009
+#define SAVE_RW					0x2009
 #define LOCK_METHOD 			0x200F
-#define SAVE_NEWPARAM 			0x2010
+#define SAVE_RW_S 				0x2010
 #define VELO_SMOOTH_FACTOR 		0x2018
 #define ELEC_ERATIO_GAIN 		0x2019
 #define ELEC_INTEGRAL 			0x201A
@@ -47,6 +47,7 @@ typedef enum MOTOR
 #define TARGET_VELOCITY			0x60FF
 
 #define IS_GET_UINT16(REG)		(((REG) == LOCK_METHOD) || \
+								 ((REG) == SAVE_NEWPARAM) || \
 								 ((REG) == VELO_SMOOTH_FACTOR) || \
 								 ((REG) == ELEC_ERATIO_GAIN) || \
 								 ((REG) == ELEC_INTEGRAL) || \

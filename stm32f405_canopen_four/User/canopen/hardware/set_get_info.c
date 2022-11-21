@@ -287,6 +287,8 @@ int8_t clear_fault(motorID ID)
 	int8_t ret = 0;
 	if(!IS_MOTOR_ID(ID))
 		return -1;
+	if(isfault(ID) != 1)
+		return -2;
 	switch(ID)
 	{
 		case MOTOR1:
@@ -514,6 +516,15 @@ int32_t get_distance(motorID ID)
 }
 
 
+
+uint16_t get_issave(motorID ID)
+{
+	if(!IS_MOTOR_ID(ID))
+		return 0xFFFF;
+	return get_u16(ID, 0x2010);
+}
+
+
 uint16_t get_motor_temp(motorID ID)
 {
 	if(!IS_MOTOR_ID(ID))
@@ -647,6 +658,18 @@ uint16_t get_Pfeedforward_Kf(motorID ID)
 
 
 
+
+int8_t set_issave_rw(motorID ID, uint16_t issave)
+{
+	uint8_t buf[2] = {0};
+	if((issave != 1) || (issave != 2))
+		return -3;
+	buf[0] = issave & 0xFF;
+	buf[1] = (issave >> 8)& 0xFF;
+
+	return set_reg(ID, 0x2009, 2, buf);
+}
+
 int8_t set_lock(motorID ID, uint16_t lock)
 {
 	uint8_t buf[2] = {0};
@@ -657,6 +680,18 @@ int8_t set_lock(motorID ID, uint16_t lock)
 
 	return set_reg(ID, 0x200F, 2, buf);
 }
+
+int8_t set_issave_rws(motorID ID, uint16_t issave)
+{
+	uint8_t buf[2] = {0};
+	if((issave != 0) || (issave != 1))
+		return -3;
+	buf[0] = issave & 0xFF;
+	buf[1] = (issave >> 8)& 0xFF;
+
+	return set_reg(ID, 0x2010, 2, buf);
+}
+
 int8_t set_accelerate_time(motorID ID, uint32_t time)
 {
 	uint8_t buf[4] = {0};

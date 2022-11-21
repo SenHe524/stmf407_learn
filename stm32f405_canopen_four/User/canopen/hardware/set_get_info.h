@@ -26,6 +26,7 @@ int32_t get_count(motorID ID);
 int32_t get_rad(motorID ID);
 int32_t get_distance(motorID ID);
 
+uint16_t get_issave(motorID ID);
 uint16_t get_motor_temp(motorID ID);
 uint16_t get_motor_status(motorID ID);
 uint16_t get_hall_status(motorID ID);
@@ -46,7 +47,9 @@ uint16_t get_Vfeedforward_Kf(motorID ID);
 uint16_t get_PKp(motorID ID);
 uint16_t get_Pfeedforward_Kf(motorID ID);
 
+int8_t set_issave_rw(motorID ID, uint16_t issave);
 int8_t set_lock(motorID ID, uint16_t lock);
+int8_t set_issave_rws(motorID ID, uint16_t issave);
 int8_t set_accelerate_time(motorID ID, uint32_t time);
 int8_t set_decelerate_time(motorID ID, uint32_t time);
 int8_t set_Vsmooth_factor(motorID ID, uint16_t factor);

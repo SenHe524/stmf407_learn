@@ -1,21 +1,5 @@
 #include "pdo_set.h"
 
-//保存新写入功能码参数配置至EEPROM
-uint8_t Save_EEPROM(void)
-{
-	Message mes = {0x604,0,8,{0x2B,0x10,0x20,0x00,0x00,0x00,0x00,0x00}};
-
-	return canSend(CAN1, &mes);
-}
-
-//1:恢复出厂配置
-//2:保存所有RW属性的参数到EEPROM
-uint8_t Reset_Save(motorID ID, uint8_t select)
-{
-	Message mes = {0x600+ID,0,8,{0x2B,0x09,0x20,0x00,select,0x00,0x00,0x00}};
-
-	return canSend(CAN1, &mes);
-}
 
 //NMT发送
 //0x01 node-id：开启node-id号节点驱动PDO传输（让节点进入操作状态）

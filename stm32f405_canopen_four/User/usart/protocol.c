@@ -264,18 +264,12 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_temp)
 	union_uint16 data;
 	switch(reg)
 	{
-		case SAVE_RESET_ALLPARAM:{
+		case SAVE_RW:{
 			for(int i = 0; i < 4; i++)
 			{
 				data.data8[0] = data_buf[5+i*2];
 				data.data8[1] = data_buf[6+i*2];
-				if(data.data_uint16 == 1)
-					Reset_Save((motorID)(i+1), 1);
-				else if(data.data_uint16 == 2)
-					Reset_Save((motorID)(i+1), 2);
-				else
-					data8.data_int8 = 0;
-				data8.data_int8 = 1;
+				data8.data_int8 = set_issave_rw((motorID)(i+1), data.data_uint16);
 				data_temp[cnt_++] = data8.data8;
 				delay_ms(1);
 			}
@@ -297,17 +291,12 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_temp)
 			}
 			break;
 		}
-		case SAVE_NEWPARAM:{
+		case SAVE_RW_S:{
 			for(int i = 0; i < 4; i++)
 			{
 				data.data8[0] = data_buf[5+i*2];
 				data.data8[1] = data_buf[6+i*2];
-				if(data.data_uint16 == 0){
-					Save_EEPROM();
-					data8.data_int8 = 1;
-				}else{
-					data8.data_int8 = 0;
-				}
+				data8.data_int8 = set_issave_rws((motorID)(i+1), data.data_uint16);
 				data_temp[cnt_++] = data8.data8;
 				delay_ms(1);
 			}
@@ -459,6 +448,17 @@ void param_get_uint16(const uint16_t reg, uint8_t *data_temp)
 			for(int i = 0; i < 4; i++)
 			{
 				data.data_uint16 = get_lock((motorID)(i+1));
+				data_temp[cnt_++] = data.data8[0];
+				data_temp[cnt_++] = data.data8[1];
+				delay_ms(1);
+			}
+			
+			break;
+		}
+		case SAVE_RW_S:{
+			for(int i = 0; i < 4; i++)
+			{
+				data.data_uint16 = get_issave((motorID)(i+1));
 				data_temp[cnt_++] = data.data8[0];
 				data_temp[cnt_++] = data.data8[1];
 				delay_ms(1);
@@ -739,7 +739,7 @@ void param_cmd(const uint8_t *data_buf, uint8_t data_len)
 	USART1_sendbuf(txbuf, cnt);
 }
 // 指令解析，传入接收到的完整指令，及其长度
-void analysis_cmd(const uint8_t *data_buf, uint8_t len)
+void analysis_cmd(const uint8_t data_buf[], uint8_t len)
 {
 	uint8_t data_len;
 	data_len = data_buf[2];
@@ -765,10 +765,8 @@ void analysis_cmd(const uint8_t *data_buf, uint8_t len)
 			control_cmd(data_buf, data_len);
 			break;
 		case SPEED:
-		{
 			velo_cmd(data_buf, data_len);
 			break;
-		}
 		case SET_PARAM:
 		case GET_PARAM:
 			param_cmd(data_buf, data_len);
