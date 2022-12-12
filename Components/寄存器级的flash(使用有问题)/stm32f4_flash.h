@@ -44,6 +44,7 @@ typedef enum
 	STM32FLASH_PGAERR		=	3,	//编程对齐错误，必须128位对齐
 	STM32FLASH_PGPERR		=	4,	//并行位数错误
 	STM32FLASH_PGSERR		=	5,	//编程顺序错误
+	STM32FLASH_UNKNOWN		=	6,	//初始状态
 }STM32FLASH_STATUS;
  
  

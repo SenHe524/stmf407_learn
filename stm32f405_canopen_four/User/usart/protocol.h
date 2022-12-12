@@ -4,7 +4,7 @@
 
 #include "main.h"	
 
-#define BUF_MAX_LEN				32
+#define BUF_MAX_LEN				128
 	
 #define FRAME_HEADER			0
 #define FRAME_FUNC				1
@@ -27,47 +27,24 @@
 #define SPEED					0x08
 #define SET_PARAM				0x09
 #define GET_PARAM				0x0A
+#define ODOMETRY				0x0B
+
 
 #define ENABLE_CHECKSUM			1
 
-typedef union 
-{
-    int8_t data_int8;
-    unsigned char data8;
-}union_int8;
 
-typedef union 
-{
-    uint16_t data_uint16;
-    unsigned char data8[2];
-}union_uint16;
-
-typedef union 
-{
-    int16_t data_int16;
-    unsigned char data8[2];
-}union_int16;
-
-
-typedef union 
-{
-    int32_t data_int32;
-    unsigned char data8[4];
-}union_int32;
-
-
-uint8_t* get_rxbuf(void);
+uint8_t* get_usart1rxbuf(void);
 // 获取命令长度
-uint8_t get_rxlen(void);
+uint8_t get_usart1rxlen(void);
 // 获取命令标志
-uint8_t is_rcv_cmd(void);
+uint8_t is_rcv_usart1cmd(void);
 // 清除命令数据和相关标志
-void clear_cmd(void);
+void clear_usart1cmd(void);
 // 封装数据帧
-int frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t func);
+int usart1frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t func);
 // 接收串口单字节数据接收并保存
-void usart_rcv(uint8_t rxdata);
+void usart1_rcv(uint8_t rxdata);
 // 指令解析，传入接收到的完整指令，及其长度
-void analysis_cmd(const uint8_t *data_buf, uint8_t len);
-
+void usart1_analysis_cmd(const uint8_t* data_buf, uint8_t len);
+void Odometry_data(void);
 #endif

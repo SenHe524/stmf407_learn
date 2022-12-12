@@ -19,6 +19,7 @@ int8_t clear_fault(motorID ID);
 int8_t quick_stop(motorID ID);
 int8_t quickstop_to_enable(motorID ID);
 
+//int8_t save_agvparam(motorID ID);
 
 uint16_t get_status(motorID ID);
 int8_t get_mode(motorID ID);
@@ -26,16 +27,16 @@ int32_t get_count(motorID ID);
 int32_t get_rad(motorID ID);
 int32_t get_distance(motorID ID);
 
-uint16_t get_issave(motorID ID);
+
 uint16_t get_motor_temp(motorID ID);
 uint16_t get_motor_status(motorID ID);
 uint16_t get_hall_status(motorID ID);
 uint16_t get_errorcode(motorID ID);
 int32_t get_actual_velocity(motorID ID);
-uint16_t get_lock(motorID ID);
 
-uint32_t get_accelerate_time(motorID ID);
-uint32_t get_decelerate_time(motorID ID);
+uint16_t get_issave_rw(motorID ID);
+uint16_t get_lock(motorID ID);
+uint16_t get_issave_rws(motorID ID);
 uint16_t get_Vsmooth_factor(motorID ID);
 uint16_t get_Eratio_gain(motorID ID);
 uint16_t get_Eintegral_gain(motorID ID);
@@ -46,12 +47,14 @@ uint16_t get_VKi(motorID ID);
 uint16_t get_Vfeedforward_Kf(motorID ID);
 uint16_t get_PKp(motorID ID);
 uint16_t get_Pfeedforward_Kf(motorID ID);
+uint32_t get_accelerate_time(motorID ID);
+uint32_t get_decelerate_time(motorID ID);
 
+int8_t set_status(motorID ID, uint16_t status_valve);
+int8_t set_mode(motorID ID, int8_t mode);
 int8_t set_issave_rw(motorID ID, uint16_t issave);
 int8_t set_lock(motorID ID, uint16_t lock);
 int8_t set_issave_rws(motorID ID, uint16_t issave);
-int8_t set_accelerate_time(motorID ID, uint32_t time);
-int8_t set_decelerate_time(motorID ID, uint32_t time);
 int8_t set_Vsmooth_factor(motorID ID, uint16_t factor);
 int8_t set_Eratio_gain(motorID ID, uint16_t factor);
 int8_t set_Eintegral_gain(motorID ID, uint16_t factor);
@@ -62,6 +65,8 @@ int8_t set_VKi(motorID ID, uint16_t factor);
 int8_t set_Vfeedforward_Kf(motorID ID, uint16_t factor);
 int8_t set_PKp(motorID ID, uint16_t factor);
 int8_t set_Pfeedforward_Kf(motorID ID, uint16_t factor);
+int8_t set_accelerate_time(motorID ID, uint32_t time);
+int8_t set_decelerate_time(motorID ID, uint32_t time);
 
 
 

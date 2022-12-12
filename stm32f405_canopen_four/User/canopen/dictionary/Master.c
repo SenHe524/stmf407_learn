@@ -30,6 +30,10 @@ INTEGER8 motor4_mode = 0x0;		/* Mapped at index 0x3020, subindex 0x00 */
 INTEGER8 motor4_mode_display = 0x0;		/* Mapped at index 0x3021, subindex 0x00 */
 INTEGER32 motor4_position = 0x0;		/* Mapped at index 0x3022, subindex 0x00 */
 INTEGER32 motor4_velocity = 0x0;		/* Mapped at index 0x3023, subindex 0x00 */
+INTEGER32 motor1_accvelo = 0x0;		/* Mapped at index 0x3024, subindex 0x00 */
+INTEGER32 motor2_accvelo = 0x0;		/* Mapped at index 0x3025, subindex 0x00 */
+INTEGER32 motor3_accvelo = 0x0;		/* Mapped at index 0x3026, subindex 0x00 */
+INTEGER32 motor4_accvelo = 0x0;		/* Mapped at index 0x3027, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
@@ -219,67 +223,59 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1600 :   Receive PDO 1 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1600 = 3; /* number of subindex - 1*/
+                    UNS8 Master_highestSubIndex_obj1600 = 2; /* number of subindex - 1*/
                     UNS32 Master_obj1600[] = 
                     {
-                      0x30010010,	/* 805371920 */
-                      0x30030008,	/* 805502984 */
-                      0x30040020	/* 805568544 */
+                      0x30040020,	/* 805568544 */
+                      0x30240020	/* 807665696 */
                     };
                     subindex Master_Index1600[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1600, NULL },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1600[0], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1600[1], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1600[2], NULL }
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1600[1], NULL }
                      };
 
 /* index 0x1601 :   Receive PDO 2 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1601 = 3; /* number of subindex - 1*/
+                    UNS8 Master_highestSubIndex_obj1601 = 2; /* number of subindex - 1*/
                     UNS32 Master_obj1601[] = 
                     {
-                      0x30070010,	/* 805765136 */
-                      0x30090008,	/* 805896200 */
-                      0x30100020	/* 806354976 */
+                      0x30100020,	/* 806354976 */
+                      0x30250020	/* 807731232 */
                     };
                     subindex Master_Index1601[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1601, NULL },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1601[0], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1601[1], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1601[2], NULL }
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1601[1], NULL }
                      };
 
 /* index 0x1602 :   Receive PDO 3 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1602 = 3; /* number of subindex - 1*/
+                    UNS8 Master_highestSubIndex_obj1602 = 2; /* number of subindex - 1*/
                     UNS32 Master_obj1602[] = 
                     {
-                      0x30130010,	/* 806551568 */
-                      0x30150008,	/* 806682632 */
-                      0x30160020	/* 806748192 */
+                      0x30160020,	/* 806748192 */
+                      0x30260020	/* 807796768 */
                     };
                     subindex Master_Index1602[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1602, NULL },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1602[0], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1602[1], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1602[2], NULL }
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1602[1], NULL }
                      };
 
 /* index 0x1603 :   Receive PDO 4 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1603 = 3; /* number of subindex - 1*/
+                    UNS8 Master_highestSubIndex_obj1603 = 2; /* number of subindex - 1*/
                     UNS32 Master_obj1603[] = 
                     {
-                      0x30190010,	/* 806944784 */
-                      0x30210008,	/* 807469064 */
-                      0x30220020	/* 807534624 */
+                      0x30220020,	/* 807534624 */
+                      0x30270020	/* 807862304 */
                     };
                     subindex Master_Index1603[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1603, NULL },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1603[0], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1603[1], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1603[2], NULL }
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1603[1], NULL }
                      };
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
@@ -359,67 +355,51 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1A00 :   Transmit PDO 1 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1A00 = 3; /* number of subindex - 1*/
+                    UNS8 Master_highestSubIndex_obj1A00 = 1; /* number of subindex - 1*/
                     UNS32 Master_obj1A00[] = 
                     {
-                      0x30000010,	/* 805306384 */
-                      0x30020008,	/* 805437448 */
                       0x30050020	/* 805634080 */
                     };
                     subindex Master_Index1A00[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1A00, NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A00[0], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A00[1], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A00[2], NULL }
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A00[0], NULL }
                      };
 
 /* index 0x1A01 :   Transmit PDO 2 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1A01 = 3; /* number of subindex - 1*/
+                    UNS8 Master_highestSubIndex_obj1A01 = 1; /* number of subindex - 1*/
                     UNS32 Master_obj1A01[] = 
                     {
-                      0x30060010,	/* 805699600 */
-                      0x30080008,	/* 805830664 */
                       0x30110020	/* 806420512 */
                     };
                     subindex Master_Index1A01[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1A01, NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A01[0], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A01[1], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A01[2], NULL }
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A01[0], NULL }
                      };
 
 /* index 0x1A02 :   Transmit PDO 3 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1A02 = 3; /* number of subindex - 1*/
+                    UNS8 Master_highestSubIndex_obj1A02 = 1; /* number of subindex - 1*/
                     UNS32 Master_obj1A02[] = 
                     {
-                      0x30120010,	/* 806486032 */
-                      0x30140008,	/* 806617096 */
                       0x30170020	/* 806813728 */
                     };
                     subindex Master_Index1A02[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1A02, NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A02[0], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A02[1], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A02[2], NULL }
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A02[0], NULL }
                      };
 
 /* index 0x1A03 :   Transmit PDO 4 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1A03 = 3; /* number of subindex - 1*/
+                    UNS8 Master_highestSubIndex_obj1A03 = 1; /* number of subindex - 1*/
                     UNS32 Master_obj1A03[] = 
                     {
-                      0x30180010,	/* 806879248 */
-                      0x30200008,	/* 807403528 */
                       0x30230020	/* 807600160 */
                     };
                     subindex Master_Index1A03[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1A03, NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A03[0], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A03[1], NULL },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A03[2], NULL }
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A03[0], NULL }
                      };
 
 /* index 0x3000 :   Mapped variable motor1_control */
@@ -566,6 +546,30 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, int32, sizeof (INTEGER32), (void*)&motor4_velocity, NULL }
                      };
 
+/* index 0x3024 :   Mapped variable motor1_accvelo */
+                    subindex Master_Index3024[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor1_accvelo, NULL }
+                     };
+
+/* index 0x3025 :   Mapped variable motor2_accvelo */
+                    subindex Master_Index3025[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor2_accvelo, NULL }
+                     };
+
+/* index 0x3026 :   Mapped variable motor3_accvelo */
+                    subindex Master_Index3026[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor3_accvelo, NULL }
+                     };
+
+/* index 0x3027 :   Mapped variable motor4_accvelo */
+                    subindex Master_Index3027[] = 
+                     {
+                       { RW, int32, sizeof (INTEGER32), (void*)&motor4_accvelo, NULL }
+                     };
+
 /**************************************************************************/
 /* Declaration of pointed variables                                       */
 /**************************************************************************/
@@ -618,6 +622,10 @@ const indextable Master_objdict[] =
   { (subindex*)Master_Index3021,sizeof(Master_Index3021)/sizeof(Master_Index3021[0]), 0x3021},
   { (subindex*)Master_Index3022,sizeof(Master_Index3022)/sizeof(Master_Index3022[0]), 0x3022},
   { (subindex*)Master_Index3023,sizeof(Master_Index3023)/sizeof(Master_Index3023[0]), 0x3023},
+  { (subindex*)Master_Index3024,sizeof(Master_Index3024)/sizeof(Master_Index3024[0]), 0x3024},
+  { (subindex*)Master_Index3025,sizeof(Master_Index3025)/sizeof(Master_Index3025[0]), 0x3025},
+  { (subindex*)Master_Index3026,sizeof(Master_Index3026)/sizeof(Master_Index3026[0]), 0x3026},
+  { (subindex*)Master_Index3027,sizeof(Master_Index3027)/sizeof(Master_Index3027[0]), 0x3027},
 };
 
 const indextable * Master_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorCode)
@@ -671,6 +679,10 @@ const indextable * Master_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorCo
 		case 0x3021: i = 43;break;
 		case 0x3022: i = 44;break;
 		case 0x3023: i = 45;break;
+		case 0x3024: i = 46;break;
+		case 0x3025: i = 47;break;
+		case 0x3026: i = 48;break;
+		case 0x3027: i = 49;break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;

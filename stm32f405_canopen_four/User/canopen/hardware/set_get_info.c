@@ -2,7 +2,7 @@
 extern uint8_t buf_temp[4];
 extern uint8_t rpdo_flag[4];
 extern int8_t write_flag;
-
+extern FLASH_DATA AGV_PARAM;
 int8_t get_i8(motorID ID, uint16_t reg)
 {
 	uint16_t i = 0;
@@ -133,39 +133,17 @@ int8_t set_reg(motorID ID, uint16_t reg, uint8_t len, uint8_t* val_buf)
 	}
 	return write_flag;
 }
-int8_t motor_control(uint16_t* controlword, uint16_t *statusword, int32_t* velocity)
-{
-//	*controlword = 0x00;
-//	delay_ms(10);
-	uint16_t i = 0;
-	*controlword = 0x06;
-	*velocity = 0;
-	delay_ms(10);
-	*controlword = 0x07;
-	delay_ms(10);
-	*controlword = 0x0F;
-	delay_ms(10);
-	while(*statusword != 0x1027)
-	{
-		delay_ms(1);
-		i++;
-		if(i > 0xFF)
-			return 0;
-	}
-	return 1;
-}
 
-int8_t motor_set(uint16_t *controlword, uint16_t *statusword, uint8_t cmd, uint8_t cmd_status)
+int8_t status_change(motorID ID, uint8_t cmd, uint8_t cmd_status)
 {
-	uint16_t i = 0;
-	*controlword = cmd;
-	while((*statusword & 0xFF) != cmd_status)
-	{
-		delay_ms(1);
-		i++;
-		if(i > 0xFF)
-			return 0;
-	}
+	int8_t ret_set = 0;
+	uint16_t ret_get = 0;
+	ret_set = set_status(ID, cmd);
+	if(ret_set != 1)
+		return 0;
+	ret_get = get_status(ID);
+	if((ret_get & 0xFF) != cmd_status)
+		return 0;
 	return 1;
 }
 
@@ -206,30 +184,52 @@ int8_t motor_enable(motorID ID)
 //	mes.data[4] = 0x0F;
 
 //	canSend(CAN1, &mes);
+	int8_t ret_set = 0;
+	uint16_t ret_get = 0;
+	ret_set = set_status(ID, 0x06);
+	if(ret_set != 1)
+		return 0;
+//	ret_get = get_status(ID);
+//	if((ret_get & 0xFF) != 0x21)
+//		return 0;
+	ret_set = set_status(ID, 0x07);
+	if(ret_set != 1)
+		return 0;
+//	ret_get = get_status(ID);
+//	if((ret_get & 0xFF) != 0x23)
+//		return 0;
+	ret_set = set_status(ID, 0x0F);
+	if(ret_set != 1)
+		return 0;
+	ret_get = get_status(ID);
+	if((ret_get & 0xFF) != 0x27)
+		return 0;
+	
+	return 1;
 	/*****************************************************/
 
 	/**********************PDO*************************/
-	int8_t ret = 0;
-	if(!IS_MOTOR_ID(ID))
-		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			ret = motor_control(&motor1_control, &motor1_status, &motor1_velocity);
-			break;
-		case MOTOR2:
-			ret = motor_control(&motor2_control, &motor2_status, &motor2_velocity);
-			break;
-		case MOTOR3:
-			ret = motor_control(&motor3_control, &motor3_status, &motor3_velocity);
-			break;
-		case MOTOR4:
-			ret = motor_control(&motor4_control, &motor4_status, &motor4_velocity);
-			break;
-		default:
-			break;
-	}
-	return ret;
+//	int8_t ret = 0;
+//	if(!IS_MOTOR_ID(ID))
+//		return -1;
+//	switch(ID)
+//	{
+//		case MOTOR1:
+//			ret = motor_control(&motor1_control, &motor1_status, &motor1_velocity);
+//			break;
+//		case MOTOR2:
+//			ret = motor_control(&motor2_control, &motor2_status, &motor2_velocity);
+//			break;
+//		case MOTOR3:
+//			ret = motor_control(&motor3_control, &motor3_status, &motor3_velocity);
+//			break;
+//		case MOTOR4:
+//			ret = motor_control(&motor4_control, &motor4_status, &motor4_velocity);
+//			break;
+//		default:
+//			break;
+//	}
+//	return ret;
 	/*************************************************/
 }
 
@@ -239,27 +239,7 @@ int8_t motor_disable(motorID ID)
 	int8_t ret = 0;
 	if(!IS_MOTOR_ID(ID))
 		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			ret = motor_set(&motor1_control, &motor1_status,
-						0x07, 0x23);
-			break;
-		case MOTOR2:
-			ret = motor_set(&motor2_control, &motor2_status,
-						0x07, 0x23);
-			break;
-		case MOTOR3:
-			ret = motor_set(&motor3_control, &motor3_status,
-						0x07, 0x23);
-			break;
-		case MOTOR4:
-			ret = motor_set(&motor4_control, &motor4_status,
-						0x07, 0x23);
-			break;
-		default:
-			break;
-	}
+	ret = status_change(ID, 0x07, 0x23);
 	return ret;
 }
 
@@ -289,27 +269,7 @@ int8_t clear_fault(motorID ID)
 		return -1;
 	if(isfault(ID) != 1)
 		return -2;
-	switch(ID)
-	{
-		case MOTOR1:
-			ret = motor_set(&motor1_control, &motor1_status,
-						0x80, 0x40);
-			break;
-		case MOTOR2:
-			ret = motor_set(&motor2_control, &motor2_status,
-						0x80, 0x40);
-			break;
-		case MOTOR3:
-			ret = motor_set(&motor3_control, &motor3_status,
-						0x80, 0x40);
-			break;
-		case MOTOR4:
-			ret = motor_set(&motor4_control, &motor4_status,
-						0x80, 0x40);
-			break;
-		default:
-			break;
-	}
+	ret = status_change(ID, 0x80, 0x40);
 	return ret;
 }
 int8_t quick_stop(motorID ID)
@@ -317,27 +277,7 @@ int8_t quick_stop(motorID ID)
 	int8_t ret = 0;
 	if(!IS_MOTOR_ID(ID))
 		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			ret = motor_set(&motor1_control, &motor1_status,
-						0x02, 0x07);
-			break;
-		case MOTOR2:
-			ret = motor_set(&motor2_control, &motor2_status,
-						0x02, 0x07);
-			break;
-		case MOTOR3:
-			ret = motor_set(&motor3_control, &motor3_status,
-						0x02, 0x07);
-			break;
-		case MOTOR4:
-			ret = motor_set(&motor4_control, &motor4_status,
-						0x02, 0x07);
-			break;
-		default:
-			break;
-	}
+	ret = status_change(ID, 0x02, 0x07);
 	return ret;
 }
 
@@ -346,88 +286,11 @@ int8_t quickstop_to_enable(motorID ID)
 	int8_t ret = 0;
 	if(!IS_MOTOR_ID(ID))
 		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			if((motor1_status & 0xFF) == 0x07)
-				ret = motor_set(&motor1_control, &motor1_status,
-						0x0F, 0x27);
-			break;
-		case MOTOR2:
-			if((motor2_status & 0xFF) == 0x07)
-				ret = motor_set(&motor2_control, &motor2_status,
-						0x0F, 0x27);
-			break;
-		case MOTOR3:
-			if((motor3_status & 0xFF) == 0x07)
-				ret = motor_set(&motor3_control, &motor3_status,
-						0x0F, 0x27);
-			break;
-		case MOTOR4:
-			if((motor4_status & 0xFF) == 0x07)
-				ret = motor_set(&motor4_control, &motor4_status,
-						0x0F, 0x27);
-			break;
-		default:
-			break;
-	}
+	if((get_status(ID) & 0xFF) == 0x07)
+		ret = status_change(ID, 0x0F, 0x27);
 	return ret;
 }
 
-
-
-
-
-
-uint16_t get_status(motorID ID)
-{
-	uint16_t status = 0;
-	if(!IS_MOTOR_ID(ID))
-		return 0xFFFF;
-	switch(ID)
-	{
-		case MOTOR1:
-			status = motor1_status;
-			break;
-		case MOTOR2:
-			status = motor2_status;
-			break;
-		case MOTOR3:
-			status = motor3_status;
-			break;
-		case MOTOR4:
-			status = motor4_status;
-			break;
-		default:
-			break;
-	}
-	return status;
-}
-
-int8_t get_mode(motorID ID)
-{
-	int8_t mode = 0;
-	if(!IS_MOTOR_ID(ID))
-		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			mode = motor1_mode_display;
-			break;
-		case MOTOR2:
-			mode = motor2_mode_display;
-			break;
-		case MOTOR3:
-			mode = motor3_mode_display;
-			break;
-		case MOTOR4:
-			mode = motor4_mode_display;
-			break;
-		default:
-			break;
-	}
-	return mode;
-}
 int32_t get_count(motorID ID)
 {
 	int32_t position = 0;
@@ -436,15 +299,13 @@ int32_t get_count(motorID ID)
 	switch(ID)
 	{
 		case MOTOR1:
-			position = motor1_position;
-			position = -position;
+			position = -motor1_position;
 			break;
 		case MOTOR2:
 			position = motor2_position;
 			break;
 		case MOTOR3:
-			position = motor3_position;
-			position = -position;
+			position = -motor3_position;
 			break;
 		case MOTOR4:
 			position = motor4_position;
@@ -517,14 +378,33 @@ int32_t get_distance(motorID ID)
 
 
 
-uint16_t get_issave(motorID ID)
+
+
+
+
+uint16_t get_status(motorID ID)
+{
+	uint16_t status = 0;
+	if(!IS_MOTOR_ID(ID))
+		return 0xFFFF;
+	status = get_u16(ID, MOTOR_STATUS);
+	return status;
+}
+
+int8_t get_mode(motorID ID)
+{
+	int8_t mode = 0;
+	if(!IS_MOTOR_ID(ID))
+		return -1;
+	mode = get_i8(ID, MOTOR_MODE);
+	return mode;
+}
+uint16_t get_issave_rw(motorID ID)
 {
 	if(!IS_MOTOR_ID(ID))
 		return 0xFFFF;
-	return get_u16(ID, 0x2010);
+	return get_u16(ID, 0x2009);
 }
-
-
 uint16_t get_motor_temp(motorID ID)
 {
 	if(!IS_MOTOR_ID(ID))
@@ -557,9 +437,27 @@ uint16_t get_errorcode(motorID ID)
 
 int32_t get_actual_velocity(motorID ID)
 {
+	int32_t velo_ = 0;
 	if(!IS_MOTOR_ID(ID))
 		return -1;
-	return get_i32(ID, 0x606C);
+	switch(ID)
+	{
+		case MOTOR1:
+			velo_ = -motor1_accvelo;
+			break;
+		case MOTOR2:
+			velo_ = motor2_accvelo;
+			break;
+		case MOTOR3:
+			velo_ = -motor3_accvelo;
+			break;
+		case MOTOR4:
+			velo_ = motor4_accvelo;
+			break;
+		default:
+			break;
+	}
+	return velo_;
 }
 
 uint16_t get_lock(motorID ID)
@@ -569,21 +467,15 @@ uint16_t get_lock(motorID ID)
 	return get_u16(ID, 0x200F);
 }
 
-uint32_t get_accelerate_time(motorID ID)
+
+
+
+uint16_t get_issave_rws(motorID ID)
 {
 	if(!IS_MOTOR_ID(ID))
 		return 0xFFFF;
-	return get_u32(ID, 0x6083);
+	return get_u16(ID, 0x2010);
 }
-
-uint32_t get_decelerate_time(motorID ID)
-{
-	if(!IS_MOTOR_ID(ID))
-		return 0xFFFF;
-	return get_u32(ID, 0x6084);
-}
-
-
 
 
 
@@ -659,10 +551,43 @@ uint16_t get_Pfeedforward_Kf(motorID ID)
 
 
 
+
+uint32_t get_accelerate_time(motorID ID)
+{
+	if(!IS_MOTOR_ID(ID))
+		return 0xFFFF;
+	return get_u32(ID, 0x6083);
+}
+
+uint32_t get_decelerate_time(motorID ID)
+{
+	if(!IS_MOTOR_ID(ID))
+		return 0xFFFF;
+	return get_u32(ID, 0x6084);
+}
+
+
+
+int8_t set_status(motorID ID, uint16_t status_valve)
+{
+	uint8_t buf[2] = {0};
+
+	buf[0] = status_valve & 0xFF;
+	buf[1] = (status_valve >> 8) & 0xFF;
+
+	return set_reg(ID, MOTOR_CONTROL, 2, buf);
+}
+
+int8_t set_mode(motorID ID, int8_t mode)
+{
+	uint8_t buf[1] = {0};
+	buf[0] = mode & 0xFF;
+	return set_reg(ID, MOTOR_MODE, 1, buf);
+}
 int8_t set_issave_rw(motorID ID, uint16_t issave)
 {
 	uint8_t buf[2] = {0};
-	if((issave != 1) || (issave != 2))
+	if((issave != 1) && (issave != 2))
 		return -3;
 	buf[0] = issave & 0xFF;
 	buf[1] = (issave >> 8)& 0xFF;
@@ -684,7 +609,7 @@ int8_t set_lock(motorID ID, uint16_t lock)
 int8_t set_issave_rws(motorID ID, uint16_t issave)
 {
 	uint8_t buf[2] = {0};
-	if((issave != 0) || (issave != 1))
+	if((issave != 0) && (issave != 1))
 		return -3;
 	buf[0] = issave & 0xFF;
 	buf[1] = (issave >> 8)& 0xFF;

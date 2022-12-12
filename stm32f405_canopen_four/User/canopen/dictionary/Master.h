@@ -36,5 +36,9 @@ extern INTEGER8 motor4_mode;		/* Mapped at index 0x3020, subindex 0x00*/
 extern INTEGER8 motor4_mode_display;		/* Mapped at index 0x3021, subindex 0x00*/
 extern INTEGER32 motor4_position;		/* Mapped at index 0x3022, subindex 0x00*/
 extern INTEGER32 motor4_velocity;		/* Mapped at index 0x3023, subindex 0x00*/
+extern INTEGER32 motor1_accvelo;		/* Mapped at index 0x3024, subindex 0x00*/
+extern INTEGER32 motor2_accvelo;		/* Mapped at index 0x3025, subindex 0x00*/
+extern INTEGER32 motor3_accvelo;		/* Mapped at index 0x3026, subindex 0x00*/
+extern INTEGER32 motor4_accvelo;		/* Mapped at index 0x3027, subindex 0x00*/
 
 #endif // MASTER_H

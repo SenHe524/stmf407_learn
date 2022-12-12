@@ -6,8 +6,8 @@
 
 uint32_t cur_time = 0;//时间计数
 uint32_t next_time_set  = 0;//下一次触发时间计数
+uint32_t odometry_time = 1000;
 static TIMEVAL last_time_set = TIMEVAL_MAX;//上一次的时间计数
-
 
 // Initializes the timer, turn on the interrupt and put the interrupt time to zero
 void TIM3_Init(void)
@@ -17,10 +17,10 @@ void TIM3_Init(void)
 
 	/* TIM3 clock enable */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-
 	/* Enable the TIM3 gloabal Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
@@ -48,6 +48,42 @@ void TIM3_Init(void)
 	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
 }
 
+void TIM4_Init(void)
+{
+	NVIC_InitTypeDef NVIC_InitStructure;
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+
+	/* TIM4 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+	/* Enable the TIM4 gloabal Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	/* Time base configuration */
+	TIM_TimeBaseStructure.TIM_Period = 4000;//40ms一个中断
+	TIM_TimeBaseStructure.TIM_Prescaler = 840-1;//84M频率/840为100k，即10us间隔
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+	
+	TIM_ClearFlag(TIM4,TIM_FLAG_Update);
+	
+	TIM_ClearITPendingBit(TIM4, TIM_SR_UIF);
+ 
+	/* TIM3 enable counter */  //启动TIM4
+	TIM_Cmd(TIM4, ENABLE);
+
+	/* Preset counter for a safe start */
+	TIM_SetCounter(TIM4, 1);
+
+	/* TIM Interrupts enable */
+	TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+}
+
+
 //Set the timer for the next alarm.
 void setTimer(TIMEVAL value)
 {
@@ -60,11 +96,8 @@ TIMEVAL getElapsedTime(void)
 	return cur_time > last_time_set ? cur_time  - last_time_set : cur_time  + TIMEVAL_MAX - last_time_set;
 }
 
-// This function handles Timer 3 interrupt request.
-void TIM3_IRQHandler(void)
+void timer_callback(void)
 {
-	if(TIM_GetFlagStatus(TIM3, TIM_SR_UIF) == RESET)//	过滤更新中断外的其他中断
-		return;
 	last_time_set = cur_time;
 	cur_time++;
 	if(cur_time > TIMEVAL_MAX)
@@ -75,9 +108,31 @@ void TIM3_IRQHandler(void)
 	{
 		TimeDispatch();
 	}
-	TIM_ClearITPendingBit(TIM3, TIM_SR_UIF);
+//	if(cur_time % odometry_time == 0)
+//	{
+//		Odometry_data();
+//	}
 }
 
+// This function handles Timer 3 interrupt request.
+void TIM3_IRQHandler(void)
+{
+	if(TIM_GetFlagStatus(TIM3, TIM_SR_UIF) == RESET)//	过滤更新中断外的其他中断
+		return;
+	timer_callback();
+	TIM_ClearITPendingBit(TIM3, TIM_SR_UIF);
+}
+void odometry_callback(void)
+{
+	Odometry_data();
+}
+void TIM4_IRQHandler(void)
+{
+	if(TIM_GetFlagStatus(TIM4, TIM_SR_UIF) == RESET)//	过滤更新中断外的其他中断
+		return;
+	odometry_callback();
+	TIM_ClearITPendingBit(TIM4, TIM_SR_UIF);
+}
 
 
 ////Set the timer for the next alarm.

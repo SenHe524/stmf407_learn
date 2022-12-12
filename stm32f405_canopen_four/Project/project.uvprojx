@@ -274,7 +274,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x10000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -336,7 +336,7 @@
               <MiscControls>--gnu</MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\Include;..\Libraries\CMSIS\Device\STM32F4xx\Include;..\Libraries\CMSIS\Device\STM32F4xx\Source;..\Libraries\CMSIS\Device\STM32F4xx\Source\arm;..\User;..\User\sys;..\User\delay;..\User\usart;..\User\flash;..\User\canopen\src;..\User\canopen\inc;..\User\canopen\inc\stm;..\User\canopen\hardware;..\User\canopen\dictionary</IncludePath>
+              <IncludePath>..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\Libraries\CMSIS\Include;..\Libraries\CMSIS\Device\STM32F4xx\Include;..\Libraries\CMSIS\Device\STM32F4xx\Source;..\Libraries\CMSIS\Device\STM32F4xx\Source\arm;..\User;..\User\sys;..\User\delay;..\User\usart;..\User\flash;..\User\canopen\src;..\User\canopen\inc;..\User\canopen\inc\stm;..\User\canopen\hardware;..\User\canopen\dictionary;..\User\imu</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -851,9 +851,19 @@
               <FilePath>..\User\canopen\hardware\can1.c</FilePath>
             </File>
             <File>
+              <FileName>can1.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\canopen\hardware\can1.h</FilePath>
+            </File>
+            <File>
               <FileName>timer_user.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\canopen\hardware\timer_user.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer_user.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\canopen\hardware\timer_user.h</FilePath>
             </File>
             <File>
               <FileName>config.h</FileName>
@@ -936,14 +946,14 @@
               <FilePath>..\User\usart\usart.h</FilePath>
             </File>
             <File>
-              <FileName>stm32f4_flash.c</FileName>
+              <FileName>hardware_driver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\flash\stm32f4_flash.c</FilePath>
+              <FilePath>..\User\canopen\hardware\hardware_driver.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4_flash.h</FileName>
+              <FileName>hardware_driver.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\User\flash\stm32f4_flash.h</FilePath>
+              <FilePath>..\User\canopen\hardware\hardware_driver.h</FilePath>
             </File>
             <File>
               <FileName>protocol.c</FileName>
@@ -954,6 +964,26 @@
               <FileName>protocol.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\User\usart\protocol.h</FilePath>
+            </File>
+            <File>
+              <FileName>stmflash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\flash\stmflash.c</FilePath>
+            </File>
+            <File>
+              <FileName>stmflash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\flash\stmflash.h</FilePath>
+            </File>
+            <File>
+              <FileName>imu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\imu\imu.c</FilePath>
+            </File>
+            <File>
+              <FileName>imu.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\imu\imu.h</FilePath>
             </File>
           </Files>
         </Group>

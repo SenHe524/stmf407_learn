@@ -52,44 +52,11 @@ uint8_t RPDO1_Config(motorID ID)
 	//	清空RPDO映射
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//	映射6040：controlword
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x00;
-	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x01;
-	pdo_map_mes.data[4] = 0x10;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x40;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-	//	映射6060：mode of operation
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x00;
-	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x02;
-	pdo_map_mes.data[4] = 0x08;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x60;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-//	//	映射607A：target position
-//	pdo_map_mes.data[0] = 0x23;
-//	pdo_map_mes.data[1] = 0x00;
-//	pdo_map_mes.data[2] = 0x16;
-//	pdo_map_mes.data[3] = 0x03;
-//	pdo_map_mes.data[4] = 0x20;
-//	pdo_map_mes.data[5] = 0x00;
-//	pdo_map_mes.data[6] = 0x7A;
-//	pdo_map_mes.data[7] = 0x60;
-//	canSend(CAN1, &pdo_map_mes);
-//	delay_ms(5);
 	//	映射60FF：target velocity
 	pdo_map_mes.data[0] = 0x23;
 	pdo_map_mes.data[1] = 0x00;
 	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x03;
+	pdo_map_mes.data[3] = 0x01;
 	pdo_map_mes.data[4] = 0x20;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0xFF;
@@ -101,7 +68,7 @@ uint8_t RPDO1_Config(motorID ID)
 	pdo_map_mes.data[1] = 0x00;
 	pdo_map_mes.data[2] = 0x16;
 	pdo_map_mes.data[3] = 0x00;
-	pdo_map_mes.data[4] = 0x03;
+	pdo_map_mes.data[4] = 0x01;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x00;
 	pdo_map_mes.data[7] = 0x00;
@@ -123,44 +90,11 @@ uint8_t RPDO2_Config(motorID ID)
 	//	清空RPDO映射
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//	映射6040：controlword
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x01;
-	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x01;
-	pdo_map_mes.data[4] = 0x10;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x40;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-	//	映射6060：mode of operation
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x01;
-	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x02;
-	pdo_map_mes.data[4] = 0x08;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x60;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-//	//	映射607A：target position
-//	pdo_map_mes.data[0] = 0x23;
-//	pdo_map_mes.data[1] = 0x01;
-//	pdo_map_mes.data[2] = 0x16;
-//	pdo_map_mes.data[3] = 0x03;
-//	pdo_map_mes.data[4] = 0x20;
-//	pdo_map_mes.data[5] = 0x00;
-//	pdo_map_mes.data[6] = 0x7A;
-//	pdo_map_mes.data[7] = 0x60;
-//	canSend(CAN1, &pdo_map_mes);
-//	delay_ms(5);
 	//	映射60FF：target velocity
 	pdo_map_mes.data[0] = 0x23;
 	pdo_map_mes.data[1] = 0x01;
 	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x03;
+	pdo_map_mes.data[3] = 0x01;
 	pdo_map_mes.data[4] = 0x20;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0xFF;
@@ -172,7 +106,7 @@ uint8_t RPDO2_Config(motorID ID)
 	pdo_map_mes.data[1] = 0x01;
 	pdo_map_mes.data[2] = 0x16;
 	pdo_map_mes.data[3] = 0x00;
-	pdo_map_mes.data[4] = 0x03;
+	pdo_map_mes.data[4] = 0x01;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x00;
 	pdo_map_mes.data[7] = 0x00;
@@ -201,44 +135,11 @@ uint8_t RPDO3_Config(motorID ID)
 	//	清空RPDO映射
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//	映射6040：controlword
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x02;
-	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x01;
-	pdo_map_mes.data[4] = 0x10;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x40;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-	//	映射6060：mode of operation
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x02;
-	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x02;
-	pdo_map_mes.data[4] = 0x08;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x60;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-//	//	映射607A：target position
-//	pdo_map_mes.data[0] = 0x23;
-//	pdo_map_mes.data[1] = 0x02;
-//	pdo_map_mes.data[2] = 0x16;
-//	pdo_map_mes.data[3] = 0x03;
-//	pdo_map_mes.data[4] = 0x20;
-//	pdo_map_mes.data[5] = 0x00;
-//	pdo_map_mes.data[6] = 0x7A;
-//	pdo_map_mes.data[7] = 0x60;
-//	canSend(CAN1, &pdo_map_mes);
-//	delay_ms(5);
 	//	映射60FF：target velocity
 	pdo_map_mes.data[0] = 0x23;
 	pdo_map_mes.data[1] = 0x02;
 	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x03;
+	pdo_map_mes.data[3] = 0x01;
 	pdo_map_mes.data[4] = 0x20;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0xFF;
@@ -250,7 +151,7 @@ uint8_t RPDO3_Config(motorID ID)
 	pdo_map_mes.data[1] = 0x02;
 	pdo_map_mes.data[2] = 0x16;
 	pdo_map_mes.data[3] = 0x00;
-	pdo_map_mes.data[4] = 0x03;
+	pdo_map_mes.data[4] = 0x01;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x00;
 	pdo_map_mes.data[7] = 0x00;
@@ -271,44 +172,11 @@ uint8_t RPDO4_Config(motorID ID)
 	//	清空RPDO映射
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//	映射6040：controlword
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x03;
-	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x01;
-	pdo_map_mes.data[4] = 0x10;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x40;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-	//	映射6060：mode of operation
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x03;
-	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x02;
-	pdo_map_mes.data[4] = 0x08;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x60;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-//	//	映射607A：target position
-//	pdo_map_mes.data[0] = 0x23;
-//	pdo_map_mes.data[1] = 0x03;
-//	pdo_map_mes.data[2] = 0x16;
-//	pdo_map_mes.data[3] = 0x03;
-//	pdo_map_mes.data[4] = 0x20;
-//	pdo_map_mes.data[5] = 0x00;
-//	pdo_map_mes.data[6] = 0x7A;
-//	pdo_map_mes.data[7] = 0x60;
-//	canSend(CAN1, &pdo_map_mes);
-//	delay_ms(5);
 	//	映射60FF：target velocity
 	pdo_map_mes.data[0] = 0x23;
 	pdo_map_mes.data[1] = 0x03;
 	pdo_map_mes.data[2] = 0x16;
-	pdo_map_mes.data[3] = 0x03;
+	pdo_map_mes.data[3] = 0x01;
 	pdo_map_mes.data[4] = 0x20;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0xFF;
@@ -320,7 +188,7 @@ uint8_t RPDO4_Config(motorID ID)
 	pdo_map_mes.data[1] = 0x03;
 	pdo_map_mes.data[2] = 0x16;
 	pdo_map_mes.data[3] = 0x00;
-	pdo_map_mes.data[4] = 0x03;
+	pdo_map_mes.data[4] = 0x01;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x00;
 	pdo_map_mes.data[7] = 0x00;
@@ -328,7 +196,6 @@ uint8_t RPDO4_Config(motorID ID)
 	delay_ms(5);
 	return 0x00;
 }
-
 
 uint8_t TPDO1_Config(motorID ID)
 {
@@ -353,56 +220,34 @@ uint8_t TPDO1_Config(motorID ID)
 	//	清空TPDO映射
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//	映射6041：statusword
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x00;
-	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x01;
-	pdo_map_mes.data[4] = 0x10;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x41;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-	//	映射6061：mode of operation display
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x00;
-	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x02;
-	pdo_map_mes.data[4] = 0x08;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x61;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
 	//	映射6064：position actual value
 	pdo_map_mes.data[0] = 0x23;
 	pdo_map_mes.data[1] = 0x00;
 	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x03;
+	pdo_map_mes.data[3] = 0x01;
 	pdo_map_mes.data[4] = 0x20;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x64;
 	pdo_map_mes.data[7] = 0x60;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-//	//	映射606C：velocity actual value
-//	pdo_map_mes.data[0] = 0x23;
-//	pdo_map_mes.data[1] = 0x00;
-//	pdo_map_mes.data[2] = 0x1A;
-//	pdo_map_mes.data[3] = 0x03;
-//	pdo_map_mes.data[4] = 0x20;
-//	pdo_map_mes.data[5] = 0x00;
-//	pdo_map_mes.data[6] = 0x6C;
-//	pdo_map_mes.data[7] = 0x60;
-//	canSend(CAN1, &pdo_map_mes);
-//	delay_ms(5);
-	//	传输个数写入：4
+	//	映射606C：velocity actual value
+	pdo_map_mes.data[0] = 0x23;
+	pdo_map_mes.data[1] = 0x00;
+	pdo_map_mes.data[2] = 0x1A;
+	pdo_map_mes.data[3] = 0x02;
+	pdo_map_mes.data[4] = 0x20;
+	pdo_map_mes.data[5] = 0x00;
+	pdo_map_mes.data[6] = 0x6C;
+	pdo_map_mes.data[7] = 0x60;
+	canSend(CAN1, &pdo_map_mes);
+	delay_ms(5);
+	//	传输个数写入：3
 	pdo_map_mes.data[0] = 0x2F;
 	pdo_map_mes.data[1] = 0x00;
 	pdo_map_mes.data[2] = 0x1A;
 	pdo_map_mes.data[3] = 0x00;
-	pdo_map_mes.data[4] = 0x03;
+	pdo_map_mes.data[4] = 0x02;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x00;
 	pdo_map_mes.data[7] = 0x00;
@@ -435,56 +280,34 @@ uint8_t TPDO2_Config(motorID ID)
 	//	清空TPDO映射
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//	映射6041：statusword
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x01;
-	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x01;
-	pdo_map_mes.data[4] = 0x10;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x41;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-	//	映射6061：mode of operation display
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x01;
-	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x02;
-	pdo_map_mes.data[4] = 0x08;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x61;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
 	//	映射6064：position actual value
 	pdo_map_mes.data[0] = 0x23;
 	pdo_map_mes.data[1] = 0x01;
 	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x03;
+	pdo_map_mes.data[3] = 0x01;
 	pdo_map_mes.data[4] = 0x20;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x64;
 	pdo_map_mes.data[7] = 0x60;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-//	//	映射606C：velocity actual value
-//	pdo_map_mes.data[0] = 0x23;
-//	pdo_map_mes.data[1] = 0x01;
-//	pdo_map_mes.data[2] = 0x1A;
-//	pdo_map_mes.data[3] = 0x03;
-//	pdo_map_mes.data[4] = 0x20;
-//	pdo_map_mes.data[5] = 0x00;
-//	pdo_map_mes.data[6] = 0x6C;
-//	pdo_map_mes.data[7] = 0x60;
-//	canSend(CAN1, &pdo_map_mes);
-//	delay_ms(5);
-	//	传输个数写入：4
+	//	映射606C：velocity actual value
+	pdo_map_mes.data[0] = 0x23;
+	pdo_map_mes.data[1] = 0x01;
+	pdo_map_mes.data[2] = 0x1A;
+	pdo_map_mes.data[3] = 0x02;
+	pdo_map_mes.data[4] = 0x20;
+	pdo_map_mes.data[5] = 0x00;
+	pdo_map_mes.data[6] = 0x6C;
+	pdo_map_mes.data[7] = 0x60;
+	canSend(CAN1, &pdo_map_mes);
+	delay_ms(5);
+	//	传输个数写入：3
 	pdo_map_mes.data[0] = 0x2F;
 	pdo_map_mes.data[1] = 0x01;
 	pdo_map_mes.data[2] = 0x1A;
 	pdo_map_mes.data[3] = 0x00;
-	pdo_map_mes.data[4] = 0x03;
+	pdo_map_mes.data[4] = 0x02;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x00;
 	pdo_map_mes.data[7] = 0x00;
@@ -515,56 +338,34 @@ uint8_t TPDO3_Config(motorID ID)
 	//	清空TPDO映射
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//	映射6041：statusword
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x02;
-	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x01;
-	pdo_map_mes.data[4] = 0x10;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x41;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-	//	映射6061：mode of operation display
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x02;
-	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x02;
-	pdo_map_mes.data[4] = 0x08;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x61;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
 	//	映射6064：position actual value
 	pdo_map_mes.data[0] = 0x23;
 	pdo_map_mes.data[1] = 0x02;
 	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x03;
+	pdo_map_mes.data[3] = 0x01;
 	pdo_map_mes.data[4] = 0x20;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x64;
 	pdo_map_mes.data[7] = 0x60;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-//	//	映射606C：velocity actual value
-//	pdo_map_mes.data[0] = 0x23;
-//	pdo_map_mes.data[1] = 0x02;
-//	pdo_map_mes.data[2] = 0x1A;
-//	pdo_map_mes.data[3] = 0x03;
-//	pdo_map_mes.data[4] = 0x20;
-//	pdo_map_mes.data[5] = 0x00;
-//	pdo_map_mes.data[6] = 0x6C;
-//	pdo_map_mes.data[7] = 0x60;
-//	canSend(CAN1, &pdo_map_mes);
-//	delay_ms(5);
-	//	传输个数写入：4
+	//	映射606C：velocity actual value
+	pdo_map_mes.data[0] = 0x23;
+	pdo_map_mes.data[1] = 0x02;
+	pdo_map_mes.data[2] = 0x1A;
+	pdo_map_mes.data[3] = 0x02;
+	pdo_map_mes.data[4] = 0x20;
+	pdo_map_mes.data[5] = 0x00;
+	pdo_map_mes.data[6] = 0x6C;
+	pdo_map_mes.data[7] = 0x60;
+	canSend(CAN1, &pdo_map_mes);
+	delay_ms(5);
+	//	传输个数写入：3
 	pdo_map_mes.data[0] = 0x2F;
 	pdo_map_mes.data[1] = 0x02;
 	pdo_map_mes.data[2] = 0x1A;
 	pdo_map_mes.data[3] = 0x00;
-	pdo_map_mes.data[4] = 0x03;
+	pdo_map_mes.data[4] = 0x02;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x00;
 	pdo_map_mes.data[7] = 0x00;
@@ -596,56 +397,34 @@ uint8_t TPDO4_Config(motorID ID)
 	//	清空TPDO映射
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-	//	映射6041：statusword
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x03;
-	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x01;
-	pdo_map_mes.data[4] = 0x10;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x41;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
-	//	映射6061：mode of operation display
-	pdo_map_mes.data[0] = 0x23;
-	pdo_map_mes.data[1] = 0x03;
-	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x02;
-	pdo_map_mes.data[4] = 0x08;
-	pdo_map_mes.data[5] = 0x00;
-	pdo_map_mes.data[6] = 0x61;
-	pdo_map_mes.data[7] = 0x60;
-	canSend(CAN1, &pdo_map_mes);
-	delay_ms(5);
 	//	映射6064：position actual value
 	pdo_map_mes.data[0] = 0x23;
 	pdo_map_mes.data[1] = 0x03;
 	pdo_map_mes.data[2] = 0x1A;
-	pdo_map_mes.data[3] = 0x03;
+	pdo_map_mes.data[3] = 0x01;
 	pdo_map_mes.data[4] = 0x20;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x64;
 	pdo_map_mes.data[7] = 0x60;
 	canSend(CAN1, &pdo_map_mes);
 	delay_ms(5);
-//	//	映射606C：velocity actual value
-//	pdo_map_mes.data[0] = 0x23;
-//	pdo_map_mes.data[1] = 0x03;
-//	pdo_map_mes.data[2] = 0x1A;
-//	pdo_map_mes.data[3] = 0x03;
-//	pdo_map_mes.data[4] = 0x20;
-//	pdo_map_mes.data[5] = 0x00;
-//	pdo_map_mes.data[6] = 0x6C;
-//	pdo_map_mes.data[7] = 0x60;
-//	canSend(CAN1, &pdo_map_mes);
-//	delay_ms(5);
-	//	传输个数写入：4
+	//	映射606C：velocity actual value
+	pdo_map_mes.data[0] = 0x23;
+	pdo_map_mes.data[1] = 0x03;
+	pdo_map_mes.data[2] = 0x1A;
+	pdo_map_mes.data[3] = 0x02;
+	pdo_map_mes.data[4] = 0x20;
+	pdo_map_mes.data[5] = 0x00;
+	pdo_map_mes.data[6] = 0x6C;
+	pdo_map_mes.data[7] = 0x60;
+	canSend(CAN1, &pdo_map_mes);
+	delay_ms(5);
+	//	传输个数写入：3
 	pdo_map_mes.data[0] = 0x2F;
 	pdo_map_mes.data[1] = 0x03;
 	pdo_map_mes.data[2] = 0x1A;
 	pdo_map_mes.data[3] = 0x00;
-	pdo_map_mes.data[4] = 0x03;
+	pdo_map_mes.data[4] = 0x02;
 	pdo_map_mes.data[5] = 0x00;
 	pdo_map_mes.data[6] = 0x00;
 	pdo_map_mes.data[7] = 0x00;

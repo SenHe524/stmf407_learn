@@ -36,8 +36,8 @@ typedef enum MOTOR
 #define IS_MOTOR_MOVE 			0x2027
 #define MOTOR_HALL_STATUS		0x2028
 #define ERROR_CODE	 			0x603f
-#define MOTOR_STATUS			0x6040
-#define MOTOR_CONTROL 			0x6041
+#define MOTOR_CONTROL			0x6040
+#define MOTOR_STATUS 			0x6041
 #define MOTOR_MODE				0x6060
 #define MODE_DISPLAY 			0x6061
 #define ACTUAL_COUNT			0x6064
@@ -45,9 +45,11 @@ typedef enum MOTOR
 #define ACC_TIME	 			0x6083
 #define DE_TIME					0x6084
 #define TARGET_VELOCITY			0x60FF
+#define AGV_ODOMETRY			0x6101
 
-#define IS_GET_UINT16(REG)		(((REG) == LOCK_METHOD) || \
-								 ((REG) == SAVE_NEWPARAM) || \
+#define IS_GET_UINT16(REG)		(((REG) == SAVE_RW) || \
+								 ((REG) == LOCK_METHOD) || \
+								 ((REG) == SAVE_RW_S) || \
 								 ((REG) == VELO_SMOOTH_FACTOR) || \
 								 ((REG) == ELEC_ERATIO_GAIN) || \
 								 ((REG) == ELEC_INTEGRAL) || \
@@ -66,9 +68,41 @@ typedef enum MOTOR
 								 ((REG) == ACC_TIME) || \
 								 ((REG) == DE_TIME))
 
+typedef union 
+{
+    int8_t data_int8;
+    unsigned char data8;
+}union_int8;
+
+typedef union 
+{
+    uint16_t data_uint16;
+    unsigned char data8[2];
+}union_uint16;
+
+typedef union 
+{
+    int16_t data_int16;
+    unsigned char data8[2];
+}union_int16;
+
+
+typedef union 
+{
+    int32_t data_int32;
+    unsigned char data8[4];
+}union_int32;
+
+
+typedef union 
+{
+    uint32_t data_uint32;
+    unsigned char data8[4];
+}union_uint32;
 
 
 #include "data.h"
+#include "hardware_driver.h"
 #include "timer_user.h"
 #include "can1.h"
 #include "Master.h"
@@ -76,9 +110,11 @@ typedef enum MOTOR
 #include "pdo_set.h"
 #include "set_get_info.h"
 #include "sysdep.h"
-#include "stm32f4_flash.h"
 #include "protocol.h"
+#include "stmflash.h"
+#include "imu.h"
 #define PI 3.1515926
+#define __weak __attribute__((weak))
 
 #endif
 
