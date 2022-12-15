@@ -204,8 +204,8 @@ void CAN1_RX0_IRQHandler(void)
 	for(i=0 ; i<rxm.len ; i++)
 		 rxm.data[i] = RxMessage.Data[i];
 
-//	printf("rec:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",rxm.cob_id,rxm.len,rxm.data[0], rxm.data[1],rxm.data[2],rxm.data[3]
-//										,rxm.data[4], rxm.data[5],rxm.data[6],rxm.data[7]);	
+	printf("rec:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",rxm.cob_id,rxm.len,rxm.data[0], rxm.data[1],rxm.data[2],rxm.data[3]
+										,rxm.data[4], rxm.data[5],rxm.data[6],rxm.data[7]);	
 	can_handle(&rxm);
 }
 

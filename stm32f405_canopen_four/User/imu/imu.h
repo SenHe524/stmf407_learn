@@ -64,6 +64,8 @@ typedef struct
 	float quaternion_data3;
 }protocol_info_t;
 
+
+
 #pragma pack()
 
 /*------------------------------------------------------------------------------------------------------------*/
@@ -75,7 +77,8 @@ uint8_t get_usart6rxlen(void);
 uint8_t is_rcv_usart6cmd(void);
 void clear_usart6cmd(void);
 void usart6_rcv(uint8_t rxdata);
-
+void imu_data_send(void);
+//void imu_data_upload(protocol_info_t* data_t);
 int usart6_analysis_cmd(const uint8_t *data, short len);
 
 #ifdef __cplusplus

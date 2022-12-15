@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include "sys.h"
 #include "delay.h"
+
+#define BUF_MAX_LEN				128
 #include "usart.h"
 
 typedef enum MOTOR
@@ -71,34 +73,40 @@ typedef enum MOTOR
 typedef union 
 {
     int8_t data_int8;
-    unsigned char data8;
+    uint8_t data8;
 }union_int8;
 
 typedef union 
 {
     uint16_t data_uint16;
-    unsigned char data8[2];
+    uint8_t data8[2];
 }union_uint16;
 
 typedef union 
 {
     int16_t data_int16;
-    unsigned char data8[2];
+    uint8_t data8[2];
 }union_int16;
 
 
 typedef union 
 {
     int32_t data_int32;
-    unsigned char data8[4];
+    uint8_t data8[4];
 }union_int32;
 
 
 typedef union 
 {
     uint32_t data_uint32;
-    unsigned char data8[4];
+    uint8_t data8[4];
 }union_uint32;
+
+typedef union 
+{
+    float data_float;
+    uint8_t data8[4];
+}union_float;
 
 
 #include "data.h"
@@ -113,7 +121,7 @@ typedef union
 #include "protocol.h"
 #include "stmflash.h"
 #include "imu.h"
-#define PI 3.1515926
+#define PI 3.1515926f
 #define __weak __attribute__((weak))
 
 #endif

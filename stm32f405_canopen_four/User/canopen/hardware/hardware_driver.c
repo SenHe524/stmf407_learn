@@ -28,12 +28,12 @@ __weak void delay_us(u32 nus)
 	//	必须实现自己的us延时
 }
 
-__weak void usart1_sendbuf(uint8_t* data, uint8_t len)
+__weak void usart1_sendbuf(const uint8_t* data, uint8_t len)
 {
 	//	必须实现自己的串口发送函数
 }
 
-__weak void usart6_sendbuf(uint8_t* data, uint8_t len)
+__weak void usart6_sendbuf(const uint8_t* data, uint8_t len)
 {
 	//	必须实现自己的串口发送函数
 }

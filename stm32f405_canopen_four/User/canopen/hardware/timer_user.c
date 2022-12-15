@@ -3,10 +3,12 @@
 //TIMEVAL last_counter_val = 0;
 //TIMEVAL elapsed_time = 0;
 
-
+#define ODOMETRY_MAX_TIMES		2
 uint32_t cur_time = 0;//时间计数
 uint32_t next_time_set  = 0;//下一次触发时间计数
-uint32_t odometry_time = 1000;
+uint32_t odometry_times = 0;
+uint8_t timer_10ms_ = 0;
+
 static TIMEVAL last_time_set = TIMEVAL_MAX;//上一次的时间计数
 
 // Initializes the timer, turn on the interrupt and put the interrupt time to zero
@@ -14,7 +16,6 @@ void TIM3_Init(void)
 {
 	NVIC_InitTypeDef NVIC_InitStructure;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-
 	/* TIM3 clock enable */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 	/* Enable the TIM3 gloabal Interrupt */
@@ -58,11 +59,12 @@ void TIM4_Init(void)
 	/* Enable the TIM4 gloabal Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = 4000;//40ms一个中断
+	TIM_TimeBaseStructure.TIM_Period = 2000;//40ms一个中断
 	TIM_TimeBaseStructure.TIM_Prescaler = 840-1;//84M频率/840为100k，即10us间隔
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
@@ -108,10 +110,6 @@ void timer_callback(void)
 	{
 		TimeDispatch();
 	}
-//	if(cur_time % odometry_time == 0)
-//	{
-//		Odometry_data();
-//	}
 }
 
 // This function handles Timer 3 interrupt request.
@@ -122,15 +120,21 @@ void TIM3_IRQHandler(void)
 	timer_callback();
 	TIM_ClearITPendingBit(TIM3, TIM_SR_UIF);
 }
-void odometry_callback(void)
-{
-	Odometry_data();
-}
+
 void TIM4_IRQHandler(void)
 {
 	if(TIM_GetFlagStatus(TIM4, TIM_SR_UIF) == RESET)//	过滤更新中断外的其他中断
 		return;
-	odometry_callback();
+//	odometry_times++;
+//	odometry_times %= ODOMETRY_MAX_TIMES;
+//	if(odometry_times == 0)
+//	{
+//		Odometry_data();
+//		imu_data_send();
+//	}
+	timer_10ms_ = 1;
+//	Odometry_data();
+//	imu_data_send();
 	TIM_ClearITPendingBit(TIM4, TIM_SR_UIF);
 }
 

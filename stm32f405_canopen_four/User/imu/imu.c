@@ -60,7 +60,7 @@
 
 /*------------------------------------------------Variables define------------------------------------------------*/
 protocol_info_t g_output_info;
-
+union_float imu_data;
 // 接收状态机
 uint8_t usart6_rxflag = 0;
 // 命令接收缓存
@@ -74,10 +74,14 @@ uint8_t usart6_cnt = 0;
 uint8_t usart6_rxlen = 0;
 // 新命令接收标志
 uint8_t usart6_cmdflag = 0;
+// 组帧后的帧长
+uint8_t frame_len;
+uint8_t imu_data_temp[64] = {0};
 
+extern uint8_t usart1_txbuf[BUF_MAX_LEN];
 /*------------------------------------------------Functions declare------------------------------------------------*/
-int get_signed_int(uint8_t *data);
-int calc_checksum(uint8_t *data, uint16_t len, uint16_t *checksum);
+int get_signed_int(const uint8_t *data);
+int calc_checksum(const uint8_t *data, uint16_t len, uint16_t *checksum);
 
 /*-------------------------------------------------------------------------------------------------------------*/
 // 获取接收的数据
@@ -135,11 +139,12 @@ void usart6_rcv(uint8_t rxdata)
 			if (rxdata == PROTOCOL_FIRST_BYTE) {
 				usart6_rxbuf[usart6_rxindex++] = PROTOCOL_FIRST_BYTE;
 				usart6_rxflag = IMU_SECOND_HEADER;
-			} else {
-				usart6_rxflag = IMU_FIRST_HEADER;
-				usart6_rxindex = 0;
-				usart6_rxbuf[0] = 0x00;
-			}
+			} 
+//			else {
+//				usart6_rxflag = IMU_FIRST_HEADER;
+//				usart6_rxindex = 0;
+//				usart6_rxbuf[0] = 0x00;
+//			}
 			break;
 		}
 		case IMU_SECOND_HEADER: // 帧头
@@ -168,7 +173,7 @@ void usart6_rcv(uint8_t rxdata)
 		}
 		case IMU_LEN:// 数据位长度
 		{
-			// New_CMD_length为数据帧总字节数 = 帧头+标识位+长度+校验位+帧尾(5 bytes)+数据位
+			// usart6_rxlen为数据帧总字节数 = 帧头(2)+标识位(2)+长度(1)+数据位(nbytes)+校验位(2)
 			usart6_rxlen = rxdata + 7;
 			if (usart6_rxlen < BUF_MAX_LEN) {
 				usart6_rxbuf[usart6_rxindex++] = rxdata;
@@ -187,7 +192,7 @@ void usart6_rcv(uint8_t rxdata)
 		case IMU_DATA:// 读取完剩余的所有字段
 		{
 			usart6_rxbuf[usart6_rxindex++] = rxdata;
-			if (usart6_rxindex >= usart6_rxlen){
+			if(usart6_rxindex >= usart6_rxlen){
 				usart6_cmdflag = 1;
 				usart6_rxflag = IMU_FIRST_HEADER;
 				usart6_rxindex = 0;
@@ -203,7 +208,41 @@ void usart6_rcv(uint8_t rxdata)
 
 
 
-uint8_t check_data_len_by_id(uint8_t id, uint8_t len, uint8_t *data)
+//把数据发送给匿名飞控做姿态显示
+//void send_rpy(float roll, float pitch, float yaw)
+//{
+//    unsigned char sc = 0;
+//    unsigned char ac = 0;
+//    unsigned char cnt = 0;
+//	uint8_t buf[64] = {0};
+//    buf[cnt++] = 0xAA;
+//    buf[cnt++] = 0xFF;
+
+//    buf[cnt++] = 0x03;
+//    buf[cnt++] = 6;
+
+//    buf[cnt++] = (short)(roll * 100) & 0xff;
+//    buf[cnt++] = ((short)(roll * 100) >> 8) & 0xff;
+
+//    buf[cnt++] = (short)(pitch * 100) & 0xff;
+//    buf[cnt++] = ((short)(pitch * 100) >> 8) & 0xff;
+
+//    buf[cnt++] = (short)(yaw * 100) & 0xff;
+//    buf[cnt++] = ((short)(yaw * 100) >> 8) & 0xff;
+
+
+
+
+//    for (unsigned char i = 0; i < buf[3] + 4; i++)
+//    {
+//        sc += buf[i];
+//        ac += sc;
+//    }
+//    buf[cnt++] = sc;
+//    buf[cnt++] = ac;
+//    usart1_sendbuf(buf, cnt);
+//}
+uint8_t check_data_len_by_id(uint8_t id, uint8_t len, const uint8_t *data)
 {
 	uint8_t ret = 0xff;
 
@@ -217,8 +256,8 @@ uint8_t check_data_len_by_id(uint8_t id, uint8_t len, uint8_t *data)
 				g_output_info.accel_x = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 				g_output_info.accel_y = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
 				g_output_info.accel_z = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
-				printf("accel_x:%f, accel_y:%f, accel_z:%f\n",
-						g_output_info.accel_x, g_output_info.accel_y, g_output_info.accel_z);
+//				printf("accel_x:%f, accel_y:%f, accel_z:%f\n",
+//						g_output_info.accel_x, g_output_info.accel_y, g_output_info.accel_z);
 			}
 			else
 			{
@@ -235,8 +274,8 @@ uint8_t check_data_len_by_id(uint8_t id, uint8_t len, uint8_t *data)
 				g_output_info.angle_x = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 				g_output_info.angle_y = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
 				g_output_info.angle_z = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
-				printf("angle_x:%f, angle_y:%f, angle_z:%f\n",
-						g_output_info.angle_x, g_output_info.angle_y, g_output_info.angle_z);
+//				printf("angle_x:%f, angle_y:%f, angle_z:%f\n",
+//						g_output_info.angle_x, g_output_info.angle_y, g_output_info.angle_z);
 			}
 			else
 			{
@@ -253,8 +292,8 @@ uint8_t check_data_len_by_id(uint8_t id, uint8_t len, uint8_t *data)
 				g_output_info.mag_x = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 				g_output_info.mag_y = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
 				g_output_info.mag_z = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
-				printf("mag_x:%f, mag_y:%f, mag_z:%f\n",
-						g_output_info.mag_x, g_output_info.mag_y, g_output_info.mag_z);
+//				printf("mag_x:%f, mag_y:%f, mag_z:%f\n",
+//						g_output_info.mag_x, g_output_info.mag_y, g_output_info.mag_z);
 			}
 			else
 			{
@@ -271,8 +310,8 @@ uint8_t check_data_len_by_id(uint8_t id, uint8_t len, uint8_t *data)
 				g_output_info.raw_mag_x = get_signed_int(data) * MAG_RAW_DATA_FACTOR;
 				g_output_info.raw_mag_y = get_signed_int(data + SINGLE_DATA_BYTES) * MAG_RAW_DATA_FACTOR;
 				g_output_info.raw_mag_z = get_signed_int(data + SINGLE_DATA_BYTES * 2) * MAG_RAW_DATA_FACTOR;
-				printf("raw_mag_x:%f, raw_mag_y:%f, raw_mag_z:%f\n",
-						g_output_info.raw_mag_x, g_output_info.raw_mag_y, g_output_info.raw_mag_z);
+//				printf("raw_mag_x:%f, raw_mag_y:%f, raw_mag_z:%f\n",
+//						g_output_info.raw_mag_x, g_output_info.raw_mag_y, g_output_info.raw_mag_z);
 			}
 			else
 			{
@@ -289,8 +328,9 @@ uint8_t check_data_len_by_id(uint8_t id, uint8_t len, uint8_t *data)
 				g_output_info.pitch = get_signed_int(data) * NOT_MAG_DATA_FACTOR;
 				g_output_info.roll = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
 				g_output_info.yaw = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
-				printf("pitch:%f, roll:%f, yaw:%f\n",
-						g_output_info.pitch, g_output_info.roll, g_output_info.yaw);
+//				printf("pitch:%f, roll:%f, yaw:%f\n",
+//						g_output_info.pitch, g_output_info.roll, g_output_info.yaw);
+//				send_rpy(g_output_info.pitch, g_output_info.roll, g_output_info.yaw);
 			}
 			else
 			{
@@ -308,9 +348,10 @@ uint8_t check_data_len_by_id(uint8_t id, uint8_t len, uint8_t *data)
 				g_output_info.quaternion_data1 = get_signed_int(data + SINGLE_DATA_BYTES) * NOT_MAG_DATA_FACTOR;
 				g_output_info.quaternion_data2 = get_signed_int(data + SINGLE_DATA_BYTES * 2) * NOT_MAG_DATA_FACTOR;
 				g_output_info.quaternion_data3 = get_signed_int(data + SINGLE_DATA_BYTES * 3) * NOT_MAG_DATA_FACTOR;
-				printf("quaternion_data0:%f, quaternion_data1:%f, quaternion_data2:%f, quaternion_data3:%f\n",
-						g_output_info.quaternion_data0, g_output_info.quaternion_data1,
-						g_output_info.quaternion_data2, g_output_info.quaternion_data3);
+//				printf("quaternion_data0:%f, quaternion_data1:%f, quaternion_data2:%f, quaternion_data3:%f\n",
+//						g_output_info.quaternion_data0, g_output_info.quaternion_data1,
+//						g_output_info.quaternion_data2, g_output_info.quaternion_data3);
+			
 			}
 			else
 			{
@@ -325,7 +366,48 @@ uint8_t check_data_len_by_id(uint8_t id, uint8_t len, uint8_t *data)
 
 	return ret;
 }
-
+void imu_data_send(void){
+	
+}
+void imu_data_upload(protocol_info_t* data_t)
+{
+	uint8_t ret_buf[64]={0};
+	uint8_t imu_cnt = 0;
+	for(int i = 0; i < 3; i++)
+	{
+		imu_data.data_float = *(&(data_t->accel_x)+i);
+		ret_buf[imu_cnt++] = imu_data.data8[0];
+		ret_buf[imu_cnt++] = imu_data.data8[1];
+		ret_buf[imu_cnt++] = imu_data.data8[2];
+		ret_buf[imu_cnt++] = imu_data.data8[3];
+	}
+	for(int i = 0; i < 3; i++)
+	{
+		imu_data.data_float = (*(&(data_t->angle_x)+i) * PI) / 180.0f;
+		ret_buf[imu_cnt++] = imu_data.data8[0];
+		ret_buf[imu_cnt++] = imu_data.data8[1];
+		ret_buf[imu_cnt++] = imu_data.data8[2];
+		ret_buf[imu_cnt++] = imu_data.data8[3];
+	}
+	for(int i = 0; i < 3; i++)
+	{
+		imu_data.data_float = *(&(data_t->pitch)+i);
+		ret_buf[imu_cnt++] = imu_data.data8[0];
+		ret_buf[imu_cnt++] = imu_data.data8[1];
+		ret_buf[imu_cnt++] = imu_data.data8[2];
+		ret_buf[imu_cnt++] = imu_data.data8[3];
+	}
+	for(int i = 0; i < 4; i++)
+	{
+		imu_data.data_float = *(&(data_t->quaternion_data0)+i);
+		ret_buf[imu_cnt++] = imu_data.data8[0];
+		ret_buf[imu_cnt++] = imu_data.data8[1];
+		ret_buf[imu_cnt++] = imu_data.data8[2];
+		ret_buf[imu_cnt++] = imu_data.data8[3];
+	}
+	memcpy(imu_data_temp, ret_buf, imu_cnt);
+//	frame_len = usart1frame_packing(ret_buf, usart1_txbuf, imu_cnt, IMU);
+}
 /*--------------------------------------------------------------------------------------------------------------
 * 输出协议为：header1(0x59) + header2(0x53) + tid(2B) + payload_len(1B) + payload_data(Nbytes) + ck1(1B) + ck2(1B)
 * crc校验从TID开始到payload data的最后一个字节
@@ -394,7 +476,8 @@ int usart6_analysis_cmd(const uint8_t *data, short len)
 				payload_len--;
 			}
 		}
-
+//		printf("Im here\n");
+		imu_data_upload(&g_output_info);
 		return analysis_ok;
 	}
 	else
@@ -403,7 +486,7 @@ int usart6_analysis_cmd(const uint8_t *data, short len)
 	}
 }
 
-int get_signed_int(uint8_t *data)
+int get_signed_int(const uint8_t *data)
 {
 	int temp = 0;
 
@@ -412,7 +495,7 @@ int get_signed_int(uint8_t *data)
 	return temp;
 }
 
-int calc_checksum(uint8_t *data, uint16_t len, uint16_t *checksum)
+int calc_checksum(const uint8_t *data, uint16_t len, uint16_t *checksum)
 {
 	uint8_t check_a = 0;
 	uint8_t check_b = 0;

@@ -2,7 +2,6 @@
 extern uint8_t buf_temp[4];
 extern uint8_t rpdo_flag[4];
 extern int8_t write_flag;
-extern FLASH_DATA AGV_PARAM;
 int8_t get_i8(motorID ID, uint16_t reg)
 {
 	uint16_t i = 0;

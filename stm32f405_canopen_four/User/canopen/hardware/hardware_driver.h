@@ -9,8 +9,8 @@ void can_init(CO_Data * d, unsigned char (*usercan_init)(CO_Data *));
 
 void delay_ms(u16 nms);
 void delay_us(u32 nus);
-void usart1_sendbuf(uint8_t* data, uint8_t len);
-void usart6_sendbuf(uint8_t* data, uint8_t len);
+void usart1_sendbuf(const uint8_t* data, uint8_t len);
+void usart6_sendbuf(const uint8_t* data, uint8_t len);
 unsigned char canSend(CAN_PORT notused, Message *m);
 
 

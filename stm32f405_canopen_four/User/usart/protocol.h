@@ -4,8 +4,6 @@
 
 #include "main.h"	
 
-#define BUF_MAX_LEN				128
-	
 #define FRAME_HEADER			0
 #define FRAME_FUNC				1
 #define FRAME_LEN				2
@@ -28,6 +26,7 @@
 #define SET_PARAM				0x09
 #define GET_PARAM				0x0A
 #define ODOMETRY				0x0B
+#define IMU						0x0C
 
 
 #define ENABLE_CHECKSUM			1
@@ -46,5 +45,5 @@ int usart1frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t
 void usart1_rcv(uint8_t rxdata);
 // 指令解析，传入接收到的完整指令，及其长度
 void usart1_analysis_cmd(const uint8_t* data_buf, uint8_t len);
-void Odometry_data(void);
+void Odometry_data(const uint8_t* imudata, uint8_t len);
 #endif

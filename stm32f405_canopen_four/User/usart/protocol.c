@@ -1,10 +1,12 @@
 #include "protocol.h"
 #include "stdlib.h"
-// 接收状态机
-uint8_t usart1_rxflag = 0;
+
 // 命令接收缓存
 uint8_t usart1_rxbuf[BUF_MAX_LEN] = {0};
 uint8_t usart1_txbuf[BUF_MAX_LEN] = {0};
+
+// 接收状态机
+uint8_t usart1_rxflag = 0;
 // 接收数据下标
 uint8_t usart1_rxindex = 0;
 // 返回值数组下标
@@ -17,7 +19,6 @@ uint8_t usart1_cmdflag = 0;
 union_int8 data8;
 uint8_t datatype_flag = 0xFF;
 //引入外部全局变量
-extern FLASH_DATA AGV_PARAM;
 // ------------------------查表法crc8校验-------
 static const uint8_t  crc8tab[] = 
 {0x00,0x5e,0xbc,0xe2,0x61,0x3f,0xdd,0x83,0xc2,0x9c,0x7e,0x20,0xa3,0xfd,0x1f,0x41,
@@ -136,11 +137,11 @@ void usart1_rcv(uint8_t rxdata)
 		case FRAME_DATA:// 读取完剩余的所有字段
 		{
 			usart1_rxbuf[usart1_rxindex++] = rxdata;
-			if (usart1_rxindex >= usart1_rxlen && usart1_rxbuf[usart1_rxlen-1] == END_CODE) {
+			if(usart1_rxindex >= usart1_rxlen && usart1_rxbuf[usart1_rxlen-1] == END_CODE) {
 				usart1_cmdflag = 1;
 				usart1_rxflag = 0;
 				usart1_rxindex = 0;				
-			} else if (usart1_rxindex >= usart1_rxlen 
+			} else if(usart1_rxindex >= usart1_rxlen 
 				&& usart1_rxbuf[usart1_rxlen-1] != END_CODE){
 				clear_usart1cmd();
 			}
@@ -153,11 +154,11 @@ void usart1_rcv(uint8_t rxdata)
 }
 
 
-void Odometry_data(void)
+void Odometry_data(const uint8_t* imudata, uint8_t len)
 {
 	union_int32 count_[4];
 	union_int16 velo_[4];
-	uint8_t data_buf[30] = {0};
+	uint8_t data_buf[128] = {0};
 	for(int i = 0; i < 4; i++)
 	{
 		count_[i].data_int32 = get_count((motorID)(i+1));
@@ -172,8 +173,9 @@ void Odometry_data(void)
 		data_buf[i*2+16] = velo_[i].data8[0];
 		data_buf[i*2+17] = velo_[i].data8[1];
 	}
+	memcpy(data_buf+24, imudata, len);
 	int8_t frame_len = 0;
-	frame_len = usart1frame_packing(data_buf, usart1_txbuf, 24, ODOMETRY);
+	frame_len = usart1frame_packing(data_buf, usart1_txbuf, 24+len, ODOMETRY);
 	usart1_sendbuf(usart1_txbuf, frame_len);
 }
 

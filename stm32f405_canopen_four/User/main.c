@@ -1,7 +1,7 @@
 #include "main.h"
 //DEBUG_ERR_CONSOLE_ON
-
-
+extern uint8_t timer_10ms_;
+extern uint8_t imu_data_temp[64];
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -10,7 +10,7 @@ int main(void)
 	//	canopen主站定时器初始化
 	timer_init(TIM3_Init);
 	//	里程计上传定时器初始化
-//	timer_init(TIM4_Init);
+	timer_init(TIM4_Init);
 	//	与上位机通信的串口1初始化
 	usart_init(115200,usart1_init_bsp);
 	//	与IMU通信的串口6初始化
@@ -57,6 +57,14 @@ int main(void)
 			usart6_analysis_cmd(get_usart6rxbuf(), get_usart6rxlen());
 			clear_usart6cmd();
 		}
+		if(timer_10ms_)
+		{
+			Odometry_data(imu_data_temp, 52);
+//			imu_data_send();
+			timer_10ms_ = 0;
+		}
+//			uint8_t buf[5] = {0x02, 0x06, 0x07, 0x03, 0x04};
+//	usart1_sendbuf(buf, 5);
 	}
 	return 0;
 }
