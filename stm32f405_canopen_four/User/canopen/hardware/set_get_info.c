@@ -47,7 +47,7 @@ uint16_t get_u16(motorID ID, uint16_t reg)
 	{
 		i++;
 		if(i >= 0xFFF)
-		return 0xFFFF;
+		return 0xFFFE;
 	}
 	reg_info = (buf_temp[1] << 8) | buf_temp[0];
 	buf_temp[0] = 0;

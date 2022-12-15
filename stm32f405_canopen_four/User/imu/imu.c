@@ -57,10 +57,11 @@
 #define IMU_LEN					4
 #define	IMU_DATA				5
 
+//odo数据长度
 
 /*------------------------------------------------Variables define------------------------------------------------*/
 protocol_info_t g_output_info;
-union_float imu_data;
+
 // 接收状态机
 uint8_t usart6_rxflag = 0;
 // 命令接收缓存
@@ -68,15 +69,13 @@ uint8_t usart6_rxbuf[BUF_MAX_LEN] = {0};
 uint8_t usart6_txbuf[BUF_MAX_LEN] = {0};
 // 接收数据下标
 uint8_t usart6_rxindex = 0;
-// 返回值数组下标
-uint8_t usart6_cnt = 0;
 // 新命令数据长度
 uint8_t usart6_rxlen = 0;
 // 新命令接收标志
 uint8_t usart6_cmdflag = 0;
 // 组帧后的帧长
 uint8_t frame_len;
-uint8_t imu_data_temp[64] = {0};
+uint8_t imu_data_buf[64] = {0};
 
 extern uint8_t usart1_txbuf[BUF_MAX_LEN];
 /*------------------------------------------------Functions declare------------------------------------------------*/
@@ -112,136 +111,6 @@ void clear_usart6cmd(void)
 	usart6_cmdflag = 0;
 }
 
-
-
-int usart6frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t frame_id) {
-//    uint8_t cnt = 0;
-//    frame[cnt++] = PROTOCOL_FIRST_BYTE;
-//	frame[cnt++] = PROTOCOL_SECOND_BYTE;
-//    frame[cnt++] = func;
-//    frame[cnt++] = len;
-//    for (int i = 0; i < len; i++) {
-//        frame[cnt++] = buf[i];
-//    }
-//    frame[cnt++] = getcrc8tab(buf, len);
-//    frame[cnt++] = END_CODE;
-//    return cnt;
-	return 0;
-}
-
-
-// 接收串口单字节数据并保存
-void usart6_rcv(uint8_t rxdata)
-{
-	switch (usart6_rxflag) {
-		case IMU_FIRST_HEADER: // 帧头
-		{
-			if (rxdata == PROTOCOL_FIRST_BYTE) {
-				usart6_rxbuf[usart6_rxindex++] = PROTOCOL_FIRST_BYTE;
-				usart6_rxflag = IMU_SECOND_HEADER;
-			} 
-//			else {
-//				usart6_rxflag = IMU_FIRST_HEADER;
-//				usart6_rxindex = 0;
-//				usart6_rxbuf[0] = 0x00;
-//			}
-			break;
-		}
-		case IMU_SECOND_HEADER: // 帧头
-		{
-			if (rxdata == PROTOCOL_SECOND_BYTE) {
-				usart6_rxbuf[usart6_rxindex++] = PROTOCOL_SECOND_BYTE;
-				usart6_rxflag = IMU_TIME_ID_L;
-			} else {
-				usart6_rxflag = IMU_FIRST_HEADER;
-				usart6_rxindex = 0;
-				usart6_rxbuf[0] = 0x00;
-			}
-			break;
-		}
-		case IMU_TIME_ID_L:// 标识位
-		{
-			usart6_rxbuf[usart6_rxindex++] = rxdata;
-			usart6_rxflag = IMU_TIME_ID_H;
-			break;
-		}
-		case IMU_TIME_ID_H:// 标识位
-		{
-			usart6_rxbuf[usart6_rxindex++] = rxdata;
-			usart6_rxflag = IMU_LEN;
-			break;
-		}
-		case IMU_LEN:// 数据位长度
-		{
-			// usart6_rxlen为数据帧总字节数 = 帧头(2)+标识位(2)+长度(1)+数据位(nbytes)+校验位(2)
-			usart6_rxlen = rxdata + 7;
-			if (usart6_rxlen < BUF_MAX_LEN) {
-				usart6_rxbuf[usart6_rxindex++] = rxdata;
-				usart6_rxflag = IMU_DATA;
-			} else {
-				usart6_rxflag = IMU_FIRST_HEADER;
-				usart6_rxindex = 0;
-				usart6_rxbuf[0] = 0;
-				usart6_rxbuf[1] = 0;
-				usart6_rxbuf[2] = 0;
-				usart6_rxbuf[3] = 0;
-				usart6_rxlen = 0;
-			}
-			break;
-		}
-		case IMU_DATA:// 读取完剩余的所有字段
-		{
-			usart6_rxbuf[usart6_rxindex++] = rxdata;
-			if(usart6_rxindex >= usart6_rxlen){
-				usart6_cmdflag = 1;
-				usart6_rxflag = IMU_FIRST_HEADER;
-				usart6_rxindex = 0;
-			}
-			break;
-		}
-		default:
-			clear_usart6cmd();
-			break;
-	}
-}
-
-
-
-
-//把数据发送给匿名飞控做姿态显示
-//void send_rpy(float roll, float pitch, float yaw)
-//{
-//    unsigned char sc = 0;
-//    unsigned char ac = 0;
-//    unsigned char cnt = 0;
-//	uint8_t buf[64] = {0};
-//    buf[cnt++] = 0xAA;
-//    buf[cnt++] = 0xFF;
-
-//    buf[cnt++] = 0x03;
-//    buf[cnt++] = 6;
-
-//    buf[cnt++] = (short)(roll * 100) & 0xff;
-//    buf[cnt++] = ((short)(roll * 100) >> 8) & 0xff;
-
-//    buf[cnt++] = (short)(pitch * 100) & 0xff;
-//    buf[cnt++] = ((short)(pitch * 100) >> 8) & 0xff;
-
-//    buf[cnt++] = (short)(yaw * 100) & 0xff;
-//    buf[cnt++] = ((short)(yaw * 100) >> 8) & 0xff;
-
-
-
-
-//    for (unsigned char i = 0; i < buf[3] + 4; i++)
-//    {
-//        sc += buf[i];
-//        ac += sc;
-//    }
-//    buf[cnt++] = sc;
-//    buf[cnt++] = ac;
-//    usart1_sendbuf(buf, cnt);
-//}
 uint8_t check_data_len_by_id(uint8_t id, uint8_t len, const uint8_t *data)
 {
 	uint8_t ret = 0xff;
@@ -366,47 +235,27 @@ uint8_t check_data_len_by_id(uint8_t id, uint8_t len, const uint8_t *data)
 
 	return ret;
 }
-void imu_data_send(void){
-	
-}
 void imu_data_upload(protocol_info_t* data_t)
 {
 	uint8_t ret_buf[64]={0};
-	uint8_t imu_cnt = 0;
+	//四字节拷贝
 	for(int i = 0; i < 3; i++)
 	{
-		imu_data.data_float = *(&(data_t->accel_x)+i);
-		ret_buf[imu_cnt++] = imu_data.data8[0];
-		ret_buf[imu_cnt++] = imu_data.data8[1];
-		ret_buf[imu_cnt++] = imu_data.data8[2];
-		ret_buf[imu_cnt++] = imu_data.data8[3];
+		*(float*)(ret_buf+i*4) = *(&(data_t->accel_x)+i);
 	}
 	for(int i = 0; i < 3; i++)
 	{
-		imu_data.data_float = (*(&(data_t->angle_x)+i) * PI) / 180.0f;
-		ret_buf[imu_cnt++] = imu_data.data8[0];
-		ret_buf[imu_cnt++] = imu_data.data8[1];
-		ret_buf[imu_cnt++] = imu_data.data8[2];
-		ret_buf[imu_cnt++] = imu_data.data8[3];
+		*(float*)(ret_buf+i*4+12) = (*(&(data_t->angle_x)+i) * PI) / 180.0f;
 	}
 	for(int i = 0; i < 3; i++)
 	{
-		imu_data.data_float = *(&(data_t->pitch)+i);
-		ret_buf[imu_cnt++] = imu_data.data8[0];
-		ret_buf[imu_cnt++] = imu_data.data8[1];
-		ret_buf[imu_cnt++] = imu_data.data8[2];
-		ret_buf[imu_cnt++] = imu_data.data8[3];
+		*(float*)(ret_buf+i*4+24) = *(&(data_t->pitch)+i);
 	}
 	for(int i = 0; i < 4; i++)
 	{
-		imu_data.data_float = *(&(data_t->quaternion_data0)+i);
-		ret_buf[imu_cnt++] = imu_data.data8[0];
-		ret_buf[imu_cnt++] = imu_data.data8[1];
-		ret_buf[imu_cnt++] = imu_data.data8[2];
-		ret_buf[imu_cnt++] = imu_data.data8[3];
+		*(float*)(ret_buf+i*4+36) = *(&(data_t->quaternion_data0)+i);
 	}
-	memcpy(imu_data_temp, ret_buf, imu_cnt);
-//	frame_len = usart1frame_packing(ret_buf, usart1_txbuf, imu_cnt, IMU);
+	memcpy(imu_data_buf, ret_buf, ODO_DATA_LEN);
 }
 /*--------------------------------------------------------------------------------------------------------------
 * 输出协议为：header1(0x59) + header2(0x53) + tid(2B) + payload_len(1B) + payload_data(Nbytes) + ck1(1B) + ck2(1B)
@@ -515,5 +364,77 @@ int calc_checksum(const uint8_t *data, uint16_t len, uint16_t *checksum)
 	*checksum = ((uint16_t)(check_b << 8) | check_a);
 
 	return 0;
+}
+
+
+
+// 处理串口单字节数据并保存
+void usart6_rcv(uint8_t rxdata)
+{
+	switch (usart6_rxflag) {
+		case IMU_FIRST_HEADER: // 帧头
+		{
+			if (rxdata == PROTOCOL_FIRST_BYTE) {
+				usart6_rxbuf[usart6_rxindex++] = PROTOCOL_FIRST_BYTE;
+				usart6_rxflag = IMU_SECOND_HEADER;
+			}
+			break;
+		}
+		case IMU_SECOND_HEADER: // 帧头
+		{
+			if (rxdata == PROTOCOL_SECOND_BYTE) {
+				usart6_rxbuf[usart6_rxindex++] = PROTOCOL_SECOND_BYTE;
+				usart6_rxflag = IMU_TIME_ID_L;
+			} else {
+				usart6_rxflag = IMU_FIRST_HEADER;
+				usart6_rxindex = 0;
+				usart6_rxbuf[0] = 0x00;
+			}
+			break;
+		}
+		case IMU_TIME_ID_L:// 标识位
+		{
+			usart6_rxbuf[usart6_rxindex++] = rxdata;
+			usart6_rxflag = IMU_TIME_ID_H;
+			break;
+		}
+		case IMU_TIME_ID_H:// 标识位
+		{
+			usart6_rxbuf[usart6_rxindex++] = rxdata;
+			usart6_rxflag = IMU_LEN;
+			break;
+		}
+		case IMU_LEN:// 数据位长度
+		{
+			// usart6_rxlen为数据帧总字节数 = 帧头(2)+标识位(2)+长度(1)+数据位(nbytes)+校验位(2)
+			usart6_rxlen = rxdata + 7;
+			if (usart6_rxlen < BUF_MAX_LEN) {
+				usart6_rxbuf[usart6_rxindex++] = rxdata;
+				usart6_rxflag = IMU_DATA;
+			} else {
+				usart6_rxflag = IMU_FIRST_HEADER;
+				usart6_rxindex = 0;
+				usart6_rxbuf[0] = 0;
+				usart6_rxbuf[1] = 0;
+				usart6_rxbuf[2] = 0;
+				usart6_rxbuf[3] = 0;
+				usart6_rxlen = 0;
+			}
+			break;
+		}
+		case IMU_DATA:// 读取完剩余的所有字段
+		{
+			usart6_rxbuf[usart6_rxindex++] = rxdata;
+			if(usart6_rxindex >= usart6_rxlen){
+				usart6_cmdflag = 1;
+				usart6_rxflag = IMU_FIRST_HEADER;
+				usart6_rxindex = 0;
+			}
+			break;
+		}
+		default:
+			clear_usart6cmd();
+			break;
+	}
 }
 

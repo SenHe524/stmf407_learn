@@ -1,7 +1,9 @@
 #include "main.h"
 //DEBUG_ERR_CONSOLE_ON
 extern uint8_t timer_10ms_;
-extern uint8_t imu_data_temp[64];
+
+extern uint8_t imu_data_buf[64];
+
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -59,12 +61,9 @@ int main(void)
 		}
 		if(timer_10ms_)
 		{
-			Odometry_data(imu_data_temp, 52);
-//			imu_data_send();
+			Odometry_imu_data(imu_data_buf, ODO_DATA_LEN);
 			timer_10ms_ = 0;
 		}
-//			uint8_t buf[5] = {0x02, 0x06, 0x07, 0x03, 0x04};
-//	usart1_sendbuf(buf, 5);
 	}
 	return 0;
 }

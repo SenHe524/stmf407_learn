@@ -7,6 +7,7 @@
 #include "delay.h"
 
 #define BUF_MAX_LEN				128
+#define ODO_DATA_LEN			52
 #include "usart.h"
 
 typedef enum MOTOR

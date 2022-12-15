@@ -31,6 +31,17 @@
 
 #define ENABLE_CHECKSUM			1
 
+typedef struct
+{
+	int32_t count1;
+	int32_t count2;
+	int32_t count3;
+	int32_t count4;
+	int16_t velo1;
+	int16_t velo2;
+	int16_t velo3;
+	int16_t velo4;
+}odo_info_t;
 
 uint8_t* get_usart1rxbuf(void);
 // 获取命令长度
@@ -45,5 +56,5 @@ int usart1frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t
 void usart1_rcv(uint8_t rxdata);
 // 指令解析，传入接收到的完整指令，及其长度
 void usart1_analysis_cmd(const uint8_t* data_buf, uint8_t len);
-void Odometry_data(const uint8_t* imudata, uint8_t len);
+void Odometry_imu_data(const uint8_t* imudata, uint8_t len);
 #endif

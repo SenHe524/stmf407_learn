@@ -3,10 +3,10 @@
 //TIMEVAL last_counter_val = 0;
 //TIMEVAL elapsed_time = 0;
 
-#define ODOMETRY_MAX_TIMES		2
+
 uint32_t cur_time = 0;//时间计数
 uint32_t next_time_set  = 0;//下一次触发时间计数
-uint32_t odometry_times = 0;
+
 uint8_t timer_10ms_ = 0;
 
 static TIMEVAL last_time_set = TIMEVAL_MAX;//上一次的时间计数
@@ -125,16 +125,7 @@ void TIM4_IRQHandler(void)
 {
 	if(TIM_GetFlagStatus(TIM4, TIM_SR_UIF) == RESET)//	过滤更新中断外的其他中断
 		return;
-//	odometry_times++;
-//	odometry_times %= ODOMETRY_MAX_TIMES;
-//	if(odometry_times == 0)
-//	{
-//		Odometry_data();
-//		imu_data_send();
-//	}
 	timer_10ms_ = 1;
-//	Odometry_data();
-//	imu_data_send();
 	TIM_ClearITPendingBit(TIM4, TIM_SR_UIF);
 }
 
