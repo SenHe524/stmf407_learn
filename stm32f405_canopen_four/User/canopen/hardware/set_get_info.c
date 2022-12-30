@@ -1,100 +1,54 @@
 #include "set_get_info.h"
-extern uint8_t buf_temp[4];
-extern uint8_t rpdo_flag[4];
-extern int8_t write_flag;
+extern uint8_t buf_temp[4][4];
+extern int8_t write_flag[4];
 int8_t get_i8(motorID ID, uint16_t reg)
 {
-	uint16_t i = 0;
-	int8_t reg_info = 0; 
+	int8_t reg_info = 0;
 	Message mes = {0x600+ID,0,8,{0x40,(reg & 0xFF),((reg  >> 8) & 0xFF),0x00,0x00,0x00,0x00,0x00}};
+	buf_temp[ID-1][0] = 0xFE;
 	canSend(CAN1, &mes);
-	while(rpdo_flag[ID-1] == 0)
-	{
-		i++;
-		if(i >= 0xFFF)
-		return 0xFF;
-	}
-	reg_info = buf_temp[0];
-	buf_temp[0] = 0;
-	rpdo_flag[ID-1] = 0;
+	delay_ms(1);
+	reg_info = buf_temp[ID-1][0];
 	return reg_info;
 }
 int16_t get_i16(motorID ID, uint16_t reg)
 {
-	uint16_t i = 0;
-	int16_t reg_info = 0; 
+	int16_t reg_info = 0;
 	Message mes = {0x600+ID,0,8,{0x40,(reg & 0xFF),((reg  >> 8) & 0xFF),0x00,0x00,0x00,0x00,0x00}};
+	*(int16_t*)buf_temp[ID-1] = 0xFFFE;
 	canSend(CAN1, &mes);
-	while(rpdo_flag[ID-1] == 0)
-	{
-		i++;
-		if(i >= 0xFFF)
-		return 0xFF;
-	}
-	reg_info = (buf_temp[1] << 8) | buf_temp[0];
-	buf_temp[0] = 0;
-	buf_temp[1] = 0;
-	rpdo_flag[ID-1] = 0;
+	delay_ms(1);
+	reg_info = *(int16_t*)buf_temp[ID-1];
 	return reg_info;
 }
 uint16_t get_u16(motorID ID, uint16_t reg)
 {
-	uint16_t i = 0;
-	uint16_t reg_info = 0; 
+	uint16_t reg_info = 0;
 	Message mes = {0x600+ID,0,8,{0x40,(reg & 0xFF),((reg  >> 8) & 0xFF),0x00,0x00,0x00,0x00,0x00}};
+	*(uint16_t*)buf_temp[ID-1] = 0xFFFE;
 	canSend(CAN1, &mes);
-	while(rpdo_flag[ID-1] == 0)
-	{
-		i++;
-		if(i >= 0xFFF)
-		return 0xFFFE;
-	}
-	reg_info = (buf_temp[1] << 8) | buf_temp[0];
-	buf_temp[0] = 0;
-	buf_temp[1] = 0;
-	rpdo_flag[ID-1] = 0;
+	delay_ms(1);
+	reg_info = *(uint16_t*)buf_temp[ID-1];
 	return reg_info;
 }
 int32_t get_i32(motorID ID, uint16_t reg)
 {
-	uint16_t i = 0;
-	int32_t reg_info = 0; 
+	int32_t reg_info = 0;
 	Message mes = {0x600+ID,0,8,{0x40,(reg & 0xFF),((reg  >> 8) & 0xFF),0x00,0x00,0x00,0x00,0x00}};
+	*(int32_t*)buf_temp[ID-1] = 0xFFFFFFFE;
 	canSend(CAN1, &mes);
-	while(rpdo_flag[ID-1] == 0)
-	{
-		i++;
-		if(i >= 0xFFF)
-		return 0xFFFF;
-	}
-	reg_info = (buf_temp[3] << 24) | (buf_temp[2] << 16)
-					| (buf_temp[1] << 8) | buf_temp[0];
-	buf_temp[0] = 0;
-	buf_temp[1] = 0;
-	buf_temp[2] = 0;
-	buf_temp[3] = 0;
-	rpdo_flag[ID-1] = 0;
+	delay_ms(1);
+	reg_info = *(int32_t*)buf_temp[ID-1];
 	return reg_info;
 }
 uint32_t get_u32(motorID ID, uint16_t reg)
 {
-	uint16_t i = 0;
-	uint32_t reg_info = 0; 
+	uint32_t reg_info = 0;
 	Message mes = {0x600+ID,0,8,{0x40,(reg & 0xFF),((reg  >> 8) & 0xFF),0x00,0x00,0x00,0x00,0x00}};
+	*(uint32_t*)buf_temp[ID-1] = 0xFFFFFFFE;
 	canSend(CAN1, &mes);
-	while(rpdo_flag[ID-1] == 0)
-	{
-		i++;
-		if(i >= 0xFFF)
-		return 0xFFFF;
-	}
-	reg_info = (buf_temp[3] << 24) | (buf_temp[2] << 16)
-					| (buf_temp[1] << 8) | buf_temp[0];
-	buf_temp[0] = 0;
-	buf_temp[1] = 0;
-	buf_temp[2] = 0;
-	buf_temp[3] = 0;
-	rpdo_flag[ID-1] = 0;
+	delay_ms(1);
+	reg_info = *(uint32_t*)buf_temp[ID-1];
 	return reg_info;
 }
 
@@ -102,7 +56,7 @@ uint32_t get_u32(motorID ID, uint16_t reg)
 int8_t set_reg(motorID ID, uint16_t reg, uint8_t len, uint8_t* val_buf)
 {
 	Message mes = {0x600+ID,0,8,{0x2F,(reg & 0xFF),((reg  >> 8) & 0xFF),00,00,00,00,00}};
-	int i = 0;
+	uint32_t i = 0;
 	if(!IS_MOTOR_ID(ID))
 		return -1;
 	switch(len)
@@ -124,13 +78,10 @@ int8_t set_reg(motorID ID, uint16_t reg, uint8_t len, uint8_t* val_buf)
 		mes.data[i+4] = val_buf[i];
 	}
 	canSend(CAN1, &mes);
-	while(write_flag == -2)
-	{
-		i++;
-		if(i >= 0xFFF)
-		return write_flag;
-	}
-	return write_flag;
+	delay_ms(1);
+	int8_t temp_flag = write_flag[ID-1];
+	write_flag[ID-1] = -2;
+	return temp_flag;
 }
 
 int8_t status_change(motorID ID, uint8_t cmd, uint8_t cmd_status)
@@ -139,7 +90,7 @@ int8_t status_change(motorID ID, uint8_t cmd, uint8_t cmd_status)
 	uint16_t ret_get = 0;
 	ret_set = set_status(ID, cmd);
 	if(ret_set != 1)
-		return 0;
+		return -2;
 	ret_get = get_status(ID);
 	if((ret_get & 0xFF) != cmd_status)
 		return 0;
@@ -154,6 +105,7 @@ int8_t isenable(motorID ID)
 	switch(status & 0xFF)
 	{
 		case 0xFF:
+		case 0xFE:
 			ret = -1;
 			break;
 		case 0x27:
@@ -168,68 +120,21 @@ int8_t isenable(motorID ID)
 
 int8_t motor_enable(motorID ID)
 {
-	//*************************SDO****************************
-//	Message mes = {0x600+ID,0,8,{0x23,0xFF,0x60,0x00,0x00,0x00,0x00,0x00}};
-//	canSend(CAN1, &mes);
-//	delay_ms(5);
-//	mes.data[0] = 0x2B;
-//	mes.data[1] = 0x40;
-//	mes.data[4] = 0x06;
-//	canSend(CAN1, &mes);
-//	delay_ms(5);
-//	mes.data[4] = 0x07;
-//	canSend(CAN1, &mes);
-//	delay_ms(5);
-//	mes.data[4] = 0x0F;
-
-//	canSend(CAN1, &mes);
 	int8_t ret_set = 0;
 	uint16_t ret_get = 0;
 	ret_set = set_status(ID, 0x06);
 	if(ret_set != 1)
 		return 0;
-//	ret_get = get_status(ID);
-//	if((ret_get & 0xFF) != 0x21)
-//		return 0;
 	ret_set = set_status(ID, 0x07);
 	if(ret_set != 1)
 		return 0;
-//	ret_get = get_status(ID);
-//	if((ret_get & 0xFF) != 0x23)
-//		return 0;
 	ret_set = set_status(ID, 0x0F);
 	if(ret_set != 1)
 		return 0;
 	ret_get = get_status(ID);
 	if((ret_get & 0xFF) != 0x27)
 		return 0;
-	
 	return 1;
-	/*****************************************************/
-
-	/**********************PDO*************************/
-//	int8_t ret = 0;
-//	if(!IS_MOTOR_ID(ID))
-//		return -1;
-//	switch(ID)
-//	{
-//		case MOTOR1:
-//			ret = motor_control(&motor1_control, &motor1_status, &motor1_velocity);
-//			break;
-//		case MOTOR2:
-//			ret = motor_control(&motor2_control, &motor2_status, &motor2_velocity);
-//			break;
-//		case MOTOR3:
-//			ret = motor_control(&motor3_control, &motor3_status, &motor3_velocity);
-//			break;
-//		case MOTOR4:
-//			ret = motor_control(&motor4_control, &motor4_status, &motor4_velocity);
-//			break;
-//		default:
-//			break;
-//	}
-//	return ret;
-	/*************************************************/
 }
 
 
@@ -249,6 +154,7 @@ int8_t isfault(motorID ID)
 	switch(status & 0xFF)
 	{
 		case 0xFF:
+		case 0xFE:
 			ret = -1;
 			break;
 		case 0x80:
@@ -266,8 +172,6 @@ int8_t clear_fault(motorID ID)
 	int8_t ret = 0;
 	if(!IS_MOTOR_ID(ID))
 		return -1;
-	if(isfault(ID) != 1)
-		return -2;
 	ret = status_change(ID, 0x80, 0x40);
 	return ret;
 }
@@ -285,8 +189,7 @@ int8_t quickstop_to_enable(motorID ID)
 	int8_t ret = 0;
 	if(!IS_MOTOR_ID(ID))
 		return -1;
-	if((get_status(ID) & 0xFF) == 0x07)
-		ret = status_change(ID, 0x0F, 0x27);
+	ret = status_change(ID, 0x0F, 0x27);
 	return ret;
 }
 
@@ -315,71 +218,6 @@ int32_t get_count(motorID ID)
 	return position;
 }
 
-int32_t get_rad(motorID ID)
-{
-	int32_t rad = 0;
-	double temp = 0;
-	if(!IS_MOTOR_ID(ID))
-		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			temp = get_count(MOTOR1) / 4096.0;
-			rad = temp * 200 * PI;
-			break;
-		case MOTOR2:
-			temp = get_count(MOTOR2) / 4096.0;
-			rad = temp * 200 * PI;
-			break;
-		case MOTOR3:
-			temp = get_count(MOTOR3) / 4096.0;
-			rad = temp * 200 * PI;
-			break;
-		case MOTOR4:
-			temp = get_count(MOTOR4) / 4096.0;
-			rad = temp * 200 * PI;
-			break;
-		default:
-			break;
-	}
-	return rad;
-}
-
-int32_t get_distance(motorID ID)
-{
-	int32_t meter = 0;
-	double temp = 0;
-	if(!IS_MOTOR_ID(ID))
-		return -1;
-	switch(ID)
-	{
-		case MOTOR1:
-			temp = get_count(MOTOR1) / 4096.0;
-			meter = temp * 20 * PI;
-			break;
-		case MOTOR2:
-			temp = get_count(MOTOR2) / 4096.0;
-			meter = temp * 20 * PI;
-			break;
-		case MOTOR3:
-			temp = get_count(MOTOR3) / 4096.0;
-			meter = temp * 20 * PI;
-			break;
-		case MOTOR4:
-			temp = get_count(MOTOR4) / 4096.0;
-			meter = temp * 20 * PI;
-			break;
-		default:
-			break;
-	}
-	return meter;
-}
-
-
-
-
-
-
 
 uint16_t get_status(motorID ID)
 {
@@ -394,7 +232,7 @@ int8_t get_mode(motorID ID)
 {
 	int8_t mode = 0;
 	if(!IS_MOTOR_ID(ID))
-		return -1;
+		return 0xFF;
 	mode = get_i8(ID, MOTOR_MODE);
 	return mode;
 }
@@ -411,7 +249,7 @@ uint16_t get_motor_temp(motorID ID)
 	return get_u16(ID, 0x2026);
 }
 
-uint16_t get_motor_status(motorID ID)
+uint16_t is_motor_moving(motorID ID)
 {
 	if(!IS_MOTOR_ID(ID))
 		return 0xFFFF;
@@ -567,12 +405,11 @@ uint32_t get_decelerate_time(motorID ID)
 
 
 
-int8_t set_status(motorID ID, uint16_t status_valve)
+int8_t set_status(motorID ID, uint16_t status_value)
 {
 	uint8_t buf[2] = {0};
 
-	buf[0] = status_valve & 0xFF;
-	buf[1] = (status_valve >> 8) & 0xFF;
+	*(uint16_t*)buf = status_value;
 
 	return set_reg(ID, MOTOR_CONTROL, 2, buf);
 }
@@ -588,9 +425,7 @@ int8_t set_issave_rw(motorID ID, uint16_t issave)
 	uint8_t buf[2] = {0};
 	if((issave != 1) && (issave != 2))
 		return -3;
-	buf[0] = issave & 0xFF;
-	buf[1] = (issave >> 8)& 0xFF;
-
+	*(uint16_t*)buf = issave;
 	return set_reg(ID, 0x2009, 2, buf);
 }
 
@@ -599,8 +434,7 @@ int8_t set_lock(motorID ID, uint16_t lock)
 	uint8_t buf[2] = {0};
 	if(lock > 30000)
 		return -3;
-	buf[0] = lock & 0xFF;
-	buf[1] = (lock >> 8)& 0xFF;
+	*(uint16_t*)buf = lock;
 
 	return set_reg(ID, 0x200F, 2, buf);
 }
@@ -610,8 +444,7 @@ int8_t set_issave_rws(motorID ID, uint16_t issave)
 	uint8_t buf[2] = {0};
 	if((issave != 0) && (issave != 1))
 		return -3;
-	buf[0] = issave & 0xFF;
-	buf[1] = (issave >> 8)& 0xFF;
+	*(uint16_t*)buf = issave;
 
 	return set_reg(ID, 0x2010, 2, buf);
 }
@@ -621,10 +454,8 @@ int8_t set_accelerate_time(motorID ID, uint32_t time)
 	uint8_t buf[4] = {0};
 	if(time > 32767)
 		return -3;
-	buf[0] = time & 0xFF;
-	buf[1] = (time >> 8)& 0xFF;
-	buf[2] = (time >> 16) & 0xFF;
-	buf[3] = (time >> 24) & 0xFF;
+	*(uint32_t*)buf = time;
+	
 	return set_reg(ID, 0x6083, 4, buf);
 }
 
@@ -633,10 +464,8 @@ int8_t set_decelerate_time(motorID ID, uint32_t time)
 	uint8_t buf[4] = {0};
 	if(time > 32767)
 		return -3;
-	buf[0] = time & 0xFF;
-	buf[1] = (time >> 8)& 0xFF;
-	buf[2] = (time >> 16) & 0xFF;
-	buf[3] = (time >> 24) & 0xFF;
+	*(uint32_t*)buf = time;
+	
 	return set_reg(ID, 0x6084, 4, buf);
 }
 
@@ -645,8 +474,7 @@ int8_t set_Vsmooth_factor(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x2018, 2, buf);
 }
@@ -656,8 +484,7 @@ int8_t set_Eratio_gain(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x2019, 2, buf);
 }
@@ -666,8 +493,7 @@ int8_t set_Eintegral_gain(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x201A, 2, buf);
 }
@@ -676,8 +502,7 @@ int8_t set_feedforward_ratio(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x201B, 2, buf);
 }
@@ -686,8 +511,7 @@ int8_t set_torque_ratio(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x201C, 2, buf);
 }
@@ -696,8 +520,7 @@ int8_t set_VKp(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x201D, 2, buf);
 }
@@ -706,8 +529,7 @@ int8_t set_VKi(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x201E, 2, buf);
 }
@@ -716,8 +538,7 @@ int8_t set_Vfeedforward_Kf(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x201F, 2, buf);
 }
@@ -727,8 +548,7 @@ int8_t set_PKp(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x2020, 2, buf);
 }
@@ -738,8 +558,7 @@ int8_t set_Pfeedforward_Kf(motorID ID, uint16_t factor)
 	uint8_t buf[2] = {0};
 	if(factor > 30000)
 		return -3;
-	buf[0] = factor & 0xFF;
-	buf[1] = (factor >> 8)& 0xFF;
+	*(uint16_t*)buf = factor;
 
 	return set_reg(ID, 0x2021, 2, buf);
 }

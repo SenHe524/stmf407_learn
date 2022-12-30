@@ -24,12 +24,11 @@ int8_t quickstop_to_enable(motorID ID);
 uint16_t get_status(motorID ID);
 int8_t get_mode(motorID ID);
 int32_t get_count(motorID ID);
-int32_t get_rad(motorID ID);
-int32_t get_distance(motorID ID);
+
 
 
 uint16_t get_motor_temp(motorID ID);
-uint16_t get_motor_status(motorID ID);
+uint16_t is_motor_moving(motorID ID);
 uint16_t get_hall_status(motorID ID);
 uint16_t get_errorcode(motorID ID);
 int32_t get_actual_velocity(motorID ID);
@@ -50,7 +49,7 @@ uint16_t get_Pfeedforward_Kf(motorID ID);
 uint32_t get_accelerate_time(motorID ID);
 uint32_t get_decelerate_time(motorID ID);
 
-int8_t set_status(motorID ID, uint16_t status_valve);
+int8_t set_status(motorID ID, uint16_t status_value);
 int8_t set_mode(motorID ID, int8_t mode);
 int8_t set_issave_rw(motorID ID, uint16_t issave);
 int8_t set_lock(motorID ID, uint16_t lock);

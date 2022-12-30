@@ -208,3 +208,13 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 	USART_ClearITPendingBit(USART1, USART_IT_IDLE);
 	(void) clear_flag;
 }
+void DMA2_Stream7_IRQHandler(void)
+{
+    if(DMA_GetFlagStatus(DMA2_Stream7,DMA_FLAG_TCIF7) != RESET) 
+	{
+		//清除标志位
+		DMA_ClearFlag(DMA2_Stream7,DMA_FLAG_TCIF7);
+		//关闭DMA
+		DMA_Cmd(DMA2_Stream7,DISABLE);
+	}
+}

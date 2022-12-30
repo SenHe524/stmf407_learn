@@ -26,10 +26,8 @@ void TIM3_Init(void)
 	NVIC_Init(&NVIC_InitStructure);
 
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = 100-1;
+	TIM_TimeBaseStructure.TIM_Period = 100-1;//100us中断一次
 	TIM_TimeBaseStructure.TIM_Prescaler = 84-1;//84M频率/84为1000k(与timerscfg.h配置一致即可)，即1us间隔
-//	TIM_TimeBaseStructure.TIM_Period = 65535;
-//	TIM_TimeBaseStructure.TIM_Prescaler = 840;//84M频率/84为1000k(与timerscfg.h配置一致即可)，即1us间隔
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
@@ -49,6 +47,7 @@ void TIM3_Init(void)
 	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
 }
 
+//用于定时上传imu、odometry数据
 void TIM4_Init(void)
 {
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -64,7 +63,7 @@ void TIM4_Init(void)
 	NVIC_Init(&NVIC_InitStructure);
 
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = 2000;//40ms一个中断
+	TIM_TimeBaseStructure.TIM_Period = 1000;//40ms一个中断
 	TIM_TimeBaseStructure.TIM_Prescaler = 840-1;//84M频率/840为100k，即10us间隔
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;

@@ -5,11 +5,11 @@
 static CO_Data *co_data = NULL;
 Message rxm;
 //	SDO数据缓存
-uint8_t buf_temp[4] = {0};
+uint8_t buf_temp[4][4] = {0};
 //	rpdo的标志位
-uint8_t rpdo_flag[4] = {0};
+uint8_t rpdo_flag = 0;
 //	
-int8_t write_flag = -2;
+int8_t write_flag[4] = {-2, -2, -2, -2};
 
 
 //Initialize the CAN hardware 
@@ -40,8 +40,8 @@ unsigned char can1_init_bsp(CO_Data * d)
 
 	/* NVIC configuration *******************************************************/
 	NVIC_InitStructure.NVIC_IRQChannel = CANx_RX0_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x2;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
@@ -120,23 +120,26 @@ void sdodata_handle(Message *m)
 	UNS16 cob_id = UNS16_LE(m->cob_id);
 	uint8_t len = 0;
 	uint8_t i = 0;
+	//根据cob_id填充数据缓存
 	switch(cob_id)
 	{
 		case 0x581:
-			rpdo_flag[0] = 1;
+			rpdo_flag = 0;
 			break;
 		case 0x582:
-			rpdo_flag[1] = 1;
+			rpdo_flag = 1;
 			break;
 		case 0x583:
-			rpdo_flag[2] = 1;
+			rpdo_flag = 2;
 			break;
 		case 0x584:
-			rpdo_flag[3] = 1;
+			rpdo_flag = 3;
 			break;
 		default:
+			return ;
 			break;
 	}
+	//根据数据头选择数据长度或判断数据是否写入成功
 	switch(m->data[0])
 	{
 		case 0x4F:
@@ -152,34 +155,28 @@ void sdodata_handle(Message *m)
 			len = 4;
 			break;
 		case 0x60:
-			write_flag = 1;
-			rpdo_flag[0] = 0;
-			rpdo_flag[1] = 0;
-			rpdo_flag[2] = 0;
-			rpdo_flag[3] = 0;
+			write_flag[rpdo_flag] = 1;
 			break;
 		case 0x80:
-			write_flag = 0;
-			rpdo_flag[0] = 0;
-			rpdo_flag[1] = 0;
-			rpdo_flag[2] = 0;
-			rpdo_flag[3] = 0;
+			write_flag[rpdo_flag] = 0;
 			break;
 		default:
+			return ;
 			break;
 	}
 	for(i = 0; i< len; i++)
-		buf_temp[i] = m->data[i+4];
+		buf_temp[rpdo_flag][i] = m->data[i+4];
 }
 
 
 void can_handle(Message* rxm)
 {
+	//调用数据处理函数：此函数目前只处理PDO数据
+	canDispatch(co_data, rxm);
 	if(rxm->cob_id >> 7 == 0xB)
-	{
+	{//调用自己的SDO数据处理
 		sdodata_handle(rxm);
 	}
-	canDispatch(co_data, rxm);
 }
 
 /**
@@ -203,9 +200,9 @@ void CAN1_RX0_IRQHandler(void)
 		 rxm.data[i] = 0;
 	for(i=0 ; i<rxm.len ; i++)
 		 rxm.data[i] = RxMessage.Data[i];
-//	can_flag = 1;
 //	printf("rec:%x-%x-%x-%x-%x-%x-%x-%x-%x-%x\n",rxm.cob_id,rxm.len,rxm.data[0], rxm.data[1],rxm.data[2],rxm.data[3]
 //										,rxm.data[4], rxm.data[5],rxm.data[6],rxm.data[7]);	
+	//数据处理
 	can_handle(&rxm);
 }
 

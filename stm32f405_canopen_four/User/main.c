@@ -1,7 +1,6 @@
 #include "main.h"
 //DEBUG_ERR_CONSOLE_ON
 extern uint8_t timer_10ms_;
-
 extern uint8_t imu_data_buf[64];
 
 int main(void)
@@ -17,6 +16,8 @@ int main(void)
 	usart_init(115200,usart1_init_bsp);
 	//	与IMU通信的串口6初始化
 	usart_init(460800,usart6_init_bsp);
+	
+
 	//	初始化can外设
 	can_init(&Master_Data, can1_init_bsp);
 	//	转换总线状态
@@ -49,21 +50,22 @@ int main(void)
 //	set_issave_rws(MOTOR4, 0);
 	while(1)
 	{
-		if(is_rcv_usart1cmd())
+		if(is_rcv_usart1cmd())//查询上位机指令标志位
 		{
 			usart1_analysis_cmd(get_usart1rxbuf(), get_usart1rxlen());
 			clear_usart1cmd();
 		}
-		if(is_rcv_usart6cmd())
+		if(is_rcv_usart6cmd())//查询imu指令标志位
 		{
 			usart6_analysis_cmd(get_usart6rxbuf(), get_usart6rxlen());
 			clear_usart6cmd();
 		}
-		if(timer_10ms_)
+		if(timer_10ms_)//定时10ms上报imu数据、轮毂电机编码器数据、速度数据
 		{
 			Odometry_imu_data(imu_data_buf, ODO_DATA_LEN);
 			timer_10ms_ = 0;
 		}
+		
 	}
 	return 0;
 }

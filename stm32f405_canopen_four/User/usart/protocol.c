@@ -3,11 +3,13 @@
 
 // 命令接收缓存
 uint8_t usart1_rxbuf[BUF_MAX_LEN] = {0};
+uint8_t usart1_frame[BUF_MAX_LEN] = {0};
+
 uint8_t usart1_txbuf[BUF_MAX_LEN] = {0};
 
 // 接收状态机
 uint8_t usart1_rxflag = 0;
-// 接收数据下标
+// 单字节接收数据下标
 uint8_t usart1_rxindex = 0;
 // 返回值数组数据量
 uint8_t usart1_cnt = 0;
@@ -16,7 +18,7 @@ uint8_t usart1_rxlen = 0;
 // 新命令接收标志
 uint8_t usart1_cmdflag = 0;
 //	上位机设置读取参数值
-union_int8 data8;
+union_int8 data8;//设置参数值的结果返回值
 uint8_t datatype_flag = 0xFF;
 
 //引入外部全局变量
@@ -71,12 +73,12 @@ void clear_usart1cmd(void)
 	for (uint8_t i = 0; i < usart1_rxlen; i++)
 		usart1_rxbuf[i] = 0;
 	usart1_rxflag = 0;
-	usart1_rxindex = 0;
+//	usart1_rxindex = 0;
 	usart1_cmdflag = 0;
 }
 
 
-int usart1frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t func) {
+uint8_t usart1frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t func){
     uint8_t cnt = 0;
     frame[cnt++] = FIRST_CODE;
     frame[cnt++] = func;
@@ -88,7 +90,18 @@ int usart1frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t
     frame[cnt++] = END_CODE;
     return cnt;
 }
-
+uint8_t usart1inverse_frame(uint8_t *result, const uint8_t *frame, uint8_t len, uint8_t* func){
+    if((frame[0] != FIRST_CODE) || (frame[len - 1] != END_CODE))//  检查帧头帧尾
+        return 0;
+    for(int i = 3; i < len-2; i++)
+    {
+        result[i - 3] = frame[i];
+    }
+    if(getcrc8tab(result, frame[2]) != frame[len - 2])//    检查crc8校验
+        return 0;
+    *func = frame[1];
+    return frame[2];
+}
 
 void Odometry_imu_data(const uint8_t* imudata, uint8_t len)
 {
@@ -117,129 +130,134 @@ void Odometry_imu_data(const uint8_t* imudata, uint8_t len)
 
 	memcpy(data_buf+24, imudata, len);
 	int8_t frame_len = 0;
-	frame_len = usart1frame_packing(data_buf, usart1_txbuf, 24+len, ODOMETRY);
+	frame_len = usart1frame_packing(data_buf, usart1_txbuf, 24+len, ODOMETRY_IMU);
 	usart1_sendbuf(usart1_txbuf, frame_len);
 }
 
-void control_cmd(const uint8_t *data_buf, uint8_t data_len)
+void control_cmd(const uint8_t *data_buf, uint8_t data_len, uint8_t func)
 {
 	union_int8 control_buf[4];
 	uint8_t temp_buf[4] = {0};
 	uint8_t frame_len = 0;
 	if(data_len != 4)
 		return ;
-	switch(data_buf[1])
+	switch(func)
 	{
 		case SET_ENABLE:
 			for(int i = 0; i < 4; i++)
 			{
-				if(data_buf[3+i] == 0x01)
+				if(data_buf[i] == 0x01)
 				{
 					control_buf[i].data_int8 = motor_enable((motorID)(i+1));
 					temp_buf[i] = control_buf[i].data8;
 				}
+				delay_ms(5);
 			}
 			break;
 		case SET_DISENABLE:
 			for(int i = 0; i < 4; i++)
 			{
-				if(data_buf[3+i] == 0x01)
+				if(data_buf[i] == 0x01)
 				{
 					control_buf[i].data_int8 = motor_disable((motorID)(i+1));
 					temp_buf[i] = control_buf[i].data8;
 				}
+				delay_ms(5);
 			}
 			break;
 		case IS_ENABLE:
 			for(int i = 0; i < 4; i++)
 			{
-				if(data_buf[3+i] == 0x01)
+				if(data_buf[i] == 0x01)
 				{
 					control_buf[i].data_int8 = isenable((motorID)(i+1));
 					temp_buf[i] = control_buf[i].data8;
 				}
+				delay_ms(5);
 			}
 			break;
 		case CLEAR_FAULT:
 			for(int i = 0; i < 4; i++)
 			{
-				if(data_buf[3+i] == 0x01)
+				if(data_buf[i] == 0x01)
 				{
 					control_buf[i].data_int8 = clear_fault((motorID)(i+1));
 					temp_buf[i] = control_buf[i].data8;
 				}
+				delay_ms(5);
 			}
 			break;
 		case IS_FAULT:
 			for(int i = 0; i < 4; i++)
 			{
-				if(data_buf[3+i] == 0x01)
+				if(data_buf[i] == 0x01)
 				{
 					control_buf[i].data_int8 = isfault((motorID)(i+1));
 					temp_buf[i] = control_buf[i].data8;
 				}
+				delay_ms(5);
 			}
 			break;
 		case SET_STOP:
 			for(int i = 0; i < 4; i++)
 			{
-				if(data_buf[3+i] == 0x01)
+				if(data_buf[i] == 0x01)
 				{
 					control_buf[i].data_int8 = quick_stop((motorID)(i+1));
 					temp_buf[i] = control_buf[i].data8;
 				}
+				delay_ms(5);
 			}
 			break;
 		case STOP_TO_ENABLE:
 			for(int i = 0; i < 4; i++)
 			{
-				if(data_buf[3+i] == 0x01)
+				if(data_buf[i] == 0x01)
 				{
 					control_buf[i].data_int8 = quickstop_to_enable((motorID)(i+1));
 					temp_buf[i] = control_buf[i].data8;
 				}
+				delay_ms(5);
 			}
 			break;
 		default:
 			break;
 	}
-	frame_len = usart1frame_packing(temp_buf, usart1_txbuf, 4, data_buf[1]);
+	frame_len = usart1frame_packing(temp_buf, usart1_txbuf, 4, func);
 	usart1_sendbuf(usart1_txbuf, frame_len);
 }
-void velo_cmd(const uint8_t *data_buf, uint8_t data_len)
+void velo_cmd(const uint8_t *data_buf, uint8_t data_len, uint8_t func)
 {
 	if(data_len != 8)
 		return ;
 	uint8_t velo_buf[4] = {0}; 
-	union_int16 velocity[4];
+	int16_t velocity[4];
 	for(int i = 0; i < 4; i++)
 	{
-		velocity[i].data_int16 = 0;
-		velocity[i].data8[0] = data_buf[i*2+3];
-		velocity[i].data8[1] = data_buf[i*2+4];
+		velocity[i] = *(int16_t*)(data_buf+i*2);
 	}
-	if(abs(velocity[0].data_int16) <= VELOCITY_MAX)
+	if(abs(velocity[0]) <= VELOCITY_MAX)
 	{
-		set_velocity_motor1(velocity[0].data_int16);
+		set_velocity_motor1(velocity[0]);
 		velo_buf[0] = 1;
 	}
-	if(abs(velocity[1].data_int16) <= VELOCITY_MAX)
+	if(abs(velocity[1]) <= VELOCITY_MAX)
 	{
-		set_velocity_motor2(velocity[1].data_int16);
+		set_velocity_motor2(velocity[1]);
 		velo_buf[1] = 1;
 	}
-	if(abs(velocity[2].data_int16) <= VELOCITY_MAX)
+	if(abs(velocity[2]) <= VELOCITY_MAX)
 	{
-		set_velocity_motor3(velocity[2].data_int16);
+		set_velocity_motor3(velocity[2]);
 		velo_buf[2] = 1;
 	}
-	if(abs(velocity[3].data_int16) <= VELOCITY_MAX)
+	if(abs(velocity[3]) <= VELOCITY_MAX)
 	{
-		set_velocity_motor4(velocity[3].data_int16);
+		set_velocity_motor4(velocity[3]);
 		velo_buf[3] = 1;
 	}
 	uint8_t frame_len = 0;
-	frame_len = usart1frame_packing(velo_buf, usart1_txbuf, 4, data_buf[1]);
+	frame_len = usart1frame_packing(velo_buf, usart1_txbuf, 4, func);
 	usart1_sendbuf(usart1_txbuf, frame_len);
 }
 
@@ -247,14 +265,15 @@ void velo_cmd(const uint8_t *data_buf, uint8_t data_len)
 
 void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 {
+	//data_buf[0]和data_buf[1]为reg，后续每两字节为一个数据
 	union_uint16 data;
 	switch(reg)
 	{
 		case SAVE_RW:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_issave_rw((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -264,8 +283,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case LOCK_METHOD:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				if(data.data_uint16 == 0)
 					data8.data_int8 = set_lock((motorID)(i+1), 0);
 				else if(data.data_uint16 == 1)
@@ -280,8 +299,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case SAVE_RW_S:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_issave_rws((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -291,8 +310,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case VELO_SMOOTH_FACTOR:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_Vsmooth_factor((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -302,8 +321,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case ELEC_ERATIO_GAIN:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_Eratio_gain((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -313,8 +332,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case ELEC_INTEGRAL:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_Eintegral_gain((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -324,8 +343,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case FEEDFORWARD_RATIO:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_feedforward_ratio((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -335,8 +354,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case TORQUE_RATIO:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_torque_ratio((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -346,8 +365,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case VELO_KP:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_VKp((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -357,8 +376,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case VELO_KI:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_VKi((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -368,8 +387,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case VELO_FEEDFORWARD_KF:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_Vfeedforward_Kf((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -379,8 +398,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case POSI_KP:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_PKp((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -390,8 +409,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case POSI_FEEDFORWARD_KF:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_Pfeedforward_Kf((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -401,8 +420,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case ACC_TIME:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_accelerate_time((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -412,8 +431,8 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 		case DE_TIME:{
 			for(int i = 0; i < 4; i++)
 			{
-				data.data8[0] = data_buf[5+i*2];
-				data.data8[1] = data_buf[6+i*2];
+				data.data8[0] = data_buf[2+i*2];
+				data.data8[1] = data_buf[3+i*2];
 				data8.data_int8 = set_decelerate_time((motorID)(i+1), data.data_uint16);
 				data_ret[usart1_cnt++] = data8.data8;
 				delay_ms(1);
@@ -427,251 +446,167 @@ void param_set(const uint16_t reg, const uint8_t *data_buf, uint8_t *data_ret)
 
 void param_get_16(const uint16_t reg, uint8_t *data_ret)
 {
-//	union_uint16 data;
+	//返回值数组：data_ret[0]和data_ret[1]为本次数据对应的寄存器，data_ret[2]为本次返回数据的数据类型：1:16位无符号，0:32位有符号
 	switch(reg)
 	{
 		case SAVE_RW:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_issave_rw((motorID)(i+1));
-				usart1_cnt = 8;
-				
-//				data.data_uint16 = get_issave_rw((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_issave_rw((motorID)(i+1));
 			}
-			
+			usart1_cnt = 11;	
 			break;
 		}
 		case LOCK_METHOD:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_lock((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_lock((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_lock((motorID)(i+1));
 			}
-			
+			usart1_cnt = 11;			
 			break;
 		}
 		case SAVE_RW_S:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_issave_rws((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_issave_rws((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_issave_rws((motorID)(i+1));
 			}
-			
+			usart1_cnt = 11;
 			break;
 		}
 		case VELO_SMOOTH_FACTOR:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_Vsmooth_factor((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_Vsmooth_factor((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_Vsmooth_factor((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case ELEC_ERATIO_GAIN:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_Eratio_gain((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_Eratio_gain((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_Eratio_gain((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case ELEC_INTEGRAL:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_Eintegral_gain((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_Eintegral_gain((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_Eintegral_gain((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case FEEDFORWARD_RATIO:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_feedforward_ratio((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_feedforward_ratio((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_feedforward_ratio((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case TORQUE_RATIO:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_torque_ratio((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_torque_ratio((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_torque_ratio((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case VELO_KP:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_VKp((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_VKp((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_VKp((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case VELO_KI:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_VKi((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_VKi((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_VKi((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case VELO_FEEDFORWARD_KF:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_Vfeedforward_Kf((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_Vfeedforward_Kf((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_Vfeedforward_Kf((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case POSI_KP:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_PKp((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_PKp((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_PKp((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case POSI_FEEDFORWARD_KF:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_Pfeedforward_Kf((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_Pfeedforward_Kf((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_Pfeedforward_Kf((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case MOTOR_TEMP:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_motor_temp((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_motor_temp((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_motor_temp((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case IS_MOTOR_MOVE:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_motor_status((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_motor_status((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = is_motor_moving((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case MOTOR_HALL_STATUS:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_hall_status((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_hall_status((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_hall_status((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case ERROR_CODE:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_errorcode((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_errorcode((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_errorcode((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case MOTOR_STATUS:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_status((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_status((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_status((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case ACC_TIME:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_accelerate_time((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_accelerate_time((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_accelerate_time((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		case DE_TIME:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(uint16_t*)(data_ret+i*2) = get_decelerate_time((motorID)(i+1));
-				usart1_cnt = 8;
-//				data.data_uint16 = get_decelerate_time((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-				delay_ms(2);
+				*(uint16_t*)(data_ret+i*2+3) = get_decelerate_time((motorID)(i+1));
 			}
+			usart1_cnt = 11;
 			break;
 		}
 		default:
@@ -681,49 +616,31 @@ void param_get_16(const uint16_t reg, uint8_t *data_ret)
 
 void param_get_32(const uint16_t reg, uint8_t *data_ret)
 {
-//	union_int32 data;
-//	union_uint32 u32data;
+	//返回值数组：data_ret[0]和data_ret[1]为本次数据对应的寄存器，data_ret[2]为本次返回数据的数据类型：1:16位无符号，0:32位有符号
 	switch(reg)
 	{
 		case MODE_DISPLAY:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(int32_t*)(data_ret+i*4) = get_mode((motorID)(i+1));
-				usart1_cnt = 16;
-//				data.data_int32 = get_mode((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-//				data_ret[usart1_cnt++] = data.data8[2];
-//				data_ret[usart1_cnt++] = data.data8[3];
-				delay_ms(2);
+				*(int32_t*)(data_ret+i*4+3) = get_mode((motorID)(i+1));
 			}
+			usart1_cnt = 19;
 			break;
 		}
 		case ACTUAL_COUNT:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(int32_t*)(data_ret+i*4) = get_count((motorID)(i+1));
-				usart1_cnt = 16;
-//				data.data_int32 = get_count((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-//				data_ret[usart1_cnt++] = data.data8[2];
-//				data_ret[usart1_cnt++] = data.data8[3];
+				*(int32_t*)(data_ret+i*4+3) = get_count((motorID)(i+1));
 			}
+			usart1_cnt = 19;
 			break;
 		}
 		case ACTUAL_VELOCITY:{
 			for(int i = 0; i < 4; i++)
 			{
-				*(int32_t*)(data_ret+i*4) = get_actual_velocity((motorID)(i+1));
-				usart1_cnt = 16;
-//				data.data_int32 = get_actual_velocity((motorID)(i+1));
-//				data_ret[usart1_cnt++] = data.data8[0];
-//				data_ret[usart1_cnt++] = data.data8[1];
-//				data_ret[usart1_cnt++] = data.data8[2];
-//				data_ret[usart1_cnt++] = data.data8[3];
-
+				*(int32_t*)(data_ret+i*4+3) = get_actual_velocity((motorID)(i+1));
 			}
+			usart1_cnt = 19;
 			break;
 		}
 		default:
@@ -732,21 +649,21 @@ void param_get_32(const uint16_t reg, uint8_t *data_ret)
 }
 
 
-void param_cmd(const uint8_t *data_buf, uint8_t data_len)
+void param_cmd(const uint8_t *data_buf, uint8_t data_len, uint8_t func)
 {
 	union_uint16 reg;
 	uint8_t cnt = 0;
 	uint8_t ret_buf[27] = {0};
 	reg.data_uint16 = 0;
 	usart1_cnt = 0;
-	switch(data_buf[1])
+	switch(func)
 	{
 		case SET_PARAM:{//	set
 			if((data_len % 10) != 0)
 				return ;
 			//解析reg数据，并将其原路返回
-			reg.data8[0] = data_buf[3];
-			reg.data8[1] = data_buf[4];
+			reg.data8[0] = data_buf[0];
+			reg.data8[1] = data_buf[1];
 			ret_buf[usart1_cnt++] = reg.data8[0];
 			ret_buf[usart1_cnt++] = reg.data8[1];
 				// 每个电机的数据按顺序排列
@@ -755,8 +672,8 @@ void param_cmd(const uint8_t *data_buf, uint8_t data_len)
 		}
 		case GET_PARAM:{//	get
 			//解析reg数据，并将其原路返回
-			reg.data8[0] = data_buf[3];
-			reg.data8[1] = data_buf[4];
+			reg.data8[0] = data_buf[0];
+			reg.data8[1] = data_buf[1];
 			ret_buf[usart1_cnt++] = reg.data8[0];
 			ret_buf[usart1_cnt++] = reg.data8[1];
 			//判断所需数据格式
@@ -780,25 +697,19 @@ void param_cmd(const uint8_t *data_buf, uint8_t data_len)
 		default:
 			break;
 	}
-	cnt = usart1frame_packing(ret_buf, usart1_txbuf, usart1_cnt, data_buf[1]);
+	cnt = usart1frame_packing(ret_buf, usart1_txbuf, usart1_cnt, func);
 	usart1_sendbuf(usart1_txbuf, cnt);
 }
 // 指令解析，传入接收到的完整指令，及其长度
 void usart1_analysis_cmd(const uint8_t* data_buf, uint8_t len)
 {
-	uint8_t data_len;
-	data_len = data_buf[2];
-	#if ENABLE_CHECKSUM
-	// 计算校验
-	uint8_t crc8buf[32] = {0};
-	uint8_t i;
-	for (i = 3; i < (len - 2); i++)
-		crc8buf[i - 3]= data_buf[i];
-	if (getcrc8tab(crc8buf, data_len) != data_buf[len-2])
-		return;
-	#endif
+	uint8_t data_len, func;
+	data_len = usart1inverse_frame(usart1_frame, data_buf, len, &func);
+	
+	if(data_len ==0)
+	return ;
 
-	switch (data_buf[1])
+	switch (func)
 	{
 		
 		case SET_ENABLE:
@@ -808,20 +719,20 @@ void usart1_analysis_cmd(const uint8_t* data_buf, uint8_t len)
 		case IS_FAULT:
 		case SET_STOP:
 		case STOP_TO_ENABLE:
-			control_cmd(data_buf, data_len);
+			control_cmd(usart1_frame, data_len, func);
 			break;
 		case SPEED:
-			velo_cmd(data_buf, data_len);
+			velo_cmd(usart1_frame, data_len, func);
 			break;
 		case SET_PARAM:
 		case GET_PARAM:
-			param_cmd(data_buf, data_len);
+			param_cmd(usart1_frame, data_len, func);
 			break;
 		default:
 			break;
 	}
 }
-// 接收串口单字节数据并保存
+// 接收串口单字节数据，组帧并保存
 void usart1_rcv(uint8_t rxdata)
 {
 	switch (usart1_rxflag) {

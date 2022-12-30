@@ -25,11 +25,9 @@
 #define SPEED					0x08
 #define SET_PARAM				0x09
 #define GET_PARAM				0x0A
-#define ODOMETRY				0x0B
-#define IMU						0x0C
+#define ODOMETRY_IMU				0x0B
 
 
-#define ENABLE_CHECKSUM			1
 
 typedef struct
 {
@@ -51,7 +49,9 @@ uint8_t is_rcv_usart1cmd(void);
 // 清除命令数据和相关标志
 void clear_usart1cmd(void);
 // 封装数据帧
-int usart1frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t func);
+uint8_t usart1frame_packing(const uint8_t *buf, uint8_t *frame, uint8_t len, uint8_t func);
+// 解析数据帧
+uint8_t usart1inverse_frame(uint8_t *result, const uint8_t *frame, uint8_t len, uint8_t* func);
 // 接收串口单字节数据接收并保存
 void usart1_rcv(uint8_t rxdata);
 // 指令解析，传入接收到的完整指令，及其长度

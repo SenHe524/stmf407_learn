@@ -96,8 +96,8 @@ void usart1_init_bsp(u32 bound){
 
 	//usart1 NVIC 配置
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;//串口1中断通道
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=2;//抢占优先级15
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority =0;		//子优先级0
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=1;//抢占优先级15
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority =1;		//子优先级0
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化NVIC寄存器
 	
@@ -147,8 +147,8 @@ void usart6_init_bsp(u32 bound){
 	
 	//usart1 NVIC 配置
 	NVIC_InitStructure.NVIC_IRQChannel = USART6_IRQn;//串口1中断通道
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=2;//抢占优先级15
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		//子优先级0
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=1;//抢占优先级15
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;		//子优先级0
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化NVIC寄存器
 	
@@ -211,18 +211,19 @@ void usart1_txdma_init_bsp(void){
   	DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
   	DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   	DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-
-	//DMA发送中断设置
-	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream7_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-    //初始化DMA2_Stream7
+	//初始化DMA2_Stream7
 	DMA_Init(DMA2_Stream7, &DMA_InitStructure);
 	
+//	//DMA发送中断设置
+	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream7_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+    
 	//使能传输完成中断:DMA_IT_TC
 	DMA_ITConfig(DMA2_Stream7,DMA_IT_TC,ENABLE);
+	//失能DMA
     DMA_Cmd(DMA2_Stream7,DISABLE);
 }
 
@@ -258,7 +259,19 @@ void usart6_rxdma_init_bsp(void){
 //DMA发送
 void usart1_sendbuf(const uint8_t* data, uint8_t len)
 {   
-    //等待上次传输完成
+//	//清除TC中断标志位
+//	DMA_ClearFlag(DMA2_Stream7,DMA_FLAG_TCIF7);
+//	//等待上次传输完成
+//	while(DMA_GetCurrDataCounter(DMA2_Stream7))
+//	{
+////		if(DMA_GetFlagStatus(DMA2_Stream7,DMA_FLAG_TCIF7) == SET)
+////		{
+//			//清除TC中断标志位
+//			DMA_ClearFlag(DMA2_Stream7,DMA_FLAG_TCIF7);
+////		}	
+//	};
+//	while(DMA_GetFlagStatus(DMA2_Stream7,DMA_FLAG_TCIF7) == RESET);
+//	DMA_ClearFlag(DMA2_Stream7,DMA_FLAG_TCIF7);
 	while(DMA_GetCurrDataCounter(DMA2_Stream7));
 	//使能串口DMA发送
 	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
@@ -334,7 +347,6 @@ void USART6_IRQHandler(void)                	//串口6中断服务程序
 	(void) clear_flag;
 }
 
-
 void DMA2_Stream7_IRQHandler(void)
 {
     if(DMA_GetFlagStatus(DMA2_Stream7,DMA_FLAG_TCIF7) != RESET) 
@@ -345,7 +357,7 @@ void DMA2_Stream7_IRQHandler(void)
 		DMA_Cmd(DMA2_Stream7,DISABLE);
 	}
 }
-//普通中断读取
+//中断读取
 //void USART1_IRQHandler(void)                	//串口1中断服务程序
 //{
 //	uint8_t Res;
@@ -356,7 +368,7 @@ void DMA2_Stream7_IRQHandler(void)
 //	}
 //	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 //}
-//普通中断读取
+//中断读取
 //void USART6_IRQHandler(void)                	//串口6中断服务程序
 //{
 //	uint8_t Res;

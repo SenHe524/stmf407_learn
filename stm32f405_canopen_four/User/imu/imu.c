@@ -67,7 +67,7 @@ uint8_t usart6_rxflag = 0;
 // 命令接收缓存
 uint8_t usart6_rxbuf[BUF_MAX_LEN] = {0};
 uint8_t usart6_txbuf[BUF_MAX_LEN] = {0};
-// 接收数据下标
+// 单字节接收数据下标
 uint8_t usart6_rxindex = 0;
 // 新命令数据长度
 uint8_t usart6_rxlen = 0;
@@ -107,7 +107,7 @@ void clear_usart6cmd(void)
 	for (uint8_t i = 0; i < usart6_rxlen; i++)
 		usart6_rxbuf[i] = 0;
 	usart6_rxflag = 0;
-	usart6_rxindex = 0;
+//	usart6_rxindex = 0;
 	usart6_cmdflag = 0;
 }
 
@@ -235,7 +235,7 @@ uint8_t check_data_len_by_id(uint8_t id, uint8_t len, const uint8_t *data)
 
 	return ret;
 }
-void imu_data_upload(protocol_info_t* data_t)
+void imu_data_update(protocol_info_t* data_t)
 {
 	uint8_t ret_buf[64]={0};
 	//四字节拷贝
@@ -245,7 +245,7 @@ void imu_data_upload(protocol_info_t* data_t)
 	}
 	for(int i = 0; i < 3; i++)
 	{
-		*(float*)(ret_buf+i*4+12) = (*(&(data_t->angle_x)+i) * PI) / 180.0f;
+		*(float*)(ret_buf+i*4+12) = *(&(data_t->angle_x)+i);
 	}
 	for(int i = 0; i < 3; i++)
 	{
@@ -326,7 +326,7 @@ int usart6_analysis_cmd(const uint8_t *data, short len)
 			}
 		}
 //		printf("Im here\n");
-		imu_data_upload(&g_output_info);
+		imu_data_update(&g_output_info);
 		return analysis_ok;
 	}
 	else
